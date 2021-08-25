@@ -6,8 +6,8 @@
 
 ### Documentation:
 
-Documentation can be found [here]("https://github.com/Cazka/diepAPI/docs/diepAPI.md).
+Documentation can be found [here](https://github.com/Cazka/diepAPI/docs/diepAPI.md).
 
 ### Examples: 
 
-Examples can be found [here]("https://github.com/Cazka/diepAPI/examples).
+Examples can be found [here](https://github.com/Cazka/diepAPI/examples).
