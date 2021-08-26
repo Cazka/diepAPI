@@ -85,6 +85,14 @@ export default class Vector {
     /**
      *
      * @param {Vector} v
+     * @returns {Vector}
+     */
+    static round(v) {
+        return new Vector(Math.round(v.x), Math.round(v.y));
+    }
+    /**
+     *
+     * @param {Vector} v
      * @returns {number}
      */
     static length(v) {
