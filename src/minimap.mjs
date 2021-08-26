@@ -74,7 +74,10 @@ export default class Minimap {
         CanvasKit.replace('fillRect', (target, thisArg, args) => {
             const transform = thisArg.getTransform();
 
-            if ((transform.a / transform.d).toFixed(2) !== (window.innerWidth / window.innerHeight).toFixed(2)) {
+            if (
+                Math.round((transform.a / transform.d) * 10_000) !==
+                Math.round((window.innerWidth / window.innerHeight) * 10_000)
+            ) {
                 return Reflect.apply(target, thisArg, args);
             }
             if (transform.a >= window.innerWidth && transform.d >= window.innerHeight) {
