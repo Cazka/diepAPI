@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/Cazka/diepAPI/issues"
   },
-  "homepage": "https://github.com/Cazka/diepAPI#readme"
+  "homepage": "https://github.com/Cazka/diepAPI#readme",
+  "devDependencies": {
+    "webpack": "^5.51.1"
+  }
 }
