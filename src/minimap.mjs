@@ -1,8 +1,13 @@
 import Vector from './vector.mjs';
 import CanvasKit from './canvasKit.mjs';
 
+let instance = null;
+
 export default class Minimap {
     constructor() {
+        if (instance) return instance;
+        instance = this;
+
         this._minimapDim = new Vector(1, 1);
         this._minimapPos = new Vector(0, 0);
 
