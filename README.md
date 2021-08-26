@@ -4,10 +4,18 @@
 
 ### State of the API: `SUPER DUPER UNSTABLE`
 
+| Class          | Status   |
+| -------------- | -------- |
+| Minimap        | UNSTABLE |
+| ArenaScaling   | UNSTABLE |
+| Arena          | UNSTABLE |
+| PlayerMovement | UNSTABLE |
+
 ### Building:
 
 Since this API is still in an early stage, the bundled library is not included.
 To build the api yourself clone this repo and run:
+
 ```
 npm install
 npm run build
@@ -22,6 +30,6 @@ Refer to the documentation and examples for more information.
 
 Documentation can be found [here](https://github.com/Cazka/diepAPI/blob/main/docs/diepAPI.md).
 
-### Examples: 
+### Examples:
 
 Examples can be found [here](https://github.com/Cazka/diepAPI/blob/main/examples/).
