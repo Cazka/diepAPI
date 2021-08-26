@@ -1,8 +1,13 @@
 import Vector from './vector.mjs';
 import CanvasKit from './canvasKit.mjs';
 
+let instance = null;
+
 export default class ArenaScaling {
     constructor() {
+        if (instance) return instance;
+        instance = this;
+
         this._scalingFactor = 1;
 
         CanvasKit.hook('stroke', (target, thisArg, args) => {
