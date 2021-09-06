@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AFK Script
 // @description  press Q to activate AFK
-// @version      0.0.1
+// @version      0.0.2
 // @author       Cazka
 // @match        https://diep.io/*
 // @icon         https://www.google.com/s2/favicons?domain=diep.io
@@ -30,7 +30,7 @@ CanvasKit.hookRAF(() => {
     if (!afkActive) return;
 
     const direction = Vector.subtract(afkPosition, playerMovement.position);
-    const distance = Vector.length(direction);
+    const distance = Vector.len(direction);
 
     if (distance <= 50) {
         gamepad.x = 0;

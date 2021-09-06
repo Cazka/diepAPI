@@ -1,4 +1,4 @@
-import Vector from './vector.mjs';
+import Vector from './vector.ts';
 import CanvasKit from './canvasKit.mjs';
 
 let instance = null;
