@@ -35,7 +35,7 @@ export default class Movement {
 
     /**
      *
-     * @param {Vecotor} newPos The new position
+     * @param {Vector} newPos The new position
      * @private
      */
     _updateVelocity(newPos) {
