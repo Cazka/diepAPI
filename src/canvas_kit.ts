@@ -1,10 +1,11 @@
 export default class CanvasKit {
     /**
      * The consumer will be called before
-     * @param {string} method
-     * @param {Function} consumer The consumer with `(target, thisArg, args)` as arguments
      */
-    static hook(method, consumer) {
+    static hook(
+        method: string,
+        consumer: (target: Function, thisArg: CanvasRenderingContext2D, args: any[]) => void
+    ): void {
         const target = window.CanvasRenderingContext2D.prototype;
         target[method] = new Proxy(target[method], {
             apply(target, thisArg, args) {
@@ -17,26 +18,26 @@ export default class CanvasKit {
     /**
      * replaces the function. Use `return Reflect.apply(target, thisArg, args);` in
      * your function to call the original function.
-     * @param {string} method
-     * @param {Function} func The func with `(target, thisArg, args)` as arguments
      */
-    static replace(method, func) {
+    static replace(
+        method: string,
+        func: (target: Function, thisArg: CanvasRenderingContext2D, args: any[]) => any
+    ): void {
         const target = window.CanvasRenderingContext2D.prototype;
         target[method] = new Proxy(target[method], {
             apply(target, thisArg, args) {
-                func(target, thisArg, args);
+                return func(target, thisArg, args);
             },
         });
     }
 
     /**
      * The consumer will be called before.
-     * @param {Function} consumer The consumer with `(target, thisArg, args)` as arguments
      */
-    static hookRAF(consumer) {
+    static hookRAF(consumer: () => void): void {
         window.requestAnimationFrame = new Proxy(window.requestAnimationFrame, {
             apply(target, thisArg, args) {
-                consumer(target, thisArg, args);
+                consumer();
                 return Reflect.apply(target, thisArg, args);
             },
         });
