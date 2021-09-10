@@ -76,4 +76,4 @@ class DiepGamepad {
     }
 }
 
-export default new DiepGamepad();
+export const gamepad = new DiepGamepad();
