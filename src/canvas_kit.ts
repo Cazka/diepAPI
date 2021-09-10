@@ -1,4 +1,4 @@
-export default class CanvasKit {
+export class CanvasKit {
     /**
      * The consumer will be called before
      */
