@@ -1,72 +1,67 @@
-import Vector from './vector.ts';
-import CanvasKit from './canvasKit.mjs';
+import { Vector } from './vector';
+import { CanvasKit } from './canvas_kit';
+import { game } from './game';
 
-let instance = null;
+class Minimap {
+    #minimapDim = new Vector(1, 1);
+    #minimapPos = new Vector(0, 0);
 
-export default class Minimap {
+    #viewportDim = new Vector(1, 1);
+    #viewportPos = new Vector(0, 0);
+
+    /**
+     * @description The position of the arrow normalized to the range [0,1]
+     */
+    #arrowPos = new Vector(0.5, 0.5);
+
+    #drawViewport = false;
+
     constructor() {
-        if (instance) return instance;
-        instance = this;
-
-        this._minimapDim = new Vector(1, 1);
-        this._minimapPos = new Vector(0, 0);
-
-        this._viewportDim = new Vector(1, 1);
-        this._viewPortPos = new Vector(0, 0);
-
-        this._arrowPos = new Vector(0.5, 0.5);
-
-        this._drawViewport = false;
-        const int = setInterval(() => {
-            if (window.input === undefined) return;
-            clearInterval(int);
-            window.input.set_convar('ren_minimap_viewport', true);
+        game.once('ready', () => {
+            window.input.set_convar('ren_minimap_viewport', 'true');
             window.input.set_convar = new Proxy(window.input.set_convar, {
                 apply: (target, thisArg, args) => {
-                    if (args[0] === 'ren_minimap_viewport') this._drawViewport = args[1];
+                    if (args[0] === 'ren_minimap_viewport') this.#drawViewport = args[1];
                     else Reflect.apply(target, thisArg, args);
                 },
             });
-        }, 10);
+        });
 
         this._minimapHook();
         this._viewportHook();
         this._arrowHook();
     }
 
-    get minimapDim() {
-        return this._minimapDim;
+    get minimapDim(): Vector {
+        return this.#minimapDim;
     }
 
-    get minimapPos() {
-        return this._minimapPos;
+    get minimapPos(): Vector {
+        return this.#minimapPos;
     }
 
-    get viewportDim() {
-        return this._viewportDim;
+    get viewportDim(): Vector {
+        return this.#viewportDim;
     }
 
-    get viewportPos() {
-        return this._viewportPos;
+    get viewportPos(): Vector {
+        return this.#viewportPos;
     }
 
-    /**
-     * @returns The position of the arrow normalized to the range [0,1]
-     */
-    get arrowPos() {
-        return this._arrowPos;
+    get arrowPos(): Vector {
+        return this.#arrowPos;
     }
 
-    drawViewport(value) {
-        this._drawViewport = value;
+    drawViewport(value: boolean): void {
+        this.#drawViewport = value;
     }
 
     _minimapHook() {
         CanvasKit.hook('strokeRect', (target, thisArg, args) => {
             const transform = thisArg.getTransform();
 
-            this._minimapDim = new Vector(transform.a, transform.d);
-            this._minimapPos = new Vector(transform.e, transform.f);
+            this.#minimapDim = new Vector(transform.a, transform.d);
+            this.#minimapPos = new Vector(transform.e, transform.f);
         });
     }
 
@@ -84,19 +79,19 @@ export default class Minimap {
                 return Reflect.apply(target, thisArg, args);
             }
 
-            this._viewportDim = new Vector(transform.a, transform.d);
-            this._viewportPos = new Vector(transform.e, transform.f);
+            this.#viewportDim = new Vector(transform.a, transform.d);
+            this.#viewportPos = new Vector(transform.e, transform.f);
 
-            if (this._drawViewport) return Reflect.apply(target, thisArg, args);
+            if (this.#drawViewport) return Reflect.apply(target, thisArg, args);
         });
     }
 
     _arrowHook() {
         let index = 0;
 
-        let pointA;
-        let pointB;
-        let pointC;
+        let pointA: Vector;
+        let pointB: Vector;
+        let pointC: Vector;
 
         const calculatePos = () => {
             const side1 = Math.round(Vector.distance(pointA, pointB));
@@ -105,10 +100,10 @@ export default class Minimap {
             if (side1 === side2 && side2 === side3) return;
 
             const centroid = Vector.centroid(pointA, pointB, pointC);
-            const arrowPos = Vector.subtract(centroid, this._minimapPos);
-            const position = Vector.divide(arrowPos, this._minimapDim);
+            const arrowPos = Vector.subtract(centroid, this.#minimapPos);
+            const position = Vector.divide(arrowPos, this.#minimapDim);
 
-            this._arrowPos = position;
+            this.#arrowPos = position;
         };
 
         CanvasKit.hook('beginPath', (target, thisArg, args) => {
@@ -145,3 +140,5 @@ export default class Minimap {
         });
     }
 }
+
+export const minimap = new Minimap();
