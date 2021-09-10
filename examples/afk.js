@@ -10,9 +10,7 @@
 // ==/UserScript==
 if (!window.diepAPI) return window.alert('Please install diepAPI to use this script');
 
-const { PlayerMovement, CanvasKit, Vector, DiepGamepad } = window.diepAPI;
-const playerMovement = new PlayerMovement();
-const gamepad = new DiepGamepad();
+const { playerMovement, CanvasKit, Vector, gamepad } = window.diepAPI;
 
 let afkActive = false;
 let afkPosition;
