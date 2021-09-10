@@ -43,4 +43,4 @@ class Arena {
     }
 }
 
-export default new Arena();
+export const arena = new Arena();
