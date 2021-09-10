@@ -11,7 +11,7 @@ class Game extends EventEmitter {
     }
 
     #onframe(): void {
-        if (!this.#ready && (window as any).input !== undefined) {
+        if (!this.#ready && window.input !== undefined) {
             this.#ready = true;
             this.#onready();
         }
