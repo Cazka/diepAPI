@@ -1,9 +1,9 @@
-import { Vector } from './vector';
-import { CanvasKit } from './canvas_kit';
-import { gamepad } from './diep_gamepad';
-import { minimap } from './minimap';
-import { arenaScaling } from './arena_scaling';
-import { arena } from './arena';
-import { playerMovement } from './player_movement';
+export { Vector } from './vector';
+export { CanvasKit } from './canvas_kit';
 
-export { Vector, CanvasKit, gamepad, minimap, arenaScaling, arena, playerMovement };
+export { gamepad } from './diep_gamepad';
+export { game } from './game';
+export { minimap } from './minimap';
+export { arena } from './arena';
+export { arenaScaling } from './arena_scaling';
+export { playerMovement } from './player_movement';

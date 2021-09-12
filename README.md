@@ -6,6 +6,7 @@
 
 | Class          | Status   |
 | -------------- | -------- |
+| Game           | UNSTABLE |
 | Minimap        | UNSTABLE |
 | ArenaScaling   | UNSTABLE |
 | Arena          | UNSTABLE |

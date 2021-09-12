@@ -20,7 +20,7 @@ export class Movement {
         return this.#velocity;
     }
 
-    updatePos(newPos: Vector): void {
+    protected updatePos(newPos: Vector): void {
         this.#updateVelocity(newPos);
         this.#position = newPos;
     }
