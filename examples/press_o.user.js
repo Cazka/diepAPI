@@ -8,6 +8,7 @@
 // @namespace    https://greasyfork.org/users/541070
 // @grant        none
 // ==/UserScript==
+if (!window.diepAPI) return window.alert('Please install diepAPI to use this script');
 
 const { player } = window.diepAPI;
 
