@@ -22,43 +22,43 @@ class Player extends EventEmitter {
                 if (this.#dead) this.#ondead();
                 else this.#onspawn();
             });
-        });
 
-        //Mouse events
-        const canvas = document.getElementById('canvas');
-        canvas.onmousemove = new Proxy(canvas.onmousemove, {
-            apply: (target, thisArg, args) => {
-                if (this.#mouseLock) return;
-                //this._onmousemove(args[0]);
-                Reflect.apply(target, thisArg, args);
-            },
-        });
-        canvas.onmousedown = new Proxy(canvas.onmousedown, {
-            apply: (target, thisArg, args) => {
-                if (this.#mouseLock) return;
-                //this._onmousedown(args[0]);
-                Reflect.apply(target, thisArg, args);
-            },
-        });
-        canvas.onmouseup = new Proxy(canvas.onmouseup, {
-            apply: (target, thisArg, args) => {
-                if (this.#mouseLock) return;
-                //this._onmouseup(args[0]);
-                Reflect.apply(target, thisArg, args);
-            },
-        });
-        //Key events
-        window.onkeydown = new Proxy(window.onkeydown, {
-            apply: (target, thisArg, args) => {
-                //this._onkeydown(args[0]);
-                return Reflect.apply(target, thisArg, args);
-            },
-        });
-        window.onkeyup = new Proxy(window.onkeyup, {
-            apply: (target, thisArg, args) => {
-                //this._onkeyup(args[0]);
-                return Reflect.apply(target, thisArg, args);
-            },
+            //Mouse events
+            const canvas = document.getElementById('canvas');
+            canvas.onmousemove = new Proxy(canvas.onmousemove, {
+                apply: (target, thisArg, args) => {
+                    if (this.#mouseLock) return;
+                    //this._onmousemove(args[0]);
+                    Reflect.apply(target, thisArg, args);
+                },
+            });
+            canvas.onmousedown = new Proxy(canvas.onmousedown, {
+                apply: (target, thisArg, args) => {
+                    if (this.#mouseLock) return;
+                    //this._onmousedown(args[0]);
+                    Reflect.apply(target, thisArg, args);
+                },
+            });
+            canvas.onmouseup = new Proxy(canvas.onmouseup, {
+                apply: (target, thisArg, args) => {
+                    if (this.#mouseLock) return;
+                    //this._onmouseup(args[0]);
+                    Reflect.apply(target, thisArg, args);
+                },
+            });
+            //Key events
+            window.onkeydown = new Proxy(window.onkeydown, {
+                apply: (target, thisArg, args) => {
+                    //this._onkeydown(args[0]);
+                    return Reflect.apply(target, thisArg, args);
+                },
+            });
+            window.onkeyup = new Proxy(window.onkeyup, {
+                apply: (target, thisArg, args) => {
+                    //this._onkeyup(args[0]);
+                    return Reflect.apply(target, thisArg, args);
+                },
+            });
         });
     }
 
@@ -122,7 +122,6 @@ class Player extends EventEmitter {
 
     async spawn(name: string, attempts: number = 0): Promise<void> {
         if (!this.#dead) return;
-        if (attempts == 5) throw new Error('diepAPi: Unable to spawn.');
 
         if (name !== undefined) (document.getElementById('textInput') as HTMLInputElement).value = name;
 
