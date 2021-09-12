@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AFK Script
 // @description  press Q to activate AFK
-// @version      0.0.2
+// @version      0.0.3
 // @author       Cazka
 // @match        https://diep.io/*
 // @icon         https://www.google.com/s2/favicons?domain=diep.io
@@ -10,7 +10,7 @@
 // ==/UserScript==
 if (!window.diepAPI) return window.alert('Please install diepAPI to use this script');
 
-const { playerMovement, CanvasKit, Vector, gamepad } = window.diepAPI;
+const { player, game, Vector, gamepad } = window.diepAPI;
 
 let afkActive = false;
 let afkPosition;
@@ -21,13 +21,13 @@ window.addEventListener('keydown', (e) => {
     afkActive = !afkActive;
     gamepad.connected = afkActive;
 
-    if (afkActive) afkPosition = playerMovement.position;
+    if (afkActive) afkPosition = player.position;
 });
 
-CanvasKit.hookRAF(() => {
+game.on('frame', () => {
     if (!afkActive) return;
 
-    const direction = Vector.subtract(afkPosition, playerMovement.position);
+    const direction = Vector.subtract(afkPosition, player.position);
     const distance = Vector.len(direction);
 
     if (distance <= 50) {
