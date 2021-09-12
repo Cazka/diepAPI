@@ -108,7 +108,7 @@ class Player extends EventEmitter {
             key = key.toUpperCase().charCodeAt(0);
         }
         window.input.keyDown(key);
-        //this._onkeydown({ keyCode: key });
+        this.#onkeydown({ keyCode: key } as KeyboardEvent);
     }
     keyUp(key: number | string): void {
         if (typeof key == 'string') {
@@ -116,7 +116,7 @@ class Player extends EventEmitter {
             key = key.toUpperCase().charCodeAt(0);
         }
         window.input.keyUp(key);
-        //this._onkeyup({ keyCode: key });
+        this.#onkeyup({ keyCode: key } as KeyboardEvent);
     }
     async keyPress(key: number | string): Promise<void> {
         this.keyDown(key);
