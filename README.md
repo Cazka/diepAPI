@@ -11,6 +11,7 @@
 | ArenaScaling   | UNSTABLE |
 | Arena          | UNSTABLE |
 | PlayerMovement | UNSTABLE |
+| Player         | UNSTABLE |
 
 ### Building:
 
