@@ -4,14 +4,13 @@
 
 ### State of the API: `SUPER DUPER UNSTABLE`
 
-| Class          | Status   |
-| -------------- | -------- |
-| Game           | UNSTABLE |
-| Minimap        | UNSTABLE |
-| ArenaScaling   | UNSTABLE |
-| Arena          | UNSTABLE |
-| PlayerMovement | UNSTABLE |
-| Player         | UNSTABLE |
+| Class        | Status   |
+| ------------ | -------- |
+| Game         | UNSTABLE |
+| Minimap      | UNSTABLE |
+| ArenaScaling | UNSTABLE |
+| Arena        | UNSTABLE |
+| Player       | UNSTABLE |
 
 ### Building:
 
