@@ -3,6 +3,7 @@ import { EventEmitter } from './event_emitter';
 import { game } from './game';
 import { arenaScaling } from './arena_scaling';
 import { playerMovement } from './player_movement';
+import { gamepad } from './diep_gamepad';
 
 const sleep = (ms: number): Promise<void> => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
@@ -97,6 +98,10 @@ class Player extends EventEmitter {
         super.emit('spawn');
     }
 
+    useGamepad(value: boolean): void {
+        gamepad.connected = value;
+    }
+
     keyDown(key: number | string): void {
         if (typeof key == 'string') {
             if (key.length != 1) throw new Error(`diepAPI: Unsupported key: ${key}`);
@@ -158,6 +163,68 @@ class Player extends EventEmitter {
         this.#mouseLock = false;
         // wait 1500 ms for the animation to finish
         await sleep(1500);
+    }
+
+    moveTo(arenaPos: Vector): void {
+        if (gamepad.connected) {
+            const direction = Vector.subtract(arenaPos, this.position);
+            const distance = Vector.len(direction);
+
+            if (distance === 0) {
+                gamepad.x = 0;
+                gamepad.y = 0;
+                return;
+            }
+
+            //max speed
+            const velocity = Vector.scale(1 / distance, direction);
+
+            gamepad.x = velocity.x;
+            gamepad.y = velocity.y;
+        } else {
+            const direction = Vector.subtract(arenaPos, this.position);
+
+            if (direction.x > 0) {
+                this.keyUp('a');
+                this.keyDown('d');
+            } else if (direction.x < 0) {
+                this.keyUp('d');
+                this.keyDown('a');
+            } else {
+                this.keyUp('a');
+                this.keyUp('d');
+            }
+
+            if (direction.y > 0) {
+                this.keyUp('w');
+                this.keyDown('s');
+            } else if (direction.y < 0) {
+                this.keyUp('s');
+                this.keyDown('w');
+            } else {
+                this.keyUp('w');
+                this.keyUp('s');
+            }
+        }
+    }
+
+    lookAt(arenaPos: Vector): void {
+        if (gamepad.connected) {
+            const direction = Vector.subtract(arenaPos, this.position);
+            let axes = Vector.scale(arenaScaling.fov / 1200 / 1.1, direction);
+
+            const length = Vector.len(axes);
+
+            if (length !== 0 && length < 0.15) {
+                axes = Vector.scale(0.15 / length, axes);
+            }
+
+            gamepad.mx = axes.x;
+            gamepad.my = axes.y;
+        } else {
+            const position = arenaScaling.toScreenPos(arenaPos);
+            window.input.mouse(position.x, position.y);
+        }
     }
 }
 
