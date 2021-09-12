@@ -2,10 +2,10 @@ interface Input {
     mouse: (x: number, y: number) => void;
     keyDown: (key: string | number) => void;
     keyUp: (key: string | number) => void;
-    blur: Function; //_reset_keys
-    wheel: Function; //_mouse_wheel
-    prevent_right_click: (value: boolean) => void; //_prevent_right_click
-    flushInputHooks: Function; //_flush_input_hooks
+    blur: () => void;
+    wheel: Function;
+    prevent_right_click: (value: boolean) => void;
+    flushInputHooks: Function;
     set_convar: (key: string, value: string) => boolean;
     get_convar: (key: string) => null | string;
     execute: (v: string) => void;
