@@ -1,5 +1,6 @@
 import { Vector } from './vector';
 import { CanvasKit } from './canvas_kit';
+import { playerMovement } from './player_movement';
 
 class ArenaScaling {
     #scalingFactor = 1;
@@ -40,6 +41,32 @@ class ArenaScaling {
      */
     toScreenUnits(v: Vector): Vector {
         return Vector.scale(this.#scalingFactor, v);
+    }
+
+    /**
+     * Will translate coordinates from canvas to arena
+     * @param {Vector} screenPos The canvas coordinates
+     * @returns {Vector} The `screenPos` translated to arena coordinates
+     */
+    toArenaPos(screenPos: Vector): Vector {
+        const direction = Vector.subtract(screenPos, new Vector(window.innerWidth / 2, window.innerHeight / 2));
+        const scaled = this.toArenaUnits(direction);
+        const arenaPos = Vector.add(scaled, playerMovement.position);
+
+        return arenaPos;
+    }
+
+    /**
+     * Will translate coordinates from arena to canvas
+     * @param {Vector} arenaPos The arena coordinates
+     * @returns {Vector} The `arenaPos` translated to canvas coordinates
+     */
+    toScreenPos(arenaPos: Vector): Vector {
+        const direction = Vector.subtract(arenaPos, playerMovement.position);
+        const scaled = this.toScreenUnits(direction);
+        const screenPos = Vector.add(scaled, new Vector(window.innerWidth / 2, window.innerHeight / 2));
+
+        return screenPos;
     }
 }
 
