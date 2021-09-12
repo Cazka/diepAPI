@@ -29,34 +29,34 @@ class Player extends EventEmitter {
             canvas.onmousemove = new Proxy(canvas.onmousemove, {
                 apply: (target, thisArg, args) => {
                     if (this.#mouseLock) return;
-                    //this._onmousemove(args[0]);
-                    Reflect.apply(target, thisArg, args);
+                    this.#onmousemove(args[0]);
+                    return Reflect.apply(target, thisArg, args);
                 },
             });
             canvas.onmousedown = new Proxy(canvas.onmousedown, {
                 apply: (target, thisArg, args) => {
                     if (this.#mouseLock) return;
-                    //this._onmousedown(args[0]);
-                    Reflect.apply(target, thisArg, args);
+                    this.#onmousedown(args[0]);
+                    return Reflect.apply(target, thisArg, args);
                 },
             });
             canvas.onmouseup = new Proxy(canvas.onmouseup, {
                 apply: (target, thisArg, args) => {
                     if (this.#mouseLock) return;
-                    //this._onmouseup(args[0]);
-                    Reflect.apply(target, thisArg, args);
+                    this.#onmouseup(args[0]);
+                    return Reflect.apply(target, thisArg, args);
                 },
             });
             //Key events
             window.onkeydown = new Proxy(window.onkeydown, {
                 apply: (target, thisArg, args) => {
-                    //this._onkeydown(args[0]);
+                    this.#onkeydown(args[0]);
                     return Reflect.apply(target, thisArg, args);
                 },
             });
             window.onkeyup = new Proxy(window.onkeyup, {
                 apply: (target, thisArg, args) => {
-                    //this._onkeyup(args[0]);
+                    this.#onkeyup(args[0]);
                     return Reflect.apply(target, thisArg, args);
                 },
             });
@@ -224,6 +224,83 @@ class Player extends EventEmitter {
         } else {
             const position = arenaScaling.toScreenPos(arenaPos);
             window.input.mouse(position.x, position.y);
+        }
+    }
+
+    #onmousemove(e: MouseEvent): void {
+        if (gamepad.connected) {
+            const pos = arenaScaling.toArenaPos(new Vector(e.clientX, e.clientY));
+            this.lookAt(pos);
+        }
+    }
+
+    #onmousedown(e: MouseEvent): void {
+        if (gamepad.connected) this.#onkeydown({ keyCode: e.which } as KeyboardEvent);
+    }
+
+    #onmouseup(e: MouseEvent): void {
+        if (gamepad.connected) this.#onkeyup({ keyCode: e.which } as KeyboardEvent);
+    }
+
+    #onkeydown(e: KeyboardEvent): void {
+        if (gamepad.connected) {
+            switch (e.keyCode) {
+                case 37:
+                case 65:
+                    gamepad.x = -1;
+                    break;
+                case 40:
+                case 83:
+                    gamepad.y = 1;
+                    break;
+                case 38:
+                case 87:
+                    gamepad.y = -1;
+                    break;
+                case 39:
+                case 68:
+                    gamepad.x = 1;
+                    break;
+                case 1:
+                case 32:
+                    gamepad.leftMouse = true;
+                    break;
+                case 3:
+                case 16:
+                    gamepad.rightMouse = true;
+                    break;
+            }
+        }
+    }
+
+    #onkeyup(e: KeyboardEvent): void {
+        if (gamepad.connected) {
+            switch (e.keyCode) {
+                case 37:
+                case 65:
+                    gamepad.x = 0;
+                    break;
+                case 40:
+                case 83:
+                    gamepad.y = 0;
+                    break;
+                case 38:
+                case 87:
+                    gamepad.y = 0;
+                    break;
+                case 39:
+                case 68:
+                    gamepad.x = 0;
+                    break;
+                case 1:
+                case 32:
+                    gamepad.leftMouse = false;
+                    break;
+                case 3:
+                case 16:
+                    gamepad.rightMouse = false;
+                    break;
+            }
         }
     }
 }
