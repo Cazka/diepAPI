@@ -23,6 +23,7 @@
   "homepage": "https://github.com/Cazka/diepAPI#readme",
   "devDependencies": {
     "ts-loader": "^9.2.5",
+    "typedoc": "^0.22.3",
     "typescript": "^4.4.2",
     "webpack": "^5.51.1",
     "webpack-cli": "^4.8.0"
