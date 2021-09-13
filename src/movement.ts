@@ -16,8 +16,20 @@ export class Movement {
         return this.#position;
     }
 
+    /**
+     * Velocity in [diep_]units / second
+     */
     get velocity(): Vector {
         return this.#velocity;
+    }
+
+    /**
+     * Predict where this object will be at given `time`
+     * @param time performance.now() time
+     */
+    predict(time: number) {
+        const duration = (time - this.#velocityLastNow) / 1000;
+        return Vector.add(this.#position, Vector.scale(duration, this.#velocity));
     }
 
     protected updatePos(newPos: Vector): void {
