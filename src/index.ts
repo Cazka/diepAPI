@@ -8,3 +8,4 @@ export { arena } from './arena';
 export { arenaScaling } from './arena_scaling';
 
 export { player } from './player';
+export { entityManager } from './entity_manager';
