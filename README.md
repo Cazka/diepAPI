@@ -29,7 +29,7 @@ Refer to the documentation and examples for more information.
 
 ### Documentation:
 
-Documentation can be found [here](https://github.com/Cazka/diepAPI/blob/main/docs/diepAPI.md).
+Documentation can be found [here](https://cazka.github.io/diepAPI/).
 
 ### Examples:
 
