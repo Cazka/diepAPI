@@ -29,9 +29,11 @@ class EntityManager {
         // - moveTo -> lineTo -> lineTo -> fill
         this.#triangleHook();
 
-        //When is a hexagon being drawn?
+        //When is a pentagon being drawn?
+        this.#pentagonHook();
 
         //when is a square being drawn?
+        this.#squareHook();
 
         //when is a bullet being drawn?
 
@@ -152,7 +154,8 @@ class EntityManager {
                     }
                     break;
                 default:
-                    break;
+                    //dont add
+                    return;
             }
             this.#add(type, position);
         };
@@ -183,6 +186,152 @@ class EntityManager {
         });
         CanvasKit.hook('fill', (target, thisArg, args) => {
             if (index === 4) {
+                index++;
+                calculatePos(thisArg);
+                return;
+            }
+            index = 0;
+        });
+    }
+
+    #squareHook(): void {
+        let index = 0;
+
+        let pointA: Vector;
+        let pointB: Vector;
+        let pointC: Vector;
+        let pointD: Vector;
+
+        const calculatePos = (ctx: CanvasRenderingContext2D) => {
+            pointA = arenaScaling.toArenaPos(pointA);
+            pointB = arenaScaling.toArenaPos(pointB);
+            pointC = arenaScaling.toArenaPos(pointC);
+            pointD = arenaScaling.toArenaPos(pointD);
+
+            const position = Vector.centroid(pointA, pointB, pointC, pointD);
+            const radius = Math.round(Vector.radius(pointA, pointB, pointC, pointD));
+
+            let type: EntityType;
+            switch (radius) {
+                case 55:
+                    type = EntityType.Square;
+                    break;
+                default:
+                    //dont add
+                    return;
+            }
+            this.#add(EntityType.Square, position);
+        };
+
+        CanvasKit.hook('beginPath', (target, thisArg, args) => {
+            index = 1;
+        });
+        CanvasKit.hook('moveTo', (target, thisArg, args) => {
+            if (index === 1) {
+                index++;
+                pointA = new Vector(args[0], args[1]);
+                return;
+            }
+            index = 0;
+        });
+        CanvasKit.hook('lineTo', (target, thisArg, args) => {
+            if (index === 2) {
+                index++;
+                pointB = new Vector(args[0], args[1]);
+                return;
+            }
+            if (index === 3) {
+                index++;
+                pointC = new Vector(args[0], args[1]);
+                return;
+            }
+            if (index === 4) {
+                index++;
+                pointD = new Vector(args[0], args[1]);
+                return;
+            }
+            index = 0;
+        });
+        CanvasKit.hook('fill', (target, thisArg, args) => {
+            if (index === 5) {
+                index++;
+                calculatePos(thisArg);
+                return;
+            }
+            index = 0;
+        });
+    }
+
+    #pentagonHook(): void {
+        let index = 0;
+
+        let pointA: Vector;
+        let pointB: Vector;
+        let pointC: Vector;
+        let pointD: Vector;
+        let pointE: Vector;
+
+        const calculatePos = (ctx: CanvasRenderingContext2D) => {
+            pointA = arenaScaling.toArenaPos(pointA);
+            pointB = arenaScaling.toArenaPos(pointB);
+            pointC = arenaScaling.toArenaPos(pointC);
+            pointD = arenaScaling.toArenaPos(pointD);
+            pointE = arenaScaling.toArenaPos(pointE);
+
+            const position = Vector.centroid(pointA, pointB, pointC, pointD, pointE);
+            const radius = Math.round(Vector.radius(pointA, pointB, pointC, pointD, pointE));
+
+            let type: EntityType;
+            switch (radius) {
+                case 75:
+                    type = EntityType.Pentagon;
+                    break;
+                case 200:
+                    type = EntityType.AlphaPentagon;
+                    break;
+                default:
+                    //dont add
+                    return;
+            }
+            this.#add(type, position);
+        };
+
+        CanvasKit.hook('beginPath', (target, thisArg, args) => {
+            index = 1;
+        });
+        CanvasKit.hook('moveTo', (target, thisArg, args) => {
+            if (index === 1) {
+                index++;
+                pointA = new Vector(args[0], args[1]);
+                return;
+            }
+            index = 0;
+        });
+        CanvasKit.hook('lineTo', (target, thisArg, args) => {
+            if (index === 2) {
+                index++;
+                pointB = new Vector(args[0], args[1]);
+                return;
+            }
+            if (index === 3) {
+                index++;
+                pointC = new Vector(args[0], args[1]);
+                return;
+            }
+            if (index === 4) {
+                index++;
+                pointD = new Vector(args[0], args[1]);
+                return;
+            }
+            if (index === 5) {
+                index++;
+                pointE = new Vector(args[0], args[1]);
+                return;
+            }
+            index = 0;
+        });
+        CanvasKit.hook('fill', (target, thisArg, args) => {
+            if (index === 6) {
                 index++;
                 calculatePos(thisArg);
                 return;
