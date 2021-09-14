@@ -19,11 +19,8 @@ export enum EntityType {
  * Holds minimal information currently.
  */
 export class Entity extends Movement {
-    type: EntityType;
-    constructor(type: EntityType, position: Vector) {
+    constructor(readonly type: EntityType) {
         super();
-        super.updatePos(position);
-        this.type = type;
     }
 
     updatePos(newPos: Vector): void {

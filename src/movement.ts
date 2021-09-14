@@ -40,6 +40,7 @@ export class Movement {
     #updateVelocity(newPos: Vector): void {
         const now = performance.now();
         const time = (now - this.#velocityLastNow) / 1000;
+        if (time === 0) return;
         this.#velocityLastNow = now;
 
         const velocity = Vector.scale(1 / time, Vector.subtract(newPos, this.#position));

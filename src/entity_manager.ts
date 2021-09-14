@@ -3,43 +3,7 @@ import { CanvasKit } from './canvas_kit';
 import { Entity, EntityType } from './entity';
 import { arenaScaling } from './arena_scaling';
 import { game } from './game';
-import { player } from './player';
 
-class MaxHeap<T> {
-    #heap: T[] = [];
-
-    constructor(readonly comparator: (e1: T, e2: T) => number) {}
-
-    get array(): T[] {
-        return this.#heap;
-    }
-
-    add(element: T): void {
-        this.#heap.push(element);
-        this.#heapifyUp(this.#heap.length - 1);
-    }
-
-    #heapifyUp(i: number): void {
-        while (true) {
-            const parent = Math.floor(i / 2);
-            if (i > 0 && this.comparator(this.#heap[i], this.#heap[parent]) < 0) {
-                [this.#heap[i], this.#heap[parent]] = [this.#heap[parent], this.#heap[i]];
-                i = parent;
-            } else {
-                break;
-            }
-        }
-    }
-}
-class PriorityQueue {
-    #heap: MaxHeap<Entity> = new MaxHeap(
-        (e1, e2) => Vector.distance(e1.position, player.position) - Vector.distance(e2.position, player.position)
-    );
-
-    add(entity: Entity) {
-        this.#heap.add(entity);
-    }
-}
 /**
  * Entity Manager is used to access the information about the entities, that are currently drawn on the screen.
  * To access the entities the EntityManager exposes the EntityManager.entities field.
@@ -57,10 +21,11 @@ class PriorityQueue {
  *
  */
 class EntityManager {
-    //#entities = new PriorityQueue();
+    #entities: Entity[] = [];
+    #entitiesUpdated: Entity[] = [];
 
     constructor() {
-        //When is a triangle drawn?
+        //When is a triangle being drawn?
         // - moveTo -> lineTo -> lineTo -> fill
         this.#triangleHook();
 
@@ -70,19 +35,64 @@ class EntityManager {
 
         //when is a bullet being drawn?
 
-        //when is a player drawn?
+        //when is a player being drawn?
 
         game.on('frame', () => {
-            //we should remove entities that havent been updated in the previous frame.
+            this.#entities = this.#entitiesUpdated;
+            this.#entitiesUpdated = [];
         });
     }
 
+    get entities(): Entity[] {
+        return this.#entities;
+    }
+
+    /**
+     * Adds the entity to `#entitiesUpdated`.
+     *
+     * Will either find the entity in `#entities` or create a new `Entity`.
+     */
     #add(type: EntityType, position: Vector) {
-        //find closest entity in this.#entities to position. (entity.predict(performance.now()))
-        // - found? -> update entity position;
-        // - not found? -> create new entity
-        //
-        //this already looks like a performance critical place, since there are many calculations that have to be done on every frame.
+        const entityIndex = this.#findEntity(type, position);
+
+        let entity: Entity;
+        if (entityIndex === -1) {
+            entity = new Entity(type);
+        } else {
+            entity = this.#entities[entityIndex];
+        }
+
+        entity.updatePos(position);
+        this.#entitiesUpdated.push(entity);
+    }
+
+    /**
+     * Searches `#entities` for the entity that is closest to `position` and
+     * returns the __index__ of that entity or __-1__ if there is no match.
+     */
+    #findEntity(type: EntityType, position: Vector): number {
+        let result = -1;
+        let shortestDistance = Number.MAX_SAFE_INTEGER;
+
+        this.#entities.forEach((x, i) => {
+            const distance = Vector.distance(x.predictPos(performance.now()), position);
+
+            if (distance < shortestDistance) {
+                shortestDistance = distance;
+                result = i;
+            }
+        });
+
+        //if distance is too high
+        if (shortestDistance > 5 /* precision */) {
+            return -1;
+        }
+        //sanity check
+        if (this.#entities[result].type !== type) {
+            return -1;
+        }
+
+        return result;
     }
 
     #triangleHook(): void {
