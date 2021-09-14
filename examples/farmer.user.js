@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Farm Script
 // @description  press P to start the farmer
-// @version      0.0.2
+// @version      0.0.3
 // @author       Cazka
 // @match        https://diep.io/*
 // @icon         https://www.google.com/s2/favicons?domain=diep.io
@@ -22,11 +22,14 @@ window.addEventListener('keydown', (e) => {
 
 game.on('frame', () => {
     if (!farmActive) return;
-    const entity = entityManager.entities.reduce((acc, x) => {
-        const distanceAcc = Vector.distance(acc.predictPos(performance.now()), player.predictPos(performance.now()));
-        const distanceX = Vector.distance(x.predictPos(performance.now()), player.predictPos(performance.now()));
+    const entity = entityManager.entities
+        .filter((x) => x.type > 3)
+        .reduce((acc, x) => {
+            const now = performance.now();
+            const distAcc = Vector.distance(acc.predictPos(now), player.predictPos(now));
+            const distX = Vector.distance(x.predictPos(now), player.predictPos(now));
 
-        return distanceX < distanceAcc ? x : acc;
-    });
+            return distX < distAcc ? x : acc;
+        });
     if (entity) player.lookAt(entity.position);
 });
