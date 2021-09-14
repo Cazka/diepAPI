@@ -27,7 +27,7 @@ export class Movement {
      * Predict where this object will be at given `time`
      * @param time performance.now() time
      */
-    predict(time: number): Vector {
+    predictPos(time: number): Vector {
         const duration = (time - this.#velocityLastNow) / 1000;
         return Vector.add(this.#position, Vector.scale(duration, this.#velocity));
     }

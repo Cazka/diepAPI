@@ -75,8 +75,8 @@ class Player extends EventEmitter {
      * Predict where this object will be at given `time`
      * @param time performance.now() time
      */
-    predictPosition(time: number): Vector {
-        return playerMovement.predict(time);
+    predictPos(time: number): Vector {
+        return playerMovement.predictPos(time);
     }
 
     /**
