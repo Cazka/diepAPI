@@ -29,11 +29,13 @@ class EntityManager {
         // - moveTo -> lineTo -> lineTo -> fill
         this.#triangleHook();
 
-        //When is a pentagon being drawn?
-        this.#pentagonHook();
-
         //when is a square being drawn?
+        // - moveTo -> lineTo -> lineTo -> lineTo -> fill
         this.#squareHook();
+
+        //When is a pentagon being drawn?
+        // - moveTo -> lineTo -> lineTo -> lineTo -> lineTo -> fill
+        this.#pentagonHook();
 
         //when is a bullet being drawn?
 
@@ -214,13 +216,19 @@ class EntityManager {
             let type: EntityType;
             switch (radius) {
                 case 55:
-                    type = EntityType.Square;
+                    if (ctx.fillStyle === '#ffe869') {
+                        //square
+                        type = EntityType.Square;
+                    } else {
+                        //necromancer drone
+                        type = EntityType.Drone;
+                    }
                     break;
                 default:
                     //dont add
                     return;
             }
-            this.#add(EntityType.Square, position);
+            this.#add(type, position);
         };
 
         CanvasKit.hook('beginPath', (target, thisArg, args) => {
