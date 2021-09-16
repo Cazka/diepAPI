@@ -9,8 +9,6 @@ import { game } from './game';
  * To access the entities the EntityManager exposes the EntityManager.entities field.
  *
  * EntityMananger.entities:
- * This represents a priority queue, where the entity with the shortest distance to the player is first
- * and the entity with the largest distance is last. entities[0] will therefor always be the own player.
  * Important!: We expect the camera coordinates to match with the player coordinates. Tanks like Predator will cause
  * unexpected behaviour.
  *
