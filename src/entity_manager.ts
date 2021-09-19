@@ -1,6 +1,6 @@
 import { Vector } from './vector';
 import { CanvasKit } from './canvas_kit';
-import { Entity, EntityType } from './entity';
+import { Entity, EntityType, EntityColor, TeamColors } from './entity';
 import { arenaScaling } from './arena_scaling';
 import { game } from './game';
 
@@ -23,16 +23,10 @@ class EntityManager {
     #entitiesUpdated: Entity[] = [];
 
     constructor() {
-        //When is a triangle being drawn?
-        // - moveTo -> lineTo -> lineTo -> fill
         this.#triangleHook();
 
-        //when is a square being drawn?
-        // - moveTo -> lineTo -> lineTo -> lineTo -> fill
         this.#squareHook();
 
-        //When is a pentagon being drawn?
-        // - moveTo -> lineTo -> lineTo -> lineTo -> lineTo -> fill
         this.#pentagonHook();
 
         //when is a bullet being drawn?
@@ -90,49 +84,84 @@ class EntityManager {
             return -1;
         }
         //sanity check
-        if (this.#entities[result].type !== type) {
+        if (/*EntityType.UNKNOWN !== type &&*/ this.#entities[result].type !== type) {
             return -1;
         }
 
         return result;
     }
 
-    #triangleHook(): void {
+    /**
+     * Will call the cb method, when a polygon with `numVertices` vertices is drawn.
+     */
+    #createPolygonHook(numVertices: number, cb: (vertices: Vector[], ctx: CanvasRenderingContext2D) => void): void {
         let index = 0;
 
-        let pointA: Vector;
-        let pointB: Vector;
-        let pointC: Vector;
+        let vertices: Vector[] = [];
 
-        const calculatePos = (ctx: CanvasRenderingContext2D) => {
-            const side1 = Math.round(Vector.distance(pointA, pointB));
-            const side2 = Math.round(Vector.distance(pointA, pointC));
-            const side3 = Math.round(Vector.distance(pointB, pointC));
+        const onFillPolygon = (ctx: CanvasRenderingContext2D) => {
+            cb(vertices, ctx);
+        };
+
+        CanvasKit.hook('beginPath', (target, thisArg, args) => {
+            index = 1;
+            vertices = [];
+        });
+        CanvasKit.hook('moveTo', (target, thisArg, args) => {
+            if (index === 1) {
+                index++;
+                vertices.push(new Vector(args[0], args[1]));
+                return;
+            }
+            index = 0;
+        });
+        CanvasKit.hook('lineTo', (target, thisArg, args) => {
+            if (index >= 2 && index <= numVertices) {
+                index++;
+                vertices.push(new Vector(args[0], args[1]));
+                return;
+            }
+            index = 0;
+        });
+        CanvasKit.hook('fill', (target, thisArg, args) => {
+            if (index === numVertices + 1) {
+                index++;
+                onFillPolygon(thisArg);
+                return;
+            }
+            index = 0;
+        });
+    }
+
+    #triangleHook(): void {
+        this.#createPolygonHook(3, (vertices, ctx) => {
+            const side1 = Math.round(Vector.distance(vertices[0], vertices[1]));
+            const side2 = Math.round(Vector.distance(vertices[0], vertices[2]));
+            const side3 = Math.round(Vector.distance(vertices[1], vertices[2]));
             //ignore Minimap Arrow
             if (side1 !== side2 || side2 !== side3) return;
             //ignore Leader Arrow
-            if (ctx.fillStyle === '#000000') return;
+            if ('#000000' === ctx.fillStyle) return;
 
-            pointA = arenaScaling.toArenaPos(pointA);
-            pointB = arenaScaling.toArenaPos(pointB);
-            pointC = arenaScaling.toArenaPos(pointC);
+            vertices = vertices.map((x) => arenaScaling.toArenaPos(x));
 
-            const position = Vector.centroid(pointA, pointB, pointC);
-            const radius = Math.round(Vector.radius(pointA, pointB, pointC));
+            const position = Vector.centroid(...vertices);
+            const radius = Math.round(Vector.radius(...vertices));
+            const color = ctx.fillStyle as EntityColor;
 
             let type: EntityType;
             switch (radius) {
                 case 23:
                     //battleship drone
-                    type = EntityType.Drone;
+                    if (TeamColors.includes(color)) type = EntityType.Drone;
                     break;
                 case 30:
                     //base drone
-                    type = EntityType.Drone;
+                    if (TeamColors.includes(color)) type = EntityType.Drone;
                     break;
                 case 35:
                     //small crasher
-                    type = EntityType.Crasher;
+                    if (EntityColor.Crasher === color) type = EntityType.Crasher;
                     break;
                 case 40:
                 case 41:
@@ -142,207 +171,61 @@ class EntityManager {
                 case 45:
                 case 46:
                     //overseer/overlord drone
-                    type = EntityType.Drone;
+                    if (TeamColors.includes(color)) type = EntityType.Drone;
                     break;
                 case 55:
-                    if (ctx.fillStyle === '#f177dd') {
-                        //big crasher
-                        type = EntityType.Crasher;
-                    } else {
-                        //triangle
-                        type = EntityType.Triangle;
-                    }
+                    //big crasher
+                    if (EntityColor.Crasher === color) type = EntityType.Crasher;
+                    //triangle
+                    if (EntityColor.Triangle === color) type = EntityType.Triangle;
                     break;
-                default:
-                    //dont add
-                    return;
             }
+            if (type === undefined) type = EntityType.UNKNOWN;
             this.#add(type, position);
-        };
-
-        CanvasKit.hook('beginPath', (target, thisArg, args) => {
-            index = 1;
-        });
-        CanvasKit.hook('moveTo', (target, thisArg, args) => {
-            if (index === 1) {
-                index++;
-                pointA = new Vector(args[0], args[1]);
-                return;
-            }
-            index = 0;
-        });
-        CanvasKit.hook('lineTo', (target, thisArg, args) => {
-            if (index === 2) {
-                index++;
-                pointB = new Vector(args[0], args[1]);
-                return;
-            }
-            if (index === 3) {
-                index++;
-                pointC = new Vector(args[0], args[1]);
-                return;
-            }
-            index = 0;
-        });
-        CanvasKit.hook('fill', (target, thisArg, args) => {
-            if (index === 4) {
-                index++;
-                calculatePos(thisArg);
-                return;
-            }
-            index = 0;
         });
     }
 
     #squareHook(): void {
-        let index = 0;
+        this.#createPolygonHook(4, (vertices, ctx) => {
+            vertices = vertices.map((x) => arenaScaling.toArenaPos(x));
 
-        let pointA: Vector;
-        let pointB: Vector;
-        let pointC: Vector;
-        let pointD: Vector;
-
-        const calculatePos = (ctx: CanvasRenderingContext2D) => {
-            pointA = arenaScaling.toArenaPos(pointA);
-            pointB = arenaScaling.toArenaPos(pointB);
-            pointC = arenaScaling.toArenaPos(pointC);
-            pointD = arenaScaling.toArenaPos(pointD);
-
-            const position = Vector.centroid(pointA, pointB, pointC, pointD);
-            const radius = Math.round(Vector.radius(pointA, pointB, pointC, pointD));
+            const position = Vector.centroid(...vertices);
+            const radius = Math.round(Vector.radius(...vertices));
+            const color = ctx.fillStyle as EntityColor;
 
             let type: EntityType;
             switch (radius) {
                 case 55:
-                    if (ctx.fillStyle === '#ffe869') {
-                        //square
-                        type = EntityType.Square;
-                    } else {
-                        //necromancer drone
-                        type = EntityType.Drone;
-                    }
+                    //square
+                    if (EntityColor.Square === color) type = EntityType.Square;
+                    //necromancer drone
+                    if (TeamColors.includes(color)) type = EntityType.Drone;
                     break;
-                default:
-                    //dont add
-                    return;
             }
+            if (type === undefined) type = EntityType.UNKNOWN;
             this.#add(type, position);
-        };
-
-        CanvasKit.hook('beginPath', (target, thisArg, args) => {
-            index = 1;
-        });
-        CanvasKit.hook('moveTo', (target, thisArg, args) => {
-            if (index === 1) {
-                index++;
-                pointA = new Vector(args[0], args[1]);
-                return;
-            }
-            index = 0;
-        });
-        CanvasKit.hook('lineTo', (target, thisArg, args) => {
-            if (index === 2) {
-                index++;
-                pointB = new Vector(args[0], args[1]);
-                return;
-            }
-            if (index === 3) {
-                index++;
-                pointC = new Vector(args[0], args[1]);
-                return;
-            }
-            if (index === 4) {
-                index++;
-                pointD = new Vector(args[0], args[1]);
-                return;
-            }
-            index = 0;
-        });
-        CanvasKit.hook('fill', (target, thisArg, args) => {
-            if (index === 5) {
-                index++;
-                calculatePos(thisArg);
-                return;
-            }
-            index = 0;
         });
     }
 
     #pentagonHook(): void {
-        let index = 0;
+        this.#createPolygonHook(5, (vertices, ctx) => {
+            vertices = vertices.map((x) => arenaScaling.toArenaPos(x));
 
-        let pointA: Vector;
-        let pointB: Vector;
-        let pointC: Vector;
-        let pointD: Vector;
-        let pointE: Vector;
-
-        const calculatePos = (ctx: CanvasRenderingContext2D) => {
-            pointA = arenaScaling.toArenaPos(pointA);
-            pointB = arenaScaling.toArenaPos(pointB);
-            pointC = arenaScaling.toArenaPos(pointC);
-            pointD = arenaScaling.toArenaPos(pointD);
-            pointE = arenaScaling.toArenaPos(pointE);
-
-            const position = Vector.centroid(pointA, pointB, pointC, pointD, pointE);
-            const radius = Math.round(Vector.radius(pointA, pointB, pointC, pointD, pointE));
+            const position = Vector.centroid(...vertices);
+            const radius = Math.round(Vector.radius(...vertices));
+            const color = ctx.fillStyle as EntityColor;
 
             let type: EntityType;
             switch (radius) {
                 case 75:
-                    type = EntityType.Pentagon;
+                    if (EntityColor.Pentagon === color) type = EntityType.Pentagon;
                     break;
                 case 200:
-                    type = EntityType.AlphaPentagon;
+                    if (EntityColor.AlphaPentagon === color) type = EntityType.AlphaPentagon;
                     break;
-                default:
-                    //dont add
-                    return;
             }
+            if (type === undefined) type = EntityType.UNKNOWN;
             this.#add(type, position);
-        };
-
-        CanvasKit.hook('beginPath', (target, thisArg, args) => {
-            index = 1;
-        });
-        CanvasKit.hook('moveTo', (target, thisArg, args) => {
-            if (index === 1) {
-                index++;
-                pointA = new Vector(args[0], args[1]);
-                return;
-            }
-            index = 0;
-        });
-        CanvasKit.hook('lineTo', (target, thisArg, args) => {
-            if (index === 2) {
-                index++;
-                pointB = new Vector(args[0], args[1]);
-                return;
-            }
-            if (index === 3) {
-                index++;
-                pointC = new Vector(args[0], args[1]);
-                return;
-            }
-            if (index === 4) {
-                index++;
-                pointD = new Vector(args[0], args[1]);
-                return;
-            }
-            if (index === 5) {
-                index++;
-                pointE = new Vector(args[0], args[1]);
-                return;
-            }
-            index = 0;
-        });
-        CanvasKit.hook('fill', (target, thisArg, args) => {
-            if (index === 6) {
-                index++;
-                calculatePos(thisArg);
-                return;
-            }
-            index = 0;
         });
     }
 }
