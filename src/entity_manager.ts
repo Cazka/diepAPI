@@ -48,12 +48,12 @@ class EntityManager {
      *
      * Will either find the entity in `#entities` or create a new `Entity`.
      */
-    #add(type: EntityType, position: Vector) {
+    #add(type: EntityType, position: Vector, extras: object = {}) {
         const entityIndex = this.#findEntity(type, position);
 
         let entity: Entity;
         if (entityIndex === -1) {
-            entity = new Entity(type);
+            entity = new Entity(type, extras);
         } else {
             entity = this.#entities[entityIndex];
         }
@@ -181,7 +181,7 @@ class EntityManager {
                     break;
             }
             if (type === undefined) type = EntityType.UNKNOWN;
-            this.#add(type, position);
+            this.#add(type, position, { color, radius });
         });
     }
 
@@ -199,11 +199,11 @@ class EntityManager {
                     //square
                     if (EntityColor.Square === color) type = EntityType.Square;
                     //necromancer drone
-                    if (TeamColors.includes(color)) type = EntityType.Drone;
+                    if (TeamColors.includes(color) || EntityColor.NecromancerDrone === color) type = EntityType.Drone;
                     break;
             }
             if (type === undefined) type = EntityType.UNKNOWN;
-            this.#add(type, position);
+            this.#add(type, position, { color, radius });
         });
     }
 
@@ -225,7 +225,7 @@ class EntityManager {
                     break;
             }
             if (type === undefined) type = EntityType.UNKNOWN;
-            this.#add(type, position);
+            this.#add(type, position, { color, radius });
         });
     }
 }
