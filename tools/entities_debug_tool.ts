@@ -1,3 +1,4 @@
+import { EntityType } from 'entity';
 import { entityManager, game, arenaScaling, Vector, CanvasKit } from 'index';
 
 class EntityOverlay {
@@ -24,10 +25,25 @@ class EntityOverlay {
         this.#ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
         entityManager.entities.forEach((entity) => {
             const position = arenaScaling.toScreenPos(entity.position);
-            const dimensions = arenaScaling.toScreenUnits(new Vector(100, 100));
-            this.#ctx.strokeStyle = '#ff0000';
+            const futurePos = arenaScaling.toScreenPos(entity.predictPos(performance.now() + 1000));
+            const dimensions = arenaScaling.toScreenUnits(
+                new Vector(2 * entity.extras.radius, 2 * entity.extras.radius)
+            );
+            this.#ctx.strokeStyle = 9 === entity.type ? '#ffffff' : entity.extras.color;
             this.#ctx.lineWidth = 5;
-            this.#ctx.strokeRect(position.x, position.y, dimensions.x, dimensions.y);
+            this.#ctx.strokeRect(
+                position.x - dimensions.x / 2,
+                position.y - dimensions.y / 2,
+                dimensions.x,
+                dimensions.y
+            );
+
+            this.#ctx.strokeStyle = '#000000';
+            this.#ctx.lineWidth = 3;
+            this.#ctx.beginPath();
+            this.#ctx.moveTo(position.x, position.y);
+            this.#ctx.lineTo(futurePos.x, futurePos.y);
+            this.#ctx.stroke();
         });
     }
 }
