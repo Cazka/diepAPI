@@ -11,7 +11,22 @@ export enum EntityType {
     Pentagon,
     AlphaPentagon,
     Crasher,
+    UNKNOWN,
 }
+
+export enum EntityColor {
+    TeamBlue = '#00b2e1',
+    TeamRed = '#f14e54',
+    TeamPurple = '#bf7ff5',
+    TeamGreen = '#00e16e',
+    Square = '#ffe869',
+    Triangle = '#fc7677',
+    Pentagon = '#768dfc',
+    AlphaPentagon = '#768dfc',
+    Crasher = '#f177dd',
+}
+
+export const TeamColors = [EntityColor.TeamBlue, EntityColor.TeamRed, EntityColor.TeamPurple, EntityColor.TeamGreen];
 
 /**
  * Represents an ingame Entity.
