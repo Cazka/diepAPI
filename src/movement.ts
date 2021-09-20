@@ -8,7 +8,7 @@ export class Movement {
      * used for average velocity calculation
      */
     readonly #velocitySamplesSize = 10;
-    #velocitySamples = Array(this.#velocitySamplesSize).fill(new Vector(0, 0));
+    #velocitySamples = [];
     #velocitySamplesIndex = 0;
     #velocityLastNow = performance.now();
 
@@ -47,7 +47,7 @@ export class Movement {
 
         // add current velocity to our samples array
         this.#velocitySamples[this.#velocitySamplesIndex++] = velocity;
-        this.#velocitySamplesIndex %= this.#velocitySamples.length;
+        this.#velocitySamplesIndex %= this.#velocitySamplesSize;
 
         // calculate the average velocity
         this.#velocity = Vector.scale(

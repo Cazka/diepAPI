@@ -53,7 +53,11 @@ class EntityManager {
 
         let entity: Entity;
         if (entityIndex === -1) {
-            entity = new Entity(type, { timestamp: performance.now(), ...extras });
+            entity = new Entity(type, {
+                id: Math.random().toString(36).slice(2, 5),
+                timestamp: performance.now(),
+                ...extras,
+            });
         } else {
             entity = this.#entities[entityIndex];
         }
@@ -80,7 +84,7 @@ class EntityManager {
         });
 
         //if distance is too high
-        if (shortestDistance > 5 /* precision */) {
+        if (shortestDistance > 28 /* accuracy */) {
             return -1;
         }
         //sanity check

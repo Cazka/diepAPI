@@ -45,11 +45,13 @@ class EntityOverlay {
             this.#ctx.lineTo(futurePos.x, futurePos.y);
             this.#ctx.stroke();
 
-            //Time alive
+            //Time alive + id
+            const fontSize = arenaScaling.toScreenUnits(new Vector(30, 30));
+            this.#ctx.font = fontSize.x + 'px Ubuntu';
             this.#ctx.fillText(
-                `${(performance.now() - entity.extras.timestamp) / 1000}`,
-                position.x - dimensions.x / 10,
-                position.y - dimensions.y / 10
+                `${entity.extras.id} ${Math.floor((performance.now() - entity.extras.timestamp) / 1000)}`,
+                position.x,
+                position.y - dimensions.y * 0.7
             );
         });
 
