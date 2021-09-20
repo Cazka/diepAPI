@@ -1,6 +1,7 @@
 import { Vector } from './vector';
 import { CanvasKit } from './canvas_kit';
 import { playerMovement } from './player_movement';
+import { camera } from './camera';
 
 class ArenaScaling {
     #scalingFactor = 1;
@@ -51,7 +52,7 @@ class ArenaScaling {
     toArenaPos(screenPos: Vector): Vector {
         const direction = Vector.subtract(screenPos, new Vector(window.innerWidth / 2, window.innerHeight / 2));
         const scaled = this.toArenaUnits(direction);
-        const arenaPos = Vector.add(scaled, playerMovement.position);
+        const arenaPos = Vector.add(scaled, camera.position);
 
         return arenaPos;
     }
@@ -62,7 +63,7 @@ class ArenaScaling {
      * @returns {Vector} The `arenaPos` translated to canvas coordinates
      */
     toScreenPos(arenaPos: Vector): Vector {
-        const direction = Vector.subtract(arenaPos, playerMovement.position);
+        const direction = Vector.subtract(arenaPos, camera.position);
         const scaled = this.toScreenUnits(direction);
         const screenPos = Vector.add(scaled, new Vector(window.innerWidth / 2, window.innerHeight / 2));
 
