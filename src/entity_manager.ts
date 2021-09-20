@@ -53,7 +53,7 @@ class EntityManager {
 
         let entity: Entity;
         if (entityIndex === -1) {
-            entity = new Entity(type, extras);
+            entity = new Entity(type, { timestamp: performance.now(), ...extras });
         } else {
             entity = this.#entities[entityIndex];
         }

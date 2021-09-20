@@ -1,5 +1,4 @@
-import { EntityType } from 'entity';
-import { entityManager, game, arenaScaling, Vector, CanvasKit } from 'index';
+import { entityManager, game, arenaScaling, Vector, CanvasKit, player } from 'index';
 
 class EntityOverlay {
     #canvas: HTMLCanvasElement;
@@ -38,13 +37,31 @@ class EntityOverlay {
                 dimensions.y
             );
 
+            //velocity
             this.#ctx.strokeStyle = '#000000';
             this.#ctx.lineWidth = 3;
             this.#ctx.beginPath();
             this.#ctx.moveTo(position.x, position.y);
             this.#ctx.lineTo(futurePos.x, futurePos.y);
             this.#ctx.stroke();
+
+            //Time alive
+            this.#ctx.fillText(
+                `${(performance.now() - entity.extras.timestamp) / 1000}`,
+                position.x - dimensions.x / 10,
+                position.y - dimensions.y / 10
+            );
         });
+
+        //draw player
+        const position = arenaScaling.toScreenPos(player.position);
+        const futurePos = arenaScaling.toScreenPos(player.predictPos(performance.now() + 1000));
+
+        this.#ctx.lineWidth = 3;
+        this.#ctx.beginPath();
+        this.#ctx.moveTo(position.x, position.y);
+        this.#ctx.lineTo(futurePos.x, futurePos.y);
+        this.#ctx.stroke();
     }
 }
 
