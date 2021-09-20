@@ -84,7 +84,7 @@ class EntityManager {
             return -1;
         }
         //sanity check
-        if (/*EntityType.UNKNOWN !== type &&*/ this.#entities[result].type !== type) {
+        if (EntityType.UNKNOWN !== type && this.#entities[result].type !== type) {
             return -1;
         }
 
