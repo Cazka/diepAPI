@@ -54,16 +54,6 @@ class EntityOverlay {
                 position.y - dimensions.y * 0.7
             );
         });
-
-        //draw player
-        const position = arenaScaling.toScreenPos(player.position);
-        const futurePos = arenaScaling.toScreenPos(player.predictPos(performance.now() + 1000));
-
-        this.#ctx.lineWidth = 3;
-        this.#ctx.beginPath();
-        this.#ctx.moveTo(position.x, position.y);
-        this.#ctx.lineTo(futurePos.x, futurePos.y);
-        this.#ctx.stroke();
     }
 }
 

@@ -7,16 +7,6 @@ import { game } from './game';
 /**
  * Entity Manager is used to access the information about the entities, that are currently drawn on the screen.
  * To access the entities the EntityManager exposes the EntityManager.entities field.
- *
- * EntityMananger.entities:
- * Important!: We expect the camera coordinates to match with the player coordinates. Tanks like Predator will cause
- * unexpected behaviour.
- *
- * Entity:
- * Entity.position will work even when the player position is unknown.
- * if the player position is unknown we assume the player is at Vector(0,0) and the entity position will be relative to Vector(0,0).
- * if the player position is known (Minimap) the entity.position will be the true position in the arena.
- *
  */
 class EntityManager {
     #entities: Entity[] = [];
@@ -32,6 +22,7 @@ class EntityManager {
         //when is a bullet being drawn?
 
         //when is a player being drawn?
+        this.#playerHook();
 
         game.on('frame', () => {
             this.#entities = this.#entitiesUpdated;
@@ -230,6 +221,70 @@ class EntityManager {
             }
             if (type === undefined) type = EntityType.UNKNOWN;
             this.#add(type, position, { color, radius });
+        });
+    }
+
+    #playerHook(): void {
+        let index = 0;
+
+        let position: Vector;
+        let color: string;
+        let radius: number;
+
+        const onCircle = () => {
+            position = arenaScaling.toArenaPos(position);
+            this.#add(EntityType.Player, position, {
+                color,
+                radius: arenaScaling.toArenaUnits(new Vector(radius, radius)).x,
+            });
+        };
+
+        //Sequence: beginPath -> arc -> fill -> beginPath -> arc -> fill -> arc
+        CanvasKit.hook('beginPath', (tarrget, thisArg, args) => {
+            //start
+            if (index !== 3) {
+                index = 1;
+                return;
+            }
+            if (index === 3) {
+                index++;
+                return;
+            }
+            index = 0;
+        });
+        //check when a circle is drawn.
+        CanvasKit.hook('arc', (target, thisArg, args) => {
+            //outline
+            if (index === 1) {
+                index++;
+                const transform = thisArg.getTransform();
+                position = new Vector(transform.e, transform.f);
+                radius = transform.a;
+                return;
+            }
+            if (index === 4) {
+                index++;
+                color = thisArg.fillStyle as string;
+                return;
+            }
+            //last arc call
+            if (index === 6) {
+                index++;
+                onCircle();
+                return;
+            }
+            index = 0;
+        });
+        CanvasKit.hook('fill', (target, thisArg, args) => {
+            if (index === 2) {
+                index++;
+                return;
+            }
+            if (index === 5) {
+                index++;
+                return;
+            }
+            index = 0;
         });
     }
 }
