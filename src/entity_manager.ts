@@ -233,9 +233,18 @@ class EntityManager {
 
         const onCircle = () => {
             position = arenaScaling.toArenaPos(position);
-            this.#add(EntityType.Player, position, {
+            radius = arenaScaling.toArenaUnits(new Vector(radius, radius)).x;
+
+            let type = EntityType.UNKNOWN;
+            if (radius > 53) {
+                type = EntityType.Player;
+            } else {
+                type = EntityType.Bullet;
+            }
+
+            this.#add(type, position, {
                 color,
-                radius: arenaScaling.toArenaUnits(new Vector(radius, radius)).x,
+                radius,
             });
         };
 
