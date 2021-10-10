@@ -10,6 +10,7 @@ const sleep = (ms: number): Promise<void> => new Promise((resolve, reject) => se
 class Player extends EventEmitter {
     #dead = true;
     #mouseLock = false;
+    #mousePos = new Vector(0, 0);
 
     constructor() {
         super();
@@ -69,6 +70,10 @@ class Player extends EventEmitter {
 
     get velocity(): Vector {
         return playerMovement.velocity;
+    }
+
+    get mouse(): Vector {
+        return this.#mousePos;
     }
 
     /**
@@ -217,6 +222,8 @@ class Player extends EventEmitter {
     }
 
     lookAt(arenaPos: Vector): void {
+        this.#mousePos = arenaPos;
+
         if (gamepad.connected) {
             const direction = Vector.subtract(arenaPos, this.position);
             let axes = Vector.scale(arenaScaling.fov / 1200 / 1.1, direction);
@@ -236,8 +243,11 @@ class Player extends EventEmitter {
     }
 
     #onmousemove(e: MouseEvent): void {
+        const pos = arenaScaling.toArenaPos(new Vector(e.clientX, e.clientY));
+
+        this.#mousePos = pos;
+
         if (gamepad.connected) {
-            const pos = arenaScaling.toArenaPos(new Vector(e.clientX, e.clientY));
             this.lookAt(pos);
         }
     }
