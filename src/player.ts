@@ -8,7 +8,7 @@ import { gamepad } from './diep_gamepad';
 const sleep = (ms: number): Promise<void> => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 class Player extends EventEmitter {
-    #dead = true;
+    #isDead = true;
     #mouseLock = false;
     #mousePos = new Vector(0, 0);
 
@@ -17,11 +17,11 @@ class Player extends EventEmitter {
 
         game.once('ready', () => {
             game.on('frame', () => {
-                const dead = !window.input.should_prevent_unload();
-                if (this.#dead == dead) return;
-                this.#dead = dead;
+                const isDead = !window.input.should_prevent_unload();
+                if (this.#isDead == isDead) return;
+                this.#isDead = isDead;
 
-                if (this.#dead) this.#ondead();
+                if (this.#isDead) this.#ondead();
                 else this.#onspawn();
             });
 
@@ -74,6 +74,10 @@ class Player extends EventEmitter {
 
     get mouse(): Vector {
         return this.#mousePos;
+    }
+
+    get isDead() : boolean {
+        return this.#isDead;
     }
 
     /**
@@ -139,7 +143,7 @@ class Player extends EventEmitter {
     }
 
     async spawn(name: string, attempts: number = 0): Promise<void> {
-        if (!this.#dead) return;
+        if (!this.#isDead) return;
 
         if (name !== undefined) (document.getElementById('textInput') as HTMLInputElement).value = name;
 
@@ -261,6 +265,8 @@ class Player extends EventEmitter {
     }
 
     #onkeydown(e: KeyboardEvent): void {
+        super.emit('keydown', () => e.keyCode);
+
         if (gamepad.connected) {
             switch (e.keyCode) {
                 case 37:
@@ -292,6 +298,8 @@ class Player extends EventEmitter {
     }
 
     #onkeyup(e: KeyboardEvent): void {
+        super.emit('keyup', () => e.keyCode);
+
         if (gamepad.connected) {
             switch (e.keyCode) {
                 case 37:
