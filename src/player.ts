@@ -232,9 +232,17 @@ class Player extends EventEmitter {
     }
 
     lookAt(arenaPos: Vector): void {
-        this.#mouseScreenPos = arenaScaling.toScreenPos(arenaPos);
+        const position = arenaScaling.toScreenPos(arenaPos);
+        window.input.mouse(position.x, position.y);
+
+        this.#onmousemove({ clientX: position.x, clientY: position.y } as MouseEvent);
+    }
+
+    #onmousemove(e: MouseEvent): void {
+        this.#mouseScreenPos = new Vector(e.clientX, e.clientY);
 
         if (gamepad.connected) {
+            const arenaPos = arenaScaling.toArenaPos(this.#mouseScreenPos);
             const direction = Vector.subtract(arenaPos, this.position);
             let axes = Vector.scale(arenaScaling.fov / 1200 / 1.1, direction);
 
@@ -246,18 +254,6 @@ class Player extends EventEmitter {
 
             gamepad.mx = axes.x;
             gamepad.my = axes.y;
-        } else {
-            const position = arenaScaling.toScreenPos(arenaPos);
-            window.input.mouse(position.x, position.y);
-        }
-    }
-
-    #onmousemove(e: MouseEvent): void {
-        this.#mouseScreenPos = new Vector(e.clientX, e.clientY);
-
-        if (gamepad.connected) {
-            const pos = arenaScaling.toArenaPos(new Vector(e.clientX, e.clientY));
-            this.lookAt(pos);
         }
     }
 
