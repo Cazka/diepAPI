@@ -11,9 +11,9 @@ class Game extends EventEmitter {
     }
 
     get gamemode(): string {
-       return window.localStorage.gamemode; 
+        return window.localStorage.gamemode;
     }
-    
+
     #onframe(): void {
         if (!this.#ready && window.input !== undefined) {
             this.#ready = true;

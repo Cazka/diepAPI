@@ -10,12 +10,14 @@ const sleep = (ms: number): Promise<void> => new Promise((resolve, reject) => se
 class Player extends EventEmitter {
     #isDead = true;
     #mouseLock = false;
+    #mouseScreenPos = new Vector(0, 0);
     #mousePos = new Vector(0, 0);
 
     constructor() {
         super();
 
         game.once('ready', () => {
+            //Check dead or alive
             game.on('frame', () => {
                 const isDead = !window.input.should_prevent_unload();
                 if (this.#isDead == isDead) return;
@@ -23,6 +25,10 @@ class Player extends EventEmitter {
 
                 if (this.#isDead) this.#ondead();
                 else this.#onspawn();
+            });
+            //update mouse position
+            game.on('frame', () => {
+                this.#mousePos = arenaScaling.toArenaPos(this.#mouseScreenPos);
             });
 
             //Mouse events
@@ -76,7 +82,7 @@ class Player extends EventEmitter {
         return this.#mousePos;
     }
 
-    get isDead() : boolean {
+    get isDead(): boolean {
         return this.#isDead;
     }
 
@@ -226,7 +232,7 @@ class Player extends EventEmitter {
     }
 
     lookAt(arenaPos: Vector): void {
-        this.#mousePos = arenaPos;
+        this.#mouseScreenPos = arenaScaling.toScreenPos(arenaPos);
 
         if (gamepad.connected) {
             const direction = Vector.subtract(arenaPos, this.position);
@@ -247,11 +253,10 @@ class Player extends EventEmitter {
     }
 
     #onmousemove(e: MouseEvent): void {
-        const pos = arenaScaling.toArenaPos(new Vector(e.clientX, e.clientY));
-
-        this.#mousePos = pos;
+        this.#mouseScreenPos = new Vector(e.clientX, e.clientY);
 
         if (gamepad.connected) {
+            const pos = arenaScaling.toArenaPos(new Vector(e.clientX, e.clientY));
             this.lookAt(pos);
         }
     }
@@ -265,7 +270,7 @@ class Player extends EventEmitter {
     }
 
     #onkeydown(e: KeyboardEvent): void {
-        super.emit('keydown', () => e.keyCode);
+        super.emit('keydown', e.keyCode);
 
         if (gamepad.connected) {
             switch (e.keyCode) {
@@ -298,7 +303,7 @@ class Player extends EventEmitter {
     }
 
     #onkeyup(e: KeyboardEvent): void {
-        super.emit('keyup', () => e.keyCode);
+        super.emit('keyup', e.keyCode);
 
         if (gamepad.connected) {
             switch (e.keyCode) {
