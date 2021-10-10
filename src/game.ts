@@ -10,10 +10,6 @@ class Game extends EventEmitter {
         CanvasKit.hookRAF(() => this.#onframe());
     }
 
-    get gamemode(): string {
-        return window.localStorage.gamemode;
-    }
-
     #onframe(): void {
         if (!this.#ready && window.input !== undefined) {
             this.#ready = true;

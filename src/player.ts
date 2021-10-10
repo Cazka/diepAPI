@@ -12,6 +12,7 @@ class Player extends EventEmitter {
     #mouseLock = false;
     #mouseScreenPos = new Vector(0, 0);
     #mousePos = new Vector(0, 0);
+    #gamemode = window.localStorage.gamemode;
 
     constructor() {
         super();
@@ -86,6 +87,10 @@ class Player extends EventEmitter {
         return this.#isDead;
     }
 
+    get gamemode(): string {
+        return this.#gamemode;
+    }
+
     /**
      * Predict where this object will be at given `time`
      * @param time performance.now() time
@@ -117,6 +122,8 @@ class Player extends EventEmitter {
     }
 
     async #onspawn(): Promise<void> {
+        this.#gamemode = window.localStorage.gamemode;
+
         await sleep(50);
         super.emit('spawn');
     }
