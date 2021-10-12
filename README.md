@@ -15,7 +15,7 @@
 
 ### Building:
 
-You can build the library yourself or use my prebuild version that can be found [here](https://github.com/Cazka/diepAPI/releases/tag/v2.0.0).
+You can build the library yourself or use my prebuild version that can be found [here](https://github.com/Cazka/diepAPI/releases/).
 
 ```
 git clone https://github.com/Cazka/diepAPI.git
