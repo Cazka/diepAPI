@@ -249,7 +249,7 @@ class EntityManager {
         };
 
         //Sequence: beginPath -> arc -> fill -> beginPath -> arc -> fill -> arc
-        CanvasKit.hook('beginPath', (tarrget, thisArg, args) => {
+        CanvasKit.hook('beginPath', (target, thisArg, args) => {
             //start
             if (index !== 3) {
                 index = 1;
