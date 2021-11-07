@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Farm Script
 // @description  press P to start the farmer
-// @version      0.0.3
+// @version      0.0.4
 // @author       Cazka
 // @match        https://diep.io/*
 // @icon         https://www.google.com/s2/favicons?domain=diep.io
