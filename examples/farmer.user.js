@@ -23,7 +23,7 @@ window.addEventListener('keydown', (e) => {
 game.on('frame', () => {
     if (!farmActive) return;
     const entity = entityManager.entities
-        .filter((x) => x.type > 3)
+        .filter((x) => x.type > 3 && x.type !== 9)
         .reduce((acc, x) => {
             const now = performance.now();
             const distAcc = Vector.distance(acc.predictPos(now), player.predictPos(now));
