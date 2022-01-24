@@ -20,7 +20,7 @@ class Game extends EventEmitter {
     }
 
     #onready(): void {
-        super.emit('ready');
+        setTimeout(() => super.emit('ready'), 100);
     }
 }
 
