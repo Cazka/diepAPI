@@ -14,8 +14,8 @@ class Player extends EventEmitter {
     #mouseScreenPos = new Vector(0, 0);
     #mousePos = new Vector(0, 0);
     #gamemode = window.localStorage.gamemode;
-    #tank = 'Tank';
     #level = 1;
+    #tank = 'Tank';
 
     constructor() {
         super();
