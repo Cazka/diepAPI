@@ -14,6 +14,7 @@ class Player extends EventEmitter {
     #mouseScreenPos = new Vector(0, 0);
     #mousePos = new Vector(0, 0);
     #gamemode = window.localStorage.gamemode;
+    #tank = 'Tank';
     #level = 1;
 
     constructor() {
@@ -71,17 +72,27 @@ class Player extends EventEmitter {
                 },
             });
 
-            //lvl event listener
+            // tank and level event listener
             CanvasKit.hook('fillText', (target, thisArg, args) => {
                 const text = args[0];
-                const match = text.match(/^Lvl (\d+) \w+/);
+                const match = text.match(/^Lvl (\d+) (\w*)$/);
                 if (match == null) {
                     return;
                 }
 
-                this.#level = Number(match[1]);
+                const newLevel = Number(match[1]);
+                const newTank = match[2];
 
-                super.emit('level', this.#level);
+                // make sure to trigger events for all levels in between.
+                while (newLevel > this.#level + 1) {
+                    super.emit('level', ++this.#level);
+                }
+
+                if (newLevel !== this.#level) super.emit('level', newLevel);
+                if (newTank !== this.#tank) super.emit('tank', newTank);
+
+                this.#level = newLevel;
+                this.#tank = match[2];
             });
         });
     }
@@ -108,6 +119,10 @@ class Player extends EventEmitter {
 
     get level(): number {
         return this.#level;
+    }
+
+    get tank(): string {
+        return this.#tank;
     }
 
     /**
