@@ -66,7 +66,7 @@ class EntityManager {
         let shortestDistance = Number.MAX_SAFE_INTEGER;
 
         this.#entities.forEach((x, i) => {
-            const distance = Vector.distance(x.predictPos(performance.now()), position);
+            const distance = Vector.distance(x.predictPos(0), position);
 
             if (distance < shortestDistance) {
                 shortestDistance = distance;

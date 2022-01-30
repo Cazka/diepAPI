@@ -8,10 +8,10 @@
 // @namespace    https://greasyfork.org/users/541070
 // @grant        none
 // ==/UserScript==
-'use strict';
 if (!window.diepAPI) return window.alert('Please install diepAPI to use this script');
 
 const { entityManager, game, arenaScaling, Vector, CanvasKit, player } = window.diepAPI;
+
 class EntityOverlay {
     #canvas;
     #ctx;
@@ -31,7 +31,7 @@ class EntityOverlay {
         this.#ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
         entityManager.entities.forEach((entity) => {
             const position = arenaScaling.toScreenPos(entity.position);
-            const futurePos = arenaScaling.toScreenPos(entity.predictPos(performance.now() + 1000));
+            const futurePos = arenaScaling.toScreenPos(entity.predictPos(1000));
             const dimensions = arenaScaling.toScreenUnits(
                 new Vector(2 * entity.extras.radius, 2 * entity.extras.radius)
             );

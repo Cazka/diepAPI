@@ -25,9 +25,8 @@ game.on('frame', () => {
     const entity = entityManager.entities
         .filter((x) => x.type > 3 && x.type !== 9)
         .reduce((acc, x) => {
-            const now = performance.now();
-            const distAcc = Vector.distance(acc.predictPos(now), player.predictPos(now));
-            const distX = Vector.distance(x.predictPos(now), player.predictPos(now));
+            const distAcc = Vector.distance(acc.predictPos(now), player.predictPos(0));
+            const distX = Vector.distance(x.predictPos(now), player.predictPos(0));
 
             return distX < distAcc ? x : acc;
         });
