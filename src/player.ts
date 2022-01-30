@@ -4,6 +4,7 @@ import { game } from './game';
 import { arenaScaling } from './arena_scaling';
 import { playerMovement } from './player_movement';
 import { gamepad } from './diep_gamepad';
+import { CanvasKit } from './canvas_kit';
 
 const sleep = (ms: number): Promise<void> => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
@@ -13,6 +14,7 @@ class Player extends EventEmitter {
     #mouseScreenPos = new Vector(0, 0);
     #mousePos = new Vector(0, 0);
     #gamemode = window.localStorage.gamemode;
+    #level = 1;
 
     constructor() {
         super();
@@ -68,6 +70,19 @@ class Player extends EventEmitter {
                     return Reflect.apply(target, thisArg, args);
                 },
             });
+
+            //lvl event listener
+            CanvasKit.hook('fillText', (target, thisArg, args) => {
+                const text = args[0];
+                const match = text.match(/^Lvl (\d+) \w+/);
+                if (match == null) {
+                    return;
+                }
+
+                this.#level = Number(match[1]);
+
+                super.emit('level', this.#level);
+            });
         });
     }
 
@@ -89,6 +104,10 @@ class Player extends EventEmitter {
 
     get gamemode(): string {
         return this.#gamemode;
+    }
+
+    get level(): number {
+        return this.#level;
     }
 
     /**
