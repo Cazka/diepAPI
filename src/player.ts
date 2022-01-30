@@ -4,6 +4,7 @@ import { game } from './game';
 import { arenaScaling } from './arena_scaling';
 import { playerMovement } from './player_movement';
 import { gamepad } from './diep_gamepad';
+import { CanvasKit } from './canvas_kit';
 
 const sleep = (ms: number): Promise<void> => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
@@ -13,6 +14,8 @@ class Player extends EventEmitter {
     #mouseScreenPos = new Vector(0, 0);
     #mousePos = new Vector(0, 0);
     #gamemode = window.localStorage.gamemode;
+    #level = 1;
+    #tank = 'Tank';
 
     constructor() {
         super();
@@ -68,6 +71,29 @@ class Player extends EventEmitter {
                     return Reflect.apply(target, thisArg, args);
                 },
             });
+
+            // tank and level event listener
+            CanvasKit.hook('fillText', (target, thisArg, args) => {
+                const text = args[0];
+                const match = text.match(/^Lvl (\d+) (\w*)$/);
+                if (match == null) {
+                    return;
+                }
+
+                const newLevel = Number(match[1]);
+                const newTank = match[2];
+
+                // make sure to trigger events for all levels in between.
+                while (newLevel > this.#level + 1) {
+                    super.emit('level', ++this.#level);
+                }
+
+                if (newLevel !== this.#level) super.emit('level', newLevel);
+                if (newTank !== this.#tank) super.emit('tank', newTank);
+
+                this.#level = newLevel;
+                this.#tank = match[2];
+            });
         });
     }
 
@@ -89,6 +115,14 @@ class Player extends EventEmitter {
 
     get gamemode(): string {
         return this.#gamemode;
+    }
+
+    get level(): number {
+        return this.#level;
+    }
+
+    get tank(): string {
+        return this.#tank;
     }
 
     /**
