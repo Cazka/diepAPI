@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Farm Script
 // @description  press P to start the farmer
-// @version      0.0.4
+// @version      0.0.5
 // @author       Cazka
 // @match        https://diep.io/*
 // @icon         https://www.google.com/s2/favicons?domain=diep.io
@@ -25,6 +25,7 @@ game.on('frame', () => {
     const entity = entityManager.entities
         .filter((x) => x.type > 3 && x.type !== 9)
         .reduce((acc, x) => {
+            const now = performance.now();
             const distAcc = Vector.distance(acc.predictPos(now), player.predictPos(0));
             const distX = Vector.distance(x.predictPos(now), player.predictPos(0));
 
