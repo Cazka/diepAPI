@@ -11,7 +11,7 @@ const sleep = (ms: number): Promise<void> => new Promise((resolve, reject) => se
 class Player extends EventEmitter {
     #isDead = true;
     #mouseLock = false;
-    #mouseScreenPos = new Vector(0, 0);
+    #mouseCanvasPos = new Vector(0, 0);
     #mousePos = new Vector(0, 0);
     #gamemode = window.localStorage.gamemode;
     #level = 1;
@@ -32,7 +32,7 @@ class Player extends EventEmitter {
             });
             //update mouse position
             game.on('frame', () => {
-                this.#mousePos = arenaScaling.toArenaPos(arenaScaling.screenToCanvas(this.#mouseScreenPos));
+                this.#mousePos = arenaScaling.toArenaPos(this.#mouseCanvasPos);
             });
 
             //Mouse events
@@ -280,10 +280,10 @@ class Player extends EventEmitter {
     }
 
     #onmousemove(e: MouseEvent): void {
-        this.#mouseScreenPos = new Vector(e.clientX, e.clientY);
+        this.#mouseCanvasPos = arenaScaling.screenToCanvas(new Vector(e.clientX, e.clientY));
 
         if (gamepad.connected) {
-            const arenaPos = arenaScaling.toArenaPos(arenaScaling.screenToCanvas(this.#mouseScreenPos));
+            const arenaPos = arenaScaling.toArenaPos(this.#mouseCanvasPos);
             const direction = Vector.subtract(arenaPos, this.position);
             let axes = Vector.scale(arenaScaling.fov / 1200 / 1.1, direction);
 
