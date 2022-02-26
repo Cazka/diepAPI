@@ -32,7 +32,7 @@ class Player extends EventEmitter {
             });
             //update mouse position
             game.on('frame', () => {
-                this.#mousePos = arenaScaling.toArenaPos(this.#mouseScreenPos);
+                this.#mousePos = arenaScaling.toArenaPos(arenaScaling.screenToCanvas(this.#mouseScreenPos));
             });
 
             //Mouse events
@@ -216,8 +216,8 @@ class Player extends EventEmitter {
         index -= 1;
         const x_index = index % 2;
         const y_index = Math.floor(index / 2);
-        const x = window.devicePixelRatio * arenaScaling.windowRatio * (x_index * 115 + 97.5);
-        const y = window.devicePixelRatio * arenaScaling.windowRatio * (y_index * 110 + 120);
+        const x = arenaScaling.screenToCanvasUnits(arenaScaling.windowRatio * (x_index * 115 + 97.5));
+        const y = arenaScaling.screenToCanvasUnits(arenaScaling.windowRatio * (y_index * 110 + 120));
 
         this.#mouseLock = true;
         window.input.mouse(x, y);
@@ -273,7 +273,7 @@ class Player extends EventEmitter {
     }
 
     lookAt(arenaPos: Vector): void {
-        const position = arenaScaling.toScreenPos(arenaPos);
+        const position = arenaScaling.toCanvasPos(arenaPos);
         window.input.mouse(position.x, position.y);
 
         this.#onmousemove({ clientX: position.x, clientY: position.y } as MouseEvent);
@@ -283,7 +283,7 @@ class Player extends EventEmitter {
         this.#mouseScreenPos = new Vector(e.clientX, e.clientY);
 
         if (gamepad.connected) {
-            const arenaPos = arenaScaling.toArenaPos(this.#mouseScreenPos);
+            const arenaPos = arenaScaling.toArenaPos(arenaScaling.screenToCanvas(this.#mouseScreenPos));
             const direction = Vector.subtract(arenaPos, this.position);
             let axes = Vector.scale(arenaScaling.fov / 1200 / 1.1, direction);
 

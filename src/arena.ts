@@ -9,7 +9,10 @@ class Arena {
     constructor() {
         game.on('frame', () => {
             const ratio = Vector.divide(minimap.minimapDim, minimap.viewportDim);
-            const arenaDim = Vector.multiply(ratio, new Vector(window.innerWidth, window.innerHeight));
+            const arenaDim = Vector.multiply(
+                ratio,
+                arenaScaling.screenToCanvas(new Vector(window.innerWidth, window.innerHeight))
+            );
             const arenaSize = Vector.round(arenaScaling.toArenaUnits(arenaDim));
             this.#size = arenaSize.x;
         });
