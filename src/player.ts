@@ -11,7 +11,7 @@ const sleep = (ms: number): Promise<void> => new Promise((resolve, reject) => se
 class Player extends EventEmitter {
     #isDead = true;
     #mouseLock = false;
-    #mouseScreenPos = new Vector(0, 0);
+    #mouseCanvasPos = new Vector(0, 0);
     #mousePos = new Vector(0, 0);
     #gamemode = window.localStorage.gamemode;
     #level = 1;
@@ -32,7 +32,7 @@ class Player extends EventEmitter {
             });
             //update mouse position
             game.on('frame', () => {
-                this.#mousePos = arenaScaling.toArenaPos(this.#mouseScreenPos);
+                this.#mousePos = arenaScaling.toArenaPos(this.#mouseCanvasPos);
             });
 
             //Mouse events
@@ -216,8 +216,8 @@ class Player extends EventEmitter {
         index -= 1;
         const x_index = index % 2;
         const y_index = Math.floor(index / 2);
-        const x = window.devicePixelRatio * arenaScaling.windowRatio * (x_index * 115 + 97.5);
-        const y = window.devicePixelRatio * arenaScaling.windowRatio * (y_index * 110 + 120);
+        const x = arenaScaling.screenToCanvasUnits(arenaScaling.windowRatio * (x_index * 115 + 97.5));
+        const y = arenaScaling.screenToCanvasUnits(arenaScaling.windowRatio * (y_index * 110 + 120));
 
         this.#mouseLock = true;
         window.input.mouse(x, y);
@@ -273,17 +273,17 @@ class Player extends EventEmitter {
     }
 
     lookAt(arenaPos: Vector): void {
-        const position = arenaScaling.toScreenPos(arenaPos);
+        const position = arenaScaling.toCanvasPos(arenaPos);
         window.input.mouse(position.x, position.y);
 
         this.#onmousemove({ clientX: position.x, clientY: position.y } as MouseEvent);
     }
 
     #onmousemove(e: MouseEvent): void {
-        this.#mouseScreenPos = new Vector(e.clientX, e.clientY);
+        this.#mouseCanvasPos = arenaScaling.screenToCanvas(new Vector(e.clientX, e.clientY));
 
         if (gamepad.connected) {
-            const arenaPos = arenaScaling.toArenaPos(this.#mouseScreenPos);
+            const arenaPos = arenaScaling.toArenaPos(this.#mouseCanvasPos);
             const direction = Vector.subtract(arenaPos, this.position);
             let axes = Vector.scale(arenaScaling.fov / 1200 / 1.1, direction);
 
