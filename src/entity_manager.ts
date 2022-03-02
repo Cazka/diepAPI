@@ -3,6 +3,7 @@ import { CanvasKit } from './canvas_kit';
 import { Entity, EntityType, EntityColor, TeamColors } from './entity';
 import { arenaScaling } from './arena_scaling';
 import { game } from './game';
+import { playerMovement } from './player_movement';
 
 /**
  * Entity Manager is used to access the information about the entities, that are currently drawn on the screen.
@@ -32,6 +33,19 @@ class EntityManager {
 
     get entities(): Entity[] {
         return this.#entities;
+    }
+
+    /**
+     *
+     * @returns The own player entity
+     */
+    getPlayer(): Entity {
+        const player = this.#entities.filter(
+            (entity) =>
+                entity.type == EntityType.Player && Vector.distance(entity.position, playerMovement.position) < 28
+        );
+
+        return player[0];
     }
 
     /**
