@@ -56,22 +56,22 @@ const html = `
 }
 
 #${id}header {
-    padding: 10px;
+    margin: 10px;
     cursor: move;
 }
 
 #${id}-drawer {
     display: flex;
     flex-direction: column;
-    padding: 10px;
+    margin: 10px;
     height: 100%;
+    max-height: 100%;
 }
 
 #${id}-drawer > input {
     border: none;
     color: black;
-    padding: 0;
-    margin: 0;
+    margin: 10px;
     outline: none;
     border: 1px solid black;
     border-radius: 0;
@@ -79,7 +79,7 @@ const html = `
 }
 
 #${id}-drawer-list {
-    height: 100%;
+    height: 430px;
     overflow-y: scroll;
     margin: 0;
     padding-left: 0;
@@ -112,11 +112,41 @@ window.onload = async function() {
     register(document.getElementById(id));
 }
 
-let keydown = window.onkeydown.bind(window);
+let keydown = window.onkeydown?.bind(window);
+
+const histories = {};
+const focuses = {};
+
+window.histories = histories;
 
 window.onkeydown = (...args) => {
-    if (document.activeElement.tagName === "INPUT" && document.activeElement.id !== "textInput") return;
-    keydown(...args);
+    const ae = document.activeElement;
+    if (ae.tagName === "INPUT" && ae.id !== "textInput") {
+      histories[ae] ??= [];
+      focuses[ae] ??= histories[ae].length;
+      let accessedHistories = false;
+      if (args[0].key === "ArrowUp") {
+        focuses[ae]--;
+        accessedHistories = true;
+      }
+      if (args[0].key === "ArrowDown") {
+        focuses[ae]++;
+        accessedHistories = true;
+      }
+      focuses[ae] = Math.max(0, Math.min(histories[ae].length, focuses[ae]));
+
+      if (accessedHistories) {
+        ae.value = histories[ae][focuses[ae]] ?? "";
+      }
+
+      if (args[0].key === "Enter") {
+        console.log('ae detected', ae.value)
+        histories[ae].push(ae.value);
+        focuses[ae] = undefined;
+      }
+      return
+    };
+    keydown?.(...args);
 }
 
 window.addEventListener("click", e => {
@@ -130,8 +160,8 @@ function register(elmnt) {
   i.addEventListener(`keydown`, e => {
     if (event.key === "Enter") {
       const input = i.value;
-      i.value = "";
       game.emit('consolecommand', input);
+      setTimeout(() => { i.value = ""; }, 0);
     }
   });
   let moved = 0;
@@ -202,7 +232,11 @@ game.on('consolecommand', entry => {
     game.emit('console', `> ${entry}`);
 
     if (!entry.startsWith('/')) {
+      try {
         game.emit('console', eval(entry));
+      } catch (e) {
+        game.emit('console', {message: e.message + e.stack, level: 'error'});
+      }
     } else {
         const command = entry.substring(1);
         if (command === "hi") {
@@ -212,7 +246,7 @@ game.on('consolecommand', entry => {
 });
 
 game.on('console', entry => {
-    entry = entry.message ?? entry;
+    entry = entry?.message ?? entry;
     const l = document.getElementById(id + '-drawer-list');
     if (l.childElementCount > 100) {
         l.removeChild(l.firstChild);
