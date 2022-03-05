@@ -1,13 +1,17 @@
 import { EventEmitter } from './event_emitter';
 import { CanvasKit } from './canvas_kit';
+import { UserConsole } from './user_console';
 
 class Game extends EventEmitter {
     #ready = false;
-
+    public console: UserConsole;
     constructor() {
         super();
 
         CanvasKit.hookRAF(() => this.#onframe());
+        
+        this.console = new UserConsole({ game: this });
+        this.console.log("API loaded");
     }
 
     #onframe(): void {
@@ -24,4 +28,5 @@ class Game extends EventEmitter {
     }
 }
 
+export type { Game };
 export const game = new Game();
