@@ -140,7 +140,6 @@ window.onkeydown = (...args) => {
       }
 
       if (args[0].key === "Enter") {
-        console.log('ae detected', ae.value)
         histories[ae].push(ae.value);
         focuses[ae] = undefined;
       }
