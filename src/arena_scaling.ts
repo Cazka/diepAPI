@@ -1,15 +1,30 @@
 import { Vector } from './vector';
 import { CanvasKit } from './canvas_kit';
 import { camera } from './camera';
+import { game } from './game';
 
 class ArenaScaling {
     #scalingFactor = 1;
+    #drawSolidBackground = false;
 
     constructor() {
-        CanvasKit.hook('stroke', (target, thisArg, args) => {
-            if (thisArg.fillStyle === '#cdcdcd' && thisArg.globalAlpha !== 0) {
-                this.#scalingFactor = thisArg.globalAlpha * 10;
+        game.once('ready', () => {
+            window.input.set_convar = new Proxy(window.input.set_convar, {
+                apply: (target, thisArg, args) => {
+                    if (args[0] === 'ren_solid_background') this.#drawSolidBackground = args[1];
+                    else Reflect.apply(target, thisArg, args);
+                },
+            });
+        });
+
+        CanvasKit.replace('stroke', (target, thisArg, args) => {
+            if (thisArg.fillStyle !== '#cdcdcd' || thisArg.globalAlpha === 0) {
+                return Reflect.apply(target, thisArg, args);
             }
+
+            this.#scalingFactor = thisArg.globalAlpha * 10;
+
+            if (!this.#drawSolidBackground) return Reflect.apply(target, thisArg, args);
         });
     }
 
