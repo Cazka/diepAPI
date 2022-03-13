@@ -14,6 +14,20 @@ class EntityManager {
     #entitiesUpdated: Entity[] = [];
 
     constructor() {
+        game.on('frame', () => {
+            this.#entities = this.#entitiesUpdated;
+            this.#entitiesUpdated = [];
+        });
+    }
+
+    get entities(): Entity[] {
+        return this.#entities;
+    }
+
+    /**
+     * Calling this method is mandatory to start recording entities.
+     */
+    initialize(): void {
         this.#triangleHook();
 
         this.#squareHook();
@@ -24,15 +38,6 @@ class EntityManager {
 
         //when is a player being drawn?
         this.#playerHook();
-
-        game.on('frame', () => {
-            this.#entities = this.#entitiesUpdated;
-            this.#entitiesUpdated = [];
-        });
-    }
-
-    get entities(): Entity[] {
-        return this.#entities;
     }
 
     /**
