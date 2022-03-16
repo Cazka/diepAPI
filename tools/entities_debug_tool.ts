@@ -1,5 +1,7 @@
 import { entityManager, game, arenaScaling, Vector, CanvasKit } from 'index';
 
+entityManager.initialize();
+
 class EntityOverlay {
     #canvas: HTMLCanvasElement;
     #ctx: CanvasRenderingContext2D;
@@ -44,6 +46,18 @@ class EntityOverlay {
             this.#ctx.moveTo(position.x, position.y);
             this.#ctx.lineTo(futurePos.x, futurePos.y);
             this.#ctx.stroke();
+
+            // parent
+            if (entity.parent !== null) {
+                const parentPos = arenaScaling.toCanvasPos(entity.parent.position);
+
+                this.#ctx.strokeStyle = '#8aff69';
+                this.#ctx.lineWidth = 3;
+                this.#ctx.beginPath();
+                this.#ctx.moveTo(position.x, position.y);
+                this.#ctx.lineTo(parentPos.x, parentPos.y);
+                this.#ctx.stroke();
+            }
 
             //Time alive + id
             const fontSize = arenaScaling.toCanvasUnits(new Vector(30, 30));
