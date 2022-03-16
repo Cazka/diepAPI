@@ -35,7 +35,7 @@ export const TeamColors = [EntityColor.TeamBlue, EntityColor.TeamRed, EntityColo
  * Holds minimal information currently.
  */
 export class Entity extends Movement {
-    constructor(readonly type: EntityType, readonly extras: object = {}) {
+    constructor(readonly type: EntityType, readonly parent: Entity, readonly extras: object = {}) {
         super();
     }
 
