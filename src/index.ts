@@ -1,5 +1,6 @@
 export { Vector } from './vector';
 export { CanvasKit } from './canvas_kit';
+export { EntityColor, EntityType, TeamColors, Entity } from './entity';
 
 export { gamepad } from './diep_gamepad';
 export { game } from './game';
