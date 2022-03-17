@@ -1,17 +1,11 @@
 # diepAPI
 
-#### This is a WIP Project that I'm developing to create self playing bots in the future.
+### v.3.0.0
 
-### State of the API: `STABLE`
-
-| Class         | Status   |
-| ------------- | -------- |
-| Game          | STABLE   |
-| Minimap       | STABLE   |
-| ArenaScaling  | STABLE   |
-| Arena         | STABLE   |
-| Player        | STABLE   |
-| EntityManager | STABLE   |
+The next major release is currently planned for april 2022. 
+3.0.0 will come with
+- full documentation
+- improved and stable api
 
 ### Building:
 
