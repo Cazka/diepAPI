@@ -62,7 +62,6 @@ class EntityManager {
             if (type == EntityType.Bullet) {
                 // TODO: we want to change this to EntityType.Barrel in the future?
                 const parentIndex = this.#findEntity(EntityType.Player, position, 300);
-
                 if (parentIndex >= 0) {
                     parent = this.entities[parentIndex];
                 }
@@ -86,7 +85,6 @@ class EntityManager {
      * returns the __index__ of that entity or __-1__ if there is no match.
      */
     #findEntity(type: EntityType, position: Vector, tolerance: number = 42): number {
-
         let result = -1;
         let shortestDistance = Infinity;
 
