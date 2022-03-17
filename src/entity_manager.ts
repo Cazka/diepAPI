@@ -86,7 +86,7 @@ class EntityManager {
      */
     #findEntity(type: EntityType, position: Vector, tolerance: number = 42): number {
         let result = -1;
-        let shortestDistance = Number.MAX_SAFE_INTEGER;
+        let shortestDistance = Infinity;
 
         this.#entities.forEach((x, i) => {
             if (x.type !== type) return;
