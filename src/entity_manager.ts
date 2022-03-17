@@ -66,7 +66,7 @@ class EntityManager {
             let parent = null;
             if (type == EntityType.Bullet) {
                 // TODO: we want to change this to EntityType.Barrel in the future?
-                const parentIndex = this.#findEntity(EntityType.Player, position, 1000);
+                const parentIndex = this.#findEntity(EntityType.Player, position, 300);
                 if (parentIndex >= 0) {
                     parent = this.entities[parentIndex];
                 }
@@ -89,12 +89,14 @@ class EntityManager {
      * Searches `#entities` for the entity that is closest to `position` and
      * returns the __index__ of that entity or __-1__ if there is no match.
      */
-    #findEntity(type: EntityType, position: Vector, tolerance: number = 28): number {
+    #findEntity(type: EntityType, position: Vector, tolerance: number = 42): number {
         let result = -1;
         let shortestDistance = Number.MAX_SAFE_INTEGER;
 
         this.#entities.forEach((x, i) => {
-            const distance = Vector.distance(x.predictPos(0), position);
+            if (x.type !== type) return;
+
+            const distance = Vector.distance(x.position, position);
 
             if (distance < shortestDistance) {
                 shortestDistance = distance;
@@ -103,10 +105,6 @@ class EntityManager {
         });
 
         if (shortestDistance > tolerance) {
-            return -1;
-        }
-
-        if (this.#entities[result].type !== type) {
             return -1;
         }
 
