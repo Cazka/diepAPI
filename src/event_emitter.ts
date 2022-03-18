@@ -6,7 +6,7 @@ export abstract class EventEmitter extends EventTarget {
      * @param {string} eventName The name of the event
      * @param  {...any} args The arguments that will be passed to the listener
      */
-    protected emit(eventName: string, ...args: any): void {
+    emit(eventName: string, ...args: any): void {
         this.dispatchEvent(new CustomEvent(eventName, { detail: args }));
     }
 
