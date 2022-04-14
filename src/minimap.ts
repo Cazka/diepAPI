@@ -1,5 +1,7 @@
-import { CanvasKit } from './CanvasKit';
+import { CanvasKit } from './canvas_kit';
 import { Vector } from './vector';
+
+import { game } from './game';
 
 const _window = typeof unsafeWindow == 'undefined' ? window : unsafeWindow;
 
@@ -18,8 +20,7 @@ class Minimap {
     #drawViewport = false;
 
     constructor() {
-        // TODO: game.once('ready')
-        setTimeout(() => {
+        game.once('ready', () => {
             _window.input.set_convar('ren_minimap_viewport', 'true');
             _window.input.set_convar = new Proxy(_window.input.set_convar, {
                 apply: (target, thisArg, args) => {
@@ -31,7 +32,7 @@ class Minimap {
                     return Reflect.apply(target, thisArg, args);
                 },
             });
-        }, 1000);
+        });
 
         this.#minimapHook();
         this.#viewportHook();
