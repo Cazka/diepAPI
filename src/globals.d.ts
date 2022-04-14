@@ -16,3 +16,4 @@ interface Input {
 declare var input: Input;
 
 declare var unsafeWindow: Window & typeof globalThis;
+declare var _window: Window & typeof globalThis;
