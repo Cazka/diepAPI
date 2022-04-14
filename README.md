@@ -7,7 +7,9 @@ diepAPI is a library with many apis that allow you to interact with the game.
 - arena
 - camera
 - game
+- gamepad
 - minimap
+- player
 - playerMovement
 - scaling
 
