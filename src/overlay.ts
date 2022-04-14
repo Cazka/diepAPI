@@ -9,14 +9,14 @@ class Overlay {
         this.canvas = CanvasKit.createCanvas();
         this.ctx = this.canvas.getContext('2d');
         document.body.appendChild(this.canvas);
-        window.addEventListener('resize', () => this.#onResize());
+        _window.addEventListener('resize', () => this.#onResize());
         game.on('frame', () => this.#onFrame());
         this.#onResize();
     }
 
     #onResize() {
-        this.canvas.width = window.innerWidth * window.devicePixelRatio;
-        this.canvas.height = window.innerHeight * window.devicePixelRatio;
+        this.canvas.width = _window.innerWidth * _window.devicePixelRatio;
+        this.canvas.height = _window.innerHeight * _window.devicePixelRatio;
     }
 
     #onFrame() {
