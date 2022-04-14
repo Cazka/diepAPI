@@ -1,4 +1,4 @@
-import { Vector } from './vector';
+import { Vector } from './core/vector';
 
 import { minimap } from './minimap';
 import { scaling } from './scaling';

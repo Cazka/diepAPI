@@ -1,4 +1,4 @@
-import { Movement } from './movement';
+import { Movement } from './core/movement';
 
 import { arena } from './arena';
 import { game } from './game';
