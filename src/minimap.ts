@@ -3,8 +3,6 @@ import { Vector } from './vector';
 
 import { game } from './game';
 
-const _window = typeof unsafeWindow == 'undefined' ? window : unsafeWindow;
-
 /**
  * The Minimap API
  */

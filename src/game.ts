@@ -1,5 +1,5 @@
-import { EventEmitter } from './event_emitter';
 import { CanvasKit } from './canvas_kit';
+import { EventEmitter } from './event_emitter';
 
 class Game extends EventEmitter {
     #ready = false;

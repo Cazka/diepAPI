@@ -1,5 +1,24 @@
 import { Vector } from './vector';
+
 export class CanvasKit {
+    /**
+     * If you need a canvas then create it with this method.
+     */
+    static createCanvas(): HTMLCanvasElement {
+        const canvas = document.createElement('canvas');
+        canvas.className = 'CanvasKit-bypass';
+        canvas.style.pointerEvents = 'none';
+        canvas.style.position = 'fixed';
+        canvas.style['z-index'] = 1;
+        canvas.style.top = '0px';
+        canvas.style.left = '0px';
+        canvas.style.right = '0px';
+        canvas.style.bottom = '0px';
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        return canvas;
+    }
+
     /**
      * The consumer will be called before.
      */
