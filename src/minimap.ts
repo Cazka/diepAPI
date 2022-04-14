@@ -1,35 +1,40 @@
 import { Vector } from './vector';
-import { CanvasKit } from './canvas_kit';
-import { game } from './game';
 
+const _window = typeof unsafeWindow == 'undefined' ? window : unsafeWindow;
+
+/**
+ * The Minimap API
+ */
 class Minimap {
     #minimapDim = new Vector(1, 1);
     #minimapPos = new Vector(0, 0);
 
     #viewportDim = new Vector(1, 1);
-    #viewportPos = new Vector(0, 0);
+    #viewportPos = new Vector(1, 1);
 
-    /**
-     * @description The position of the arrow normalized to the range [0,1]
-     */
     #arrowPos = new Vector(0.5, 0.5);
 
     #drawViewport = false;
 
     constructor() {
-        game.once('ready', () => {
-            window.input.set_convar('ren_minimap_viewport', 'true');
-            window.input.set_convar = new Proxy(window.input.set_convar, {
+        // TODO: game.once('ready')
+        setTimeout(() => {
+            _window.input.set_convar('ren_minimap_viewport', 'true');
+            _window.input.set_convar = new Proxy(_window.input.set_convar, {
                 apply: (target, thisArg, args) => {
-                    if (args[0] === 'ren_minimap_viewport') this.#drawViewport = args[1];
-                    else Reflect.apply(target, thisArg, args);
+                    if (args[0] === 'ren_minimap_viewport') {
+                        this.#drawViewport = args[1];
+                        return;
+                    }
+
+                    return Reflect.apply(target, thisArg, args);
                 },
             });
-        });
+        }, 1000);
 
-        this._minimapHook();
-        this._viewportHook();
-        this._arrowHook();
+        this.#minimapHook();
+        this.#viewPortHook();
+        this.#arrowHook();
     }
 
     get minimapDim(): Vector {
@@ -52,41 +57,45 @@ class Minimap {
         return this.#arrowPos;
     }
 
-    drawViewport(value: boolean): void {
-        this.#drawViewport = value;
-    }
+    #minimapHook() {
+        _window.CanvasRenderingContext2D.prototype.strokeRect = new Proxy(_window.CanvasRenderingContext2D.prototype.strokeRect, {
+            apply(target, thisArg, args) {
+                if (thisArg.canvas.className !== 'CanvasKit-bypass') {
+                    const transform = thisArg.getTransform();
 
-    _minimapHook() {
-        CanvasKit.hook('strokeRect', (target, thisArg, args) => {
-            const transform = thisArg.getTransform();
-
-            this.#minimapDim = new Vector(transform.a, transform.d);
-            this.#minimapPos = new Vector(transform.e, transform.f);
+                    this.#minimapDim = new Vector(transform.a, transform.d);
+                    this.#minimapPos = new Vector(transform.e, transform.f);
+                }
+                return Reflect.apply(target, thisArg, args);
+            },
         });
     }
 
-    _viewportHook() {
-        CanvasKit.replace('fillRect', (target, thisArg, args) => {
-            const transform = thisArg.getTransform();
+    #viewPortHook() {
+        _window.CanvasRenderingContext2D.prototype.fillRect = new Proxy(_window.CanvasRenderingContext2D.prototype.fillRect, {
+            apply(target, thisArg, args) {
+                if (thisArg.canvas.className !== 'CanvasKit-bypass') {
+                    const transform = thisArg.getTransform();
 
-            if (
-                Math.round((transform.a / transform.d) * 10_000) !==
-                Math.round((window.innerWidth / window.innerHeight) * 10_000)
-            ) {
+                    if (Math.round((transform.a / transform.d) * 10_000) !== Math.round((_window.innerWidth / _window.innerHeight) * 10_000)) {
+                        return Reflect.apply(target, thisArg, args);
+                    }
+                    if (transform.a >= _window.innerWidth && transform.d >= _window.innerHeight) {
+                        return Reflect.apply(target, thisArg, args);
+                    }
+
+                    this.#viewportDim = new Vector(transform.a, transform.d);
+                    this.#viewportPos = new Vector(transform.e, transform.f);
+
+                    if (this.#drawViewport) return Reflect.apply(target, thisArg, args);
+                    return;
+                }
                 return Reflect.apply(target, thisArg, args);
-            }
-            if (transform.a >= window.innerWidth && transform.d >= window.innerHeight) {
-                return Reflect.apply(target, thisArg, args);
-            }
-
-            this.#viewportDim = new Vector(transform.a, transform.d);
-            this.#viewportPos = new Vector(transform.e, transform.f);
-
-            if (this.#drawViewport) return Reflect.apply(target, thisArg, args);
+            },
         });
     }
 
-    _arrowHook() {
+    #arrowHook() {
         let index = 0;
 
         let pointA: Vector;
@@ -106,37 +115,60 @@ class Minimap {
             this.#arrowPos = position;
         };
 
-        CanvasKit.hook('beginPath', (target, thisArg, args) => {
-            index = 1;
+        _window.CanvasRenderingContext2D.prototype.beginPath = new Proxy(_window.CanvasRenderingContext2D.prototype.beginPath, {
+            apply(target, thisArg, args) {
+                if (thisArg.canvas.className !== 'CanvasKit-bypass') {
+                    index = 1;
+                }
+                return Reflect.apply(target, thisArg, args);
+            },
         });
-        CanvasKit.hook('moveTo', (target, thisArg, args) => {
-            if (index === 1) {
-                index++;
-                pointA = new Vector(args[0], args[1]);
-                return;
-            }
-            index = 0;
+
+        _window.CanvasRenderingContext2D.prototype.moveTo = new Proxy(_window.CanvasRenderingContext2D.prototype.moveTo, {
+            apply(target, thisArg, args) {
+                if (thisArg.canvas.className !== 'CanvasKit-bypass') {
+                    if (index === 1) {
+                        index++;
+                        pointA = new Vector(args[0], args[1]);
+                        return Reflect.apply(target, thisArg, args);
+                    }
+                    index = 0;
+                }
+                return Reflect.apply(target, thisArg, args);
+            },
         });
-        CanvasKit.hook('lineTo', (target, thisArg, args) => {
-            if (index === 2) {
-                index++;
-                pointB = new Vector(args[0], args[1]);
-                return;
-            }
-            if (index === 3) {
-                index++;
-                pointC = new Vector(args[0], args[1]);
-                return;
-            }
-            index = 0;
+
+        _window.CanvasRenderingContext2D.prototype.lineTo = new Proxy(_window.CanvasRenderingContext2D.prototype.lineTo, {
+            apply(target, thisArg, args) {
+                if (thisArg.canvas.className !== 'CanvasKit-bypass') {
+                    if (index === 2) {
+                        index++;
+                        pointB = new Vector(args[0], args[1]);
+                        return Reflect.apply(target, thisArg, args);
+                    }
+                    if (index === 3) {
+                        index++;
+                        pointC = new Vector(args[0], args[1]);
+                        return Reflect.apply(target, thisArg, args);
+                    }
+                    index = 0;
+                }
+                return Reflect.apply(target, thisArg, args);
+            },
         });
-        CanvasKit.hook('fill', (target, thisArg, args) => {
-            if (index === 4) {
-                index++;
-                calculatePos();
-                return;
-            }
-            index = 0;
+
+        _window.CanvasRenderingContext2D.prototype.fill = new Proxy(_window.CanvasRenderingContext2D.prototype.fill, {
+            apply(target, thisArg, args) {
+                if (thisArg.canvas.className !== 'CanvasKit-bypass') {
+                    if (index === 4) {
+                        index++;
+                        calculatePos();
+                        return Reflect.apply(target, thisArg, args);
+                    }
+                    index = 0;
+                }
+                return Reflect.apply(target, thisArg, args);
+            },
         });
     }
 }
