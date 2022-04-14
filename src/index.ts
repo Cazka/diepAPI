@@ -1,8 +1,5 @@
-_window = typeof unsafeWindow == 'undefined' ? window : unsafeWindow;
-
-export { CanvasKit } from './canvas_kit';
-export { Vector } from './vector';
-export { Overlay } from './overlay';
+export { CanvasKit } from './core/canvas_kit';
+export { Vector } from './core/vector';
 
 export { arena } from './arena';
 export { camera } from './camera';
