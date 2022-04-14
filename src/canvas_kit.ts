@@ -1,8 +1,17 @@
 import { Vector } from './vector';
-
-const _window = typeof unsafeWindow == 'undefined' ? window : unsafeWindow;
-
 export class CanvasKit {
+    /**
+     * The consumer will be called before.
+     */
+    static hookRAF(consumer: () => void): void {
+        window.requestAnimationFrame = new Proxy(window.requestAnimationFrame, {
+            apply(target, thisArg, args) {
+                consumer();
+                return Reflect.apply(target, thisArg, args);
+            },
+        });
+    }
+
     /**
      * The consumer will be called before
      */
