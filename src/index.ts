@@ -7,4 +7,5 @@ export { arena } from './arena';
 export { camera } from './camera';
 export { game } from './game';
 export { minimap } from './minimap';
+export { playerMovement } from './playerMovement';
 export { scaling } from './scaling';
