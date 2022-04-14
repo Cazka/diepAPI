@@ -1,3 +1,4 @@
+import { CanvasKit } from './CanvasKit';
 import { Vector } from './vector';
 
 const _window = typeof unsafeWindow == 'undefined' ? window : unsafeWindow;
@@ -33,7 +34,7 @@ class Minimap {
         }, 1000);
 
         this.#minimapHook();
-        this.#viewPortHook();
+        this.#viewportHook();
         this.#arrowHook();
     }
 
@@ -58,117 +59,49 @@ class Minimap {
     }
 
     #minimapHook() {
-        _window.CanvasRenderingContext2D.prototype.strokeRect = new Proxy(_window.CanvasRenderingContext2D.prototype.strokeRect, {
-            apply(target, thisArg, args) {
-                if (thisArg.canvas.className !== 'CanvasKit-bypass') {
-                    const transform = thisArg.getTransform();
+        CanvasKit.hookCtx('strokeRect', (target, thisArg, args) => {
+            const transform = thisArg.getTransform();
 
-                    this.#minimapDim = new Vector(transform.a, transform.d);
-                    this.#minimapPos = new Vector(transform.e, transform.f);
-                }
-                return Reflect.apply(target, thisArg, args);
-            },
+            this.#minimapDim = new Vector(transform.a, transform.d);
+            this.#minimapPos = new Vector(transform.e, transform.f);
         });
     }
 
-    #viewPortHook() {
-        _window.CanvasRenderingContext2D.prototype.fillRect = new Proxy(_window.CanvasRenderingContext2D.prototype.fillRect, {
-            apply(target, thisArg, args) {
-                if (thisArg.canvas.className !== 'CanvasKit-bypass') {
-                    const transform = thisArg.getTransform();
+    #viewportHook() {
+        CanvasKit.replaceCtx('fillRect', (target, thisArg, args) => {
+            const transform = thisArg.getTransform();
 
-                    if (Math.round((transform.a / transform.d) * 10_000) !== Math.round((_window.innerWidth / _window.innerHeight) * 10_000)) {
-                        return Reflect.apply(target, thisArg, args);
-                    }
-                    if (transform.a >= _window.innerWidth && transform.d >= _window.innerHeight) {
-                        return Reflect.apply(target, thisArg, args);
-                    }
-
-                    this.#viewportDim = new Vector(transform.a, transform.d);
-                    this.#viewportPos = new Vector(transform.e, transform.f);
-
-                    if (this.#drawViewport) return Reflect.apply(target, thisArg, args);
-                    return;
-                }
+            if (thisArg.globalAlpha !== 0.1) {
                 return Reflect.apply(target, thisArg, args);
-            },
+            }
+            if (
+                Math.abs(transform.a / transform.d - window.innerWidth / window.innerHeight) >
+                (window.innerWidth / window.innerHeight) * 0.000_001
+            ) {
+                return Reflect.apply(target, thisArg, args);
+            }
+
+            this.#viewportDim = new Vector(transform.a, transform.d);
+            this.#viewportPos = new Vector(transform.e, transform.f);
+
+            if (this.#drawViewport) {
+                return Reflect.apply(target, thisArg, args);
+            }
         });
     }
 
     #arrowHook() {
-        let index = 0;
-
-        let pointA: Vector;
-        let pointB: Vector;
-        let pointC: Vector;
-
-        const calculatePos = () => {
-            const side1 = Math.round(Vector.distance(pointA, pointB));
-            const side2 = Math.round(Vector.distance(pointA, pointC));
-            const side3 = Math.round(Vector.distance(pointB, pointC));
+        CanvasKit.hookPolygon(3, (vertices, ctx) => {
+            const side1 = Math.round(Vector.distance(vertices[0], vertices[1]));
+            const side2 = Math.round(Vector.distance(vertices[0], vertices[2]));
+            const side3 = Math.round(Vector.distance(vertices[1], vertices[2]));
             if (side1 === side2 && side2 === side3) return;
 
-            const centroid = Vector.centroid(pointA, pointB, pointC);
+            const centroid = Vector.centroid(...vertices);
             const arrowPos = Vector.subtract(centroid, this.#minimapPos);
             const position = Vector.divide(arrowPos, this.#minimapDim);
 
             this.#arrowPos = position;
-        };
-
-        _window.CanvasRenderingContext2D.prototype.beginPath = new Proxy(_window.CanvasRenderingContext2D.prototype.beginPath, {
-            apply(target, thisArg, args) {
-                if (thisArg.canvas.className !== 'CanvasKit-bypass') {
-                    index = 1;
-                }
-                return Reflect.apply(target, thisArg, args);
-            },
-        });
-
-        _window.CanvasRenderingContext2D.prototype.moveTo = new Proxy(_window.CanvasRenderingContext2D.prototype.moveTo, {
-            apply(target, thisArg, args) {
-                if (thisArg.canvas.className !== 'CanvasKit-bypass') {
-                    if (index === 1) {
-                        index++;
-                        pointA = new Vector(args[0], args[1]);
-                        return Reflect.apply(target, thisArg, args);
-                    }
-                    index = 0;
-                }
-                return Reflect.apply(target, thisArg, args);
-            },
-        });
-
-        _window.CanvasRenderingContext2D.prototype.lineTo = new Proxy(_window.CanvasRenderingContext2D.prototype.lineTo, {
-            apply(target, thisArg, args) {
-                if (thisArg.canvas.className !== 'CanvasKit-bypass') {
-                    if (index === 2) {
-                        index++;
-                        pointB = new Vector(args[0], args[1]);
-                        return Reflect.apply(target, thisArg, args);
-                    }
-                    if (index === 3) {
-                        index++;
-                        pointC = new Vector(args[0], args[1]);
-                        return Reflect.apply(target, thisArg, args);
-                    }
-                    index = 0;
-                }
-                return Reflect.apply(target, thisArg, args);
-            },
-        });
-
-        _window.CanvasRenderingContext2D.prototype.fill = new Proxy(_window.CanvasRenderingContext2D.prototype.fill, {
-            apply(target, thisArg, args) {
-                if (thisArg.canvas.className !== 'CanvasKit-bypass') {
-                    if (index === 4) {
-                        index++;
-                        calculatePos();
-                        return Reflect.apply(target, thisArg, args);
-                    }
-                    index = 0;
-                }
-                return Reflect.apply(target, thisArg, args);
-            },
         });
     }
 }
