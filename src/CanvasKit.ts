@@ -23,7 +23,7 @@ export class CanvasKit {
      * replaces the function. Use `return Reflect.apply(target, thisArg, args);` in
      * your function to call the original function.
      */
-    static replaceCtx(
+    static overrideCtx(
         method: string,
         func: (target: Function, thisArg: CanvasRenderingContext2D, args: any[]) => any
     ): void {

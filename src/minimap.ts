@@ -68,7 +68,7 @@ class Minimap {
     }
 
     #viewportHook() {
-        CanvasKit.replaceCtx('fillRect', (target, thisArg, args) => {
+        CanvasKit.overrideCtx('fillRect', (target, thisArg, args) => {
             const transform = thisArg.getTransform();
 
             if (thisArg.globalAlpha !== 0.1) {
