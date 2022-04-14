@@ -1,11 +1,14 @@
 # diepAPI
 
-### v.3.0.0
+diepAPI is a library with many apis that allow you to interact with the game.
 
-The next major release is currently planned for april 2022. 
-3.0.0 will come with
-- full documentation
-- improved and stable api
+### APIs:
+
+- arena
+- camera
+- minimap
+- playerMovement
+- scaling
 
 ### Building:
 
@@ -16,6 +19,8 @@ git clone https://github.com/Cazka/diepAPI.git
 npm install
 npm run build
 ```
+
+You will find diepAPI.js in the /dist folder.
 
 ### Working with the API:
 
