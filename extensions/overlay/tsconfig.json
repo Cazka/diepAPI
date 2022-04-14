@@ -6,5 +6,5 @@
         "baseUrl": "../../src",
         "outDir": "../../dist"
     },
-    "include": ["./"]
+    "include": ["./", "../globals.d.ts"]
 }
