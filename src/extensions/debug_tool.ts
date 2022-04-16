@@ -54,10 +54,10 @@ class DebugTool extends Extension {
     }
 
     drawAll(v: boolean): void {
-        this.#drawBoundingBox = true;
-        this.#drawVelocity = true;
-        this.#drawParent = true;
-        this.#drawInfo = true;
+        this.#drawBoundingBox = v;
+        this.#drawVelocity = v;
+        this.#drawParent = v;
+        this.#drawInfo = v;
     }
 
     drawBoundingBox(v: boolean): void {
