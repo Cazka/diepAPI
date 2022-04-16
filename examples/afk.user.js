@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AFK Script
 // @description  press Q to activate AFK
-// @version      0.0.4
+// @version      0.0.5
 // @author       Cazka
 // @match        https://diep.io/*
 // @icon         https://www.google.com/s2/favicons?domain=diep.io
@@ -10,7 +10,8 @@
 // ==/UserScript==
 if (!window.diepAPI) return window.alert('Please install diepAPI to use this script');
 
-const { player, game, Vector } = window.diepAPI;
+const { Vector } = window.diepAPI.core;
+const { player, game } = window.diepAPI.apis;
 
 let afkActive = false;
 let afkPosition;
