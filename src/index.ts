@@ -1,10 +1,7 @@
-export { CanvasKit } from './core/canvas_kit';
-export { Vector } from './core/vector';
+export * as api from './apis';
 
-export { arena } from './apis/arena';
-export { camera } from './apis/camera';
-export { game } from './apis/game';
-export { minimap } from './apis/minimap';
-export { player } from './apis/player';
-export { playerMovement } from './apis/player_movement';
-export { scaling } from './apis/scaling';
+export * as core from './core';
+
+export * as extensions from './extensions';
+
+export * as tools from './tools';

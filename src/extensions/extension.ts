@@ -2,7 +2,7 @@ export class Extension {
     #loaded = false;
     constructor(private onload: () => void) {}
 
-    #load() {
+    public load() {
         if (this.#loaded) {
             return;
         }

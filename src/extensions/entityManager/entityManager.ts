@@ -1,5 +1,6 @@
 import { CanvasKit } from '../../core/canvas_kit';
 import { Entity, EntityType, EntityColor, TeamColors } from './entity';
+import { Extension } from '../extension';
 import { Vector } from '../../core/vector';
 
 import { game } from '../../apis/game';
@@ -10,26 +11,28 @@ import { scaling } from '../../apis/scaling';
  * Entity Manager is used to access the information about the entities, that are currently drawn on the screen.
  * To access the entities the EntityManager exposes the EntityManager.entities field.
  */
-class EntityManager {
+class EntityManager extends Extension {
     #entities: Entity[] = [];
     #entitiesUpdated: Entity[] = [];
 
     constructor() {
-        game.on('frame', () => {
-            this.#entities = this.#entitiesUpdated;
-            this.#entitiesUpdated = [];
+        super(() => {
+            game.on('frame', () => {
+                this.#entities = this.#entitiesUpdated;
+                this.#entitiesUpdated = [];
+            });
+
+            this.#triangleHook();
+
+            this.#squareHook();
+
+            this.#pentagonHook();
+
+            //when is a bullet being drawn?
+
+            //when is a player being drawn?
+            this.#playerHook();
         });
-
-        this.#triangleHook();
-
-        this.#squareHook();
-
-        this.#pentagonHook();
-
-        //when is a bullet being drawn?
-
-        //when is a player being drawn?
-        this.#playerHook();
     }
 
     get entities(): Entity[] {
