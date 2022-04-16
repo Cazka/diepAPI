@@ -1,1 +1,1 @@
-export { entityManager } from './entityManager/entityManager';
+export { entityManager } from './entity_manager';
