@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Farm Script
 // @description  press P to start the farmer
-// @version      0.0.6
+// @version      0.0.7
 // @author       Cazka
 // @match        https://diep.io/*
 // @icon         https://www.google.com/s2/favicons?domain=diep.io
@@ -10,7 +10,11 @@
 // ==/UserScript==
 if (!window.diepAPI) return window.alert('Please install diepAPI to use this script');
 
-const { player, game, entityManager, Vector } = window.diepAPI;
+const { Vector } = window.diepAPI.core;
+const { player, game } = window.diepAPI.apis;
+const { entityManager } = window.diepAPI.extensions;
+
+entityManager.load();
 
 let farmActive = false;
 
