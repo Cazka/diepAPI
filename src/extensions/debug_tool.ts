@@ -3,6 +3,7 @@ import { Entity, EntityType } from '../types/entity';
 
 import { scaling } from '../apis/scaling';
 import { game } from '../apis/game';
+import { player } from '../apis/player';
 
 import { Overlay } from '../tools/overlay';
 
@@ -17,6 +18,7 @@ class DebugTool extends Extension {
     #drawVelocity = false;
     #drawParent = false;
     #drawInfo = false;
+    #drawStats = false;
 
     constructor() {
         super(() => {
@@ -42,13 +44,17 @@ class DebugTool extends Extension {
                     }
 
                     if (this.#drawParent) {
-                        this.#_drawParent(entity, futurePos);
+                        this.#_drawParent(entity, position);
                     }
 
                     if (this.#drawInfo) {
                         this.#_drawInfo(entity, position, dimensions);
                     }
                 });
+
+                if (this.#drawStats) {
+                    this.#_drawStats();
+                }
             });
         });
     }
@@ -58,6 +64,7 @@ class DebugTool extends Extension {
         this.#drawVelocity = v;
         this.#drawParent = v;
         this.#drawInfo = v;
+        this.#drawStats = v;
     }
 
     drawBoundingBox(v: boolean): void {
@@ -74,6 +81,10 @@ class DebugTool extends Extension {
 
     drawInfo(v: boolean): void {
         this.#drawInfo = v;
+    }
+
+    drawStats(v: boolean): void {
+        this.#drawStats = v;
     }
 
     #_drawboundingBox(entity: Entity, position: Vector, dimensions: Vector) {
@@ -124,13 +135,55 @@ class DebugTool extends Extension {
     #_drawInfo(entity: Entity, position: Vector, dimensions: Vector) {
         this.#ctx.save();
 
-        this.#ctx.font = scaling.toCanvasUnits(new Vector(30, 30)).x + 'px Ubuntu';
+        const fontSize = scaling.toCanvasUnits(new Vector(30, 30)).x;
+
+        this.#ctx.font = fontSize + 'px Ubuntu';
+        this.#ctx.fillStyle = `#ffffff`;
+        this.#ctx.strokeStyle = '#000000';
+        this.#ctx.lineWidth = fontSize / 5;
+
+        this.#ctx.strokeText(
+            `${entity.extras.id} ${Math.floor((performance.now() - entity.extras.timestamp) / 1000)}`,
+            position.x,
+            position.y - dimensions.y * 0.7
+        );
 
         this.#ctx.fillText(
             `${entity.extras.id} ${Math.floor((performance.now() - entity.extras.timestamp) / 1000)}`,
             position.x,
             position.y - dimensions.y * 0.7
         );
+
+        this.#ctx.restore();
+    }
+
+    #_drawStats() {
+        const text = `Debug Tool:
+        Game Info:
+        gamemode: ${player.gamemode}
+        entities: ${entityManager.entities.length}
+        
+        Player Info:
+        Is dead: ${player.isDead}
+        level: ${player.level}
+        tank: ${player.tank}
+        position: ${Math.round(player.position.x)},${Math.round(player.position.y)}
+        mouse: ${Math.round(player.mouse.x)},${Math.round(player.mouse.y)}
+        velocity [units/seconds]: ${Math.round(Math.hypot(player.velocity.x, player.velocity.y))}`;
+
+        this.#ctx.save();
+
+        const fontSize = 20 * _window.devicePixelRatio;
+
+        this.#ctx.font = `${fontSize}px Ubuntu`;
+        this.#ctx.fillStyle = `#ffffff`;
+        this.#ctx.strokeStyle = '#000000';
+        this.#ctx.lineWidth = fontSize / 5;
+
+        text.split('\n').forEach((x, i) => {
+            this.#ctx.strokeText(x, 0, _window.innerHeight * 0.25 + i * fontSize * 1.05);
+            this.#ctx.fillText(x, 0, _window.innerHeight * 0.25 + i * fontSize * 1.05);
+        });
 
         this.#ctx.restore();
     }
