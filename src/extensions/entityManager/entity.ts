@@ -1,5 +1,5 @@
-import { Vector } from 'core/vector';
-import { Movement } from 'core/movement';
+import { Vector } from '../../core/vector';
+import { Movement } from '../../core/movement';
 
 export enum EntityType {
     Player,

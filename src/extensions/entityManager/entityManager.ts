@@ -1,10 +1,10 @@
-import { CanvasKit } from 'core/canvas_kit';
+import { CanvasKit } from '../../core/canvas_kit';
 import { Entity, EntityType, EntityColor, TeamColors } from './entity';
-import { Vector } from 'core/vector';
+import { Vector } from '../../core/vector';
 
-import { game } from 'game';
-import { playerMovement } from 'player_movement';
-import { scaling } from 'scaling';
+import { game } from '../../apis/game';
+import { playerMovement } from '../../apis/player_movement';
+import { scaling } from '../../apis/scaling';
 
 /**
  * Entity Manager is used to access the information about the entities, that are currently drawn on the screen.

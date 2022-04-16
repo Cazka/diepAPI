@@ -1,5 +1,5 @@
-import { CanvasKit } from './core/canvas_kit';
-import { Vector } from './core/vector';
+import { CanvasKit } from '../core/canvas_kit';
+import { Vector } from '../core/vector';
 
 import { game } from './game';
 

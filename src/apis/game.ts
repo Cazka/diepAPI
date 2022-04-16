@@ -1,5 +1,5 @@
-import { CanvasKit } from './core/canvas_kit';
-import { EventEmitter } from './core/event_emitter';
+import { CanvasKit } from '../core/canvas_kit';
+import { EventEmitter } from '../core/event_emitter';
 
 class Game extends EventEmitter {
     #ready = false;

@@ -1,11 +1,11 @@
-import { CanvasKit } from './core/canvas_kit';
-import { EventEmitter } from './core/event_emitter';
-import { gamepad } from './gamepad';
-import { Vector } from './core/vector';
+import { CanvasKit } from '../core/canvas_kit';
+import { EventEmitter } from '../core/event_emitter';
+import { Vector } from '../core/vector';
 
-import { scaling } from './scaling';
-import { playerMovement } from './player_movement';
 import { game } from './game';
+import { gamepad } from './gamepad';
+import { playerMovement } from './player_movement';
+import { scaling } from './scaling';
 
 const sleep = (ms: number): Promise<void> => new Promise((resolve, reject) => setTimeout(resolve, ms));
 

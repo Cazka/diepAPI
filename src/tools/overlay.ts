@@ -1,6 +1,6 @@
-import { CanvasKit } from 'core/canvas_kit';
+import { CanvasKit } from '../core/canvas_kit';
 
-import { game } from 'game';
+import { game } from '../apis/game';
 
 class Overlay {
     canvas: HTMLCanvasElement;

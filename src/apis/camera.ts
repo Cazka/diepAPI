@@ -1,4 +1,4 @@
-import { Vector } from './core/vector';
+import { Vector } from '../core/vector';
 
 import { arena } from './arena';
 import { minimap } from './minimap';
