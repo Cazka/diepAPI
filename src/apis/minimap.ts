@@ -75,7 +75,7 @@ class Minimap {
             }
             if (
                 Math.abs(transform.a / transform.d - window.innerWidth / window.innerHeight) >
-                (window.innerWidth / window.innerHeight) * 0.000_001
+                (window.innerWidth / window.innerHeight) * 0.000_05
             ) {
                 return Reflect.apply(target, thisArg, args);
             }
