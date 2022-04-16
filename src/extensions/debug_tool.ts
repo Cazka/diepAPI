@@ -80,7 +80,7 @@ class DebugTool extends Extension {
         this.#ctx.save();
 
         this.#ctx.strokeStyle = entity.type === EntityType.UNKNOWN ? '#ffffff' : entity.extras.color;
-        this.#ctx.lineWidth = scaling.toCanvasUnits(new Vector(3, 3)).x;
+        this.#ctx.lineWidth = scaling.toCanvasUnits(new Vector(5, 5)).x;
 
         this.#ctx.strokeRect(position.x - dimensions.x / 2, position.y - dimensions.y / 2, dimensions.x, dimensions.y);
 
@@ -91,7 +91,7 @@ class DebugTool extends Extension {
         this.#ctx.save();
 
         this.#ctx.strokeStyle = '#000000';
-        this.#ctx.lineWidth = scaling.toCanvasUnits(new Vector(3, 3)).x;
+        this.#ctx.lineWidth = scaling.toCanvasUnits(new Vector(5, 5)).x;
 
         this.#ctx.beginPath();
         this.#ctx.moveTo(position.x, position.y);
@@ -111,7 +111,7 @@ class DebugTool extends Extension {
         this.#ctx.save();
 
         this.#ctx.strokeStyle = '#8aff69';
-        this.#ctx.lineWidth = scaling.toCanvasUnits(new Vector(3, 3)).x;
+        this.#ctx.lineWidth = scaling.toCanvasUnits(new Vector(5, 5)).x;
 
         this.#ctx.beginPath();
         this.#ctx.moveTo(position.x, position.y);
