@@ -1,5 +1,5 @@
 import { CanvasKit } from '../core/canvas_kit';
-import { Entity, EntityType, EntityColor, TeamColors } from '../core/entity';
+import { Entity, EntityType, EntityColor, TeamColors } from '../types/entity';
 import { Extension } from './extension';
 import { Vector } from '../core/vector';
 
