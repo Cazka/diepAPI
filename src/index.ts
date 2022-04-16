@@ -1,10 +1,10 @@
 export { CanvasKit } from './core/canvas_kit';
 export { Vector } from './core/vector';
 
-export { arena } from './arena';
-export { camera } from './camera';
-export { game } from './game';
-export { minimap } from './minimap';
-export { player } from './player';
-export { playerMovement } from './player_movement';
-export { scaling } from './scaling';
+export { arena } from './apis/arena';
+export { camera } from './apis/camera';
+export { game } from './apis/game';
+export { minimap } from './apis/minimap';
+export { player } from './apis/player';
+export { playerMovement } from './apis/player_movement';
+export { scaling } from './apis/scaling';
