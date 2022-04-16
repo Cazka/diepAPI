@@ -1,4 +1,4 @@
-export * as api from './apis';
+export * as apis from './apis';
 
 export * as core from './core';
 
