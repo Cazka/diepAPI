@@ -1,5 +1,5 @@
-import { Vector } from '../../core/vector';
-import { Movement } from '../../core/movement';
+import { Vector } from './vector';
+import { Movement } from './movement';
 
 export enum EntityType {
     Player,
@@ -35,7 +35,7 @@ export const TeamColors = [EntityColor.TeamBlue, EntityColor.TeamRed, EntityColo
  * Holds minimal information currently.
  */
 export class Entity extends Movement {
-    constructor(readonly type: EntityType, readonly parent: Entity, readonly extras: object = {}) {
+    constructor(readonly type: EntityType, readonly parent: Entity, readonly extras: any) {
         super();
     }
 
