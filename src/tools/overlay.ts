@@ -28,4 +28,4 @@ class Overlay {
     }
 }
 
-export { Overlay };
+export const overlay = new Overlay();

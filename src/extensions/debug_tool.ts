@@ -5,15 +5,12 @@ import { scaling } from '../apis/scaling';
 import { game } from '../apis/game';
 import { player } from '../apis/player';
 
-import { Overlay } from '../tools/overlay';
+import { overlay } from '../tools/overlay';
 
 import { entityManager } from './entity_manager';
 import { Extension } from './extension';
 
 class DebugTool extends Extension {
-    #overlay: Overlay;
-    #ctx: CanvasRenderingContext2D;
-
     #drawBoundingBox = false;
     #drawVelocity = false;
     #drawParent = false;
@@ -23,9 +20,6 @@ class DebugTool extends Extension {
     constructor() {
         super(() => {
             entityManager.load();
-
-            this.#overlay = new Overlay();
-            this.#ctx = this.#overlay.ctx;
 
             game.on('frame', () => {
                 entityManager.entities.forEach((entity) => {
@@ -88,28 +82,33 @@ class DebugTool extends Extension {
     }
 
     #_drawboundingBox(entity: Entity, position: Vector, dimensions: Vector) {
-        this.#ctx.save();
+        overlay.ctx.save();
 
-        this.#ctx.strokeStyle = entity.type === EntityType.UNKNOWN ? '#ffffff' : entity.extras.color;
-        this.#ctx.lineWidth = scaling.toCanvasUnits(new Vector(5, 5)).x;
+        overlay.ctx.strokeStyle = entity.type === EntityType.UNKNOWN ? '#ffffff' : entity.extras.color;
+        overlay.ctx.lineWidth = scaling.toCanvasUnits(new Vector(5, 5)).x;
 
-        this.#ctx.strokeRect(position.x - dimensions.x / 2, position.y - dimensions.y / 2, dimensions.x, dimensions.y);
+        overlay.ctx.strokeRect(
+            position.x - dimensions.x / 2,
+            position.y - dimensions.y / 2,
+            dimensions.x,
+            dimensions.y
+        );
 
-        this.#ctx.restore();
+        overlay.ctx.restore();
     }
 
     #_drawVelocity(position: Vector, futurePos: Vector) {
-        this.#ctx.save();
+        overlay.ctx.save();
 
-        this.#ctx.strokeStyle = '#000000';
-        this.#ctx.lineWidth = scaling.toCanvasUnits(new Vector(5, 5)).x;
+        overlay.ctx.strokeStyle = '#000000';
+        overlay.ctx.lineWidth = scaling.toCanvasUnits(new Vector(5, 5)).x;
 
-        this.#ctx.beginPath();
-        this.#ctx.moveTo(position.x, position.y);
-        this.#ctx.lineTo(futurePos.x, futurePos.y);
-        this.#ctx.stroke();
+        overlay.ctx.beginPath();
+        overlay.ctx.moveTo(position.x, position.y);
+        overlay.ctx.lineTo(futurePos.x, futurePos.y);
+        overlay.ctx.stroke();
 
-        this.#ctx.restore();
+        overlay.ctx.restore();
     }
 
     #_drawParent(entity: Entity, position: Vector) {
@@ -119,42 +118,42 @@ class DebugTool extends Extension {
 
         const parentPos = scaling.toCanvasPos(entity.parent.position);
 
-        this.#ctx.save();
+        overlay.ctx.save();
 
-        this.#ctx.strokeStyle = '#8aff69';
-        this.#ctx.lineWidth = scaling.toCanvasUnits(new Vector(5, 5)).x;
+        overlay.ctx.strokeStyle = '#8aff69';
+        overlay.ctx.lineWidth = scaling.toCanvasUnits(new Vector(5, 5)).x;
 
-        this.#ctx.beginPath();
-        this.#ctx.moveTo(position.x, position.y);
-        this.#ctx.lineTo(parentPos.x, parentPos.y);
-        this.#ctx.stroke();
+        overlay.ctx.beginPath();
+        overlay.ctx.moveTo(position.x, position.y);
+        overlay.ctx.lineTo(parentPos.x, parentPos.y);
+        overlay.ctx.stroke();
 
-        this.#ctx.restore();
+        overlay.ctx.restore();
     }
 
     #_drawInfo(entity: Entity, position: Vector, dimensions: Vector) {
-        this.#ctx.save();
+        overlay.ctx.save();
 
         const fontSize = scaling.toCanvasUnits(new Vector(30, 30)).x;
 
-        this.#ctx.font = fontSize + 'px Ubuntu';
-        this.#ctx.fillStyle = `#ffffff`;
-        this.#ctx.strokeStyle = '#000000';
-        this.#ctx.lineWidth = fontSize / 5;
+        overlay.ctx.font = fontSize + 'px Ubuntu';
+        overlay.ctx.fillStyle = `#ffffff`;
+        overlay.ctx.strokeStyle = '#000000';
+        overlay.ctx.lineWidth = fontSize / 5;
 
-        this.#ctx.strokeText(
+        overlay.ctx.strokeText(
             `${entity.extras.id} ${Math.floor((performance.now() - entity.extras.timestamp) / 1000)}`,
             position.x,
             position.y - dimensions.y * 0.7
         );
 
-        this.#ctx.fillText(
+        overlay.ctx.fillText(
             `${entity.extras.id} ${Math.floor((performance.now() - entity.extras.timestamp) / 1000)}`,
             position.x,
             position.y - dimensions.y * 0.7
         );
 
-        this.#ctx.restore();
+        overlay.ctx.restore();
     }
 
     #_drawStats() {
@@ -171,21 +170,21 @@ class DebugTool extends Extension {
         mouse: ${Math.round(player.mouse.x)},${Math.round(player.mouse.y)}
         velocity [units/seconds]: ${Math.round(Math.hypot(player.velocity.x, player.velocity.y))}`;
 
-        this.#ctx.save();
+        overlay.ctx.save();
 
         const fontSize = 20 * _window.devicePixelRatio;
 
-        this.#ctx.font = `${fontSize}px Ubuntu`;
-        this.#ctx.fillStyle = `#ffffff`;
-        this.#ctx.strokeStyle = '#000000';
-        this.#ctx.lineWidth = fontSize / 5;
+        overlay.ctx.font = `${fontSize}px Ubuntu`;
+        overlay.ctx.fillStyle = `#ffffff`;
+        overlay.ctx.strokeStyle = '#000000';
+        overlay.ctx.lineWidth = fontSize / 5;
 
         text.split('\n').forEach((x, i) => {
-            this.#ctx.strokeText(x, 0, _window.innerHeight * 0.25 + i * fontSize * 1.05);
-            this.#ctx.fillText(x, 0, _window.innerHeight * 0.25 + i * fontSize * 1.05);
+            overlay.ctx.strokeText(x, 0, _window.innerHeight * 0.25 + i * fontSize * 1.05);
+            overlay.ctx.fillText(x, 0, _window.innerHeight * 0.25 + i * fontSize * 1.05);
         });
 
-        this.#ctx.restore();
+        overlay.ctx.restore();
     }
 }
 
