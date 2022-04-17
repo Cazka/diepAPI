@@ -20,7 +20,11 @@ class Overlay {
     }
 
     #onFrame() {
+        this.canvas.width = _window.innerWidth * _window.devicePixelRatio;
+        this.canvas.height = _window.innerHeight * _window.devicePixelRatio;
+
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
 }
 
