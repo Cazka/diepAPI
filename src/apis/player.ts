@@ -76,7 +76,7 @@ class Player extends EventEmitter {
             // tank and level event listener
             CanvasKit.hookCtx('fillText', (target, thisArg, args) => {
                 const text = args[0];
-                const match = text.match(/^Lvl (\d+) (\w*)$/);
+                const match = text.match(/^Lvl (\d+) (\w+\s?\w*)$/);
                 if (match == null) {
                     return;
                 }
