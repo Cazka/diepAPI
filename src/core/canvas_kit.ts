@@ -23,7 +23,7 @@ export class CanvasKit {
      * The consumer will be called before.
      */
     static hookRAF(consumer: () => void): void {
-        window.requestAnimationFrame = new Proxy(window.requestAnimationFrame, {
+        _window.requestAnimationFrame = new Proxy(_window.requestAnimationFrame, {
             apply(target, thisArg, args) {
                 consumer();
                 return Reflect.apply(target, thisArg, args);

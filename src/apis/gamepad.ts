@@ -20,7 +20,7 @@ class Gamepad {
         });
         this.connected = false;
 
-        window.navigator.getGamepads = new Proxy(window.navigator.getGamepads, {
+        _window.navigator.getGamepads = new Proxy(_window.navigator.getGamepads, {
             apply: (target, thisArg, args) => {
                 if (this.connected) return [this.#toGamepad()];
                 return Reflect.apply(target, thisArg, args);
