@@ -13,7 +13,7 @@ class Arena {
                 ratio,
                 scaling.screenToCanvas(new Vector(_window.innerWidth, _window.innerHeight))
             );
-            const arenaSize = Vector.round(scaling.toArenaUnits(arenaDim));
+            const arenaSize = scaling.toArenaUnits(arenaDim);
             this.#size = arenaSize.x;
         }, 16);
     }
