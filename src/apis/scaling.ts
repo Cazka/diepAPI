@@ -52,7 +52,7 @@ class Scaling {
      * @returns {Vector} The vector in arena units
      */
     toArenaUnits(v: Vector): Vector {
-        return Vector.unscale(this.#scalingFactor, v);
+        return Vector.round(Vector.unscale(this.#scalingFactor, v));
     }
 
     /**
@@ -61,7 +61,7 @@ class Scaling {
      * @returns {Vector} The vector in canvas units
      */
     toCanvasUnits(v: Vector): Vector {
-        return Vector.scale(this.#scalingFactor, v);
+        return Vector.round(Vector.scale(this.#scalingFactor, v));
     }
 
     /**
