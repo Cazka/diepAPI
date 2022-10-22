@@ -11,7 +11,7 @@ class PlayerMovement extends Movement {
     constructor() {
         super();
 
-        game.on('frame', () => super.updatePos(arena.scale(minimap.arrowPos)));
+        game.on('frame_end', () => super.updatePos(arena.scale(minimap.arrowPos)));
     }
 }
 

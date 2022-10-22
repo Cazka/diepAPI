@@ -1,11 +1,9 @@
-import { CanvasKit } from '../core/canvas_kit';
+import { CanvasKit, Vector } from '../core';
+import { game, playerMovement, scaling } from '../apis';
 import { Entity, EntityType, EntityColor, TeamColors } from '../types/entity';
 import { Extension } from './extension';
-import { Vector } from '../core/vector';
 
-import { game } from '../apis/game';
-import { playerMovement } from '../apis/player_movement';
-import { scaling } from '../apis/scaling';
+const random_id = () => Math.random().toString(36).slice(2, 5);
 
 /**
  * Entity Manager is used to access the information about the entities, that are currently drawn on the screen.
@@ -13,13 +11,13 @@ import { scaling } from '../apis/scaling';
  */
 class EntityManager extends Extension {
     #entities: Entity[] = [];
-    #entitiesUpdated: Entity[] = [];
+    #entitiesLastFrame: Entity[] = this.#entities;
 
     constructor() {
         super(() => {
-            game.on('frame', () => {
-                this.#entities = this.#entitiesUpdated;
-                this.#entitiesUpdated = [];
+            game.on('frame_end', () => {
+                this.#entitiesLastFrame = this.#entities;
+                this.#entities = [];
             });
 
             this.#triangleHook();
@@ -53,58 +51,60 @@ class EntityManager extends Extension {
     }
 
     /**
-     * Adds the entity to `#entitiesUpdated`.
+     * Adds the entity to `#entities`.
      *
-     * Will either find the entity in `#entities` or create a new `Entity`.
+     * Will either find the entity in `#entitiesLastFrame` or create a new `Entity`.
      */
     #add(type: EntityType, position: Vector, extras: object = {}) {
-        const entityIndex = this.#findEntity(type, position);
+        let entity = this.#findEntity(type, position);
 
-        let entity: Entity;
-        if (entityIndex === -1) {
-            let parent = null;
-            if (type == EntityType.Bullet) {
-                // TODO: we want to change this to EntityType.Barrel in the future?
-                const parentIndex = this.#findEntity(EntityType.Player, position, 300);
-                if (parentIndex >= 0) {
-                    parent = this.entities[parentIndex];
-                }
-            }
+        if (!entity) {
+            const parent = this.#findParent(type, position);
 
             entity = new Entity(type, parent, {
-                id: Math.random().toString(36).slice(2, 5),
+                id: random_id(),
                 timestamp: performance.now(),
                 ...extras,
             });
-        } else {
-            entity = this.#entities[entityIndex];
         }
+        //TODO: remove radius from extras
+        entity.extras.radius = (extras as any).radius;
 
         entity.updatePos(position);
-        this.#entitiesUpdated.push(entity);
+        this.#entities.push(entity);
     }
 
     /**
-     * Searches `#entities` for the entity that is closest to `position` and
-     * returns the __index__ of that entity or __-1__ if there is no match.
+     * If an entity is newly created, try to find it's parent entity.
      */
-    #findEntity(type: EntityType, position: Vector, tolerance: number = 42): number {
-        let result = -1;
+    #findParent(type: EntityType, position: Vector): Entity {
+        if (type == EntityType.Bullet) {
+            // TODO: do we want to change the parent entity to EntityType.Barrel in the future?
+            return this.#findEntity(EntityType.Player, position, 300);
+        }
+    }
+
+    /**
+     * Searches `#entitiesLastFrame` for the entity that is closest to `position`
+     * @returns the entity or null if there is no match.
+     */
+    #findEntity(type: EntityType, position: Vector, tolerance: number = 42): Entity {
+        let result = null;
         let shortestDistance = Infinity;
 
-        this.#entities.forEach((x, i) => {
-            if (x.type !== type) return;
+        this.#entitiesLastFrame.forEach((entity, i) => {
+            if (entity.type !== type) return;
 
-            const distance = Vector.distance(x.position, position);
+            const distance = Vector.distance(entity.position, position);
 
             if (distance < shortestDistance) {
                 shortestDistance = distance;
-                result = i;
+                result = entity;
             }
         });
 
         if (shortestDistance > tolerance) {
-            return -1;
+            return null;
         }
 
         return result;
