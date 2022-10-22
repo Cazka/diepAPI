@@ -112,7 +112,7 @@ class DebugTool extends Extension {
     }
 
     #_drawParent(entity: Entity, position: Vector) {
-        if (entity.parent === null) {
+        if (entity.parent == null) {
             return;
         }
 

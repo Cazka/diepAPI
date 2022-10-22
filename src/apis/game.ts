@@ -17,6 +17,7 @@ class Game extends EventEmitter {
         }
 
         super.emit('frame');
+        super.emit('frame_end');
     }
 
     #onready(): void {
