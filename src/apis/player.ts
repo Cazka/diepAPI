@@ -4,6 +4,7 @@ import { Vector } from '../core/vector';
 
 import { game } from './game';
 import { gamepad } from './gamepad';
+import { input } from './input';
 import { playerMovement } from './player_movement';
 import { scaling } from './scaling';
 
@@ -150,35 +151,12 @@ class Player extends EventEmitter {
         gamepad.connected = value;
     }
 
-    keyDown(key: number | string): void {
-        if (typeof key == 'string') {
-            if (key.length != 1) throw new Error(`diepAPI: Unsupported key: ${key}`);
-            key = key.toUpperCase().charCodeAt(0);
-        }
-        _window.input.keyDown(key);
-        this.#onkeydown({ keyCode: key } as KeyboardEvent);
-    }
-    keyUp(key: number | string): void {
-        if (typeof key == 'string') {
-            if (key.length != 1) throw new Error(`diepAPI: Unsupported key: ${key}`);
-            key = key.toUpperCase().charCodeAt(0);
-        }
-        _window.input.keyUp(key);
-        this.#onkeyup({ keyCode: key } as KeyboardEvent);
-    }
-    async keyPress(key: number | string): Promise<void> {
-        this.keyDown(key);
-        await sleep(200);
-        this.keyUp(key);
-        await sleep(10);
-    }
-
     async spawn(name: string, attempts: number = 0): Promise<void> {
         if (!this.#isDead) return;
 
         if (name !== undefined) (document.getElementById('textInput') as HTMLInputElement).value = name;
 
-        await this.keyPress(13);
+        await input.keyPress(13);
 
         await sleep(250);
 
@@ -188,11 +166,11 @@ class Player extends EventEmitter {
     async upgrade_stat(id: number, level: number): Promise<void> {
         if (id < 1 || id > 8) throw `diepAPI: ${id} is not a supported stat`;
 
-        this.keyDown(85);
+        input.keyDown(85);
         for (let i = 0; i < level; i++) {
-            await this.keyPress(48 + id);
+            await input.keyPress(48 + id);
         }
-        this.keyUp(85);
+        input.keyUp(85);
         await sleep(250);
     }
 
@@ -204,8 +182,8 @@ class Player extends EventEmitter {
         const y = scaling.screenToCanvasUnits(scaling.windowRatio * (y_index * 110 + 120));
 
         this.#mouseLock = true;
-        _window.input.mouse(x, y);
-        await this.keyPress(1);
+        input.mouse(x, y);
+        await input.keyPress(1);
         // wait 200 ms before disabling mouselock
         await sleep(200);
         this.#mouseLock = false;
@@ -233,32 +211,32 @@ class Player extends EventEmitter {
             const direction = Vector.subtract(arenaPos, this.position);
 
             if (direction.x > 0) {
-                this.keyUp('a');
-                this.keyDown('d');
+                input.keyUp('a');
+                input.keyDown('d');
             } else if (direction.x < 0) {
-                this.keyUp('d');
-                this.keyDown('a');
+                input.keyUp('d');
+                input.keyDown('a');
             } else {
-                this.keyUp('a');
-                this.keyUp('d');
+                input.keyUp('a');
+                input.keyUp('d');
             }
 
             if (direction.y > 0) {
-                this.keyUp('w');
-                this.keyDown('s');
+                input.keyUp('w');
+                input.keyDown('s');
             } else if (direction.y < 0) {
-                this.keyUp('s');
-                this.keyDown('w');
+                input.keyUp('s');
+                input.keyDown('w');
             } else {
-                this.keyUp('w');
-                this.keyUp('s');
+                input.keyUp('w');
+                input.keyUp('s');
             }
         }
     }
 
     lookAt(arenaPos: Vector): void {
         const position = scaling.toCanvasPos(arenaPos);
-        _window.input.mouse(position.x, position.y);
+        input.mouse(position.x, position.y);
 
         this.#onmousemove({ clientX: position.x, clientY: position.y } as MouseEvent);
     }
