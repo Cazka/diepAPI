@@ -11,7 +11,7 @@ class Input {
         });
     }
 
-    keyDown(key: string | number) {
+    keyDown(key: string | number): void {
         if (typeof key == 'string') {
             key = this.#toKeyCode(key);
         }
@@ -29,7 +29,7 @@ class Input {
         _window.dispatchEvent(keydown);
     }
 
-    keyUp(key: string | number) {
+    keyUp(key: string | number): void {
         if (typeof key == 'string') {
             key = this.#toKeyCode(key);
         }
@@ -54,7 +54,7 @@ class Input {
         await sleep(10);
     }
 
-    mouse(x: number, y: number) {
+    mouse(x: number, y: number): void {
         const mousemove = new MouseEvent('mousemove', {
             clientX: x,
             clientY: y,
