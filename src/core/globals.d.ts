@@ -1,16 +1,13 @@
 interface Input {
-    mouse: (x: number, y: number) => void;
+    blur: () => void;
+    execute: (v: string) => void;
+    get_convar: (key: string) => null | string;
     keyDown: (key: string | number) => void;
     keyUp: (key: string | number) => void;
-    blur: () => void;
-    wheel: Function;
-    prevent_right_click: (value: boolean) => void;
-    flushInputHooks: Function;
+    mouse: (x: number, y: number) => void;
     set_convar: (key: string, value: string) => boolean;
-    get_convar: (key: string) => null | string;
-    execute: (v: string) => void;
-    print_convar_help: () => void;
     should_prevent_unload: () => boolean;
+    trySpawn: (username: string) => void;
 }
 
 declare var input: Input;
