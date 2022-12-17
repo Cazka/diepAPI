@@ -15,6 +15,8 @@ class Player extends EventEmitter {
     #mouseLock = false;
     #mouseCanvasPos = new Vector(0, 0);
     #mousePos = new Vector(0, 0);
+
+    #username = _window.localStorage.name;
     #gamemode = _window.localStorage.gamemode;
     #level = 1;
     #tank = 'Tank';
@@ -70,6 +72,14 @@ class Player extends EventEmitter {
             _window.onkeyup = new Proxy(_window.onkeyup, {
                 apply: (target, thisArg, args) => {
                     this.#onkeyup(args[0]);
+                    return Reflect.apply(target, thisArg, args);
+                },
+            });
+
+            // username
+            _window.input.trySpawn = new Proxy(_window.input.trySpawn, {
+                apply(target, thisArg, args) {
+                    this.#username = args[0];
                     return Reflect.apply(target, thisArg, args);
                 },
             });
@@ -151,16 +161,12 @@ class Player extends EventEmitter {
         gamepad.connected = value;
     }
 
-    async spawn(name: string, attempts: number = 0): Promise<void> {
-        if (!this.#isDead) return;
+    async spawn(name: string = this.#username): Promise<void> {
+        if (!this.#isDead) {
+            return;
+        }
 
-        if (name !== undefined) (document.getElementById('textInput') as HTMLInputElement).value = name;
-
-        await input.keyPress(13);
-
-        await sleep(250);
-
-        await this.spawn(name, attempts + 1);
+        _window.input.trySpawn(name);
     }
 
     async upgrade_stat(id: number, level: number): Promise<void> {
