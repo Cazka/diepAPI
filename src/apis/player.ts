@@ -78,7 +78,7 @@ class Player extends EventEmitter {
 
             // username
             _window.input.trySpawn = new Proxy(_window.input.trySpawn, {
-                apply(target, thisArg, args) {
+                apply: (target, thisArg, args) => {
                     this.#username = args[0];
                     return Reflect.apply(target, thisArg, args);
                 },
