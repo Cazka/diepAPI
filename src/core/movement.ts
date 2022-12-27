@@ -11,7 +11,6 @@ export class Movement {
     #velocitySamples = [];
     #velocitySamplesIndex = 0;
     #velocityLastNow = performance.now();
-
     get position(): Vector {
         return this.#position;
     }

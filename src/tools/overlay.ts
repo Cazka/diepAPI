@@ -5,7 +5,6 @@ import { game } from '../apis/game';
 class Overlay {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
-
     constructor() {
         this.canvas = CanvasKit.createCanvas();
         this.ctx = this.canvas.getContext('2d');

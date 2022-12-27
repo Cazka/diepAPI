@@ -1,6 +1,5 @@
 export class Extension {
     #loaded = false;
-
     constructor(private onload: () => void) {}
 
     public load() {

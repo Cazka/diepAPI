@@ -1,5 +1,4 @@
 import { Vector } from '../core/vector';
-
 import { Entity, EntityType } from '../types/entity';
 
 import { scaling } from '../apis/scaling';
@@ -162,7 +161,7 @@ class DebugTool extends Extension {
         Game Info:
         gamemode: ${player.gamemode}
         entities: ${entityManager.entities.length}
-
+        
         Player Info:
         Is dead: ${player.isDead}
         level: ${player.level}

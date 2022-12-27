@@ -5,15 +5,12 @@ class Gamepad {
 
     /**
      * Emulates a Gampad
-     *
-     * When `gamepad.connected` is set to `true` the game will
+     * when `gamepad.connected` is set to `true` the game will
      * ignore following keyboard inputs:
-     *
      * 		W, A, S, D, upArrow, leftArrow, downArrow, rightArray
      *      leftMouse, rightMouse, Spacebar, Shift,
      *      MouseMovement to change tank angle
-     *
-     * These are also the only keys we emulate with this gamepad
+     * these are also the only keys we emulate with this gamepad
      *
      */
     constructor() {
@@ -34,23 +31,18 @@ class Gamepad {
     set x(value: number) {
         this.#axes[0] = value;
     }
-
     set y(value: number) {
         this.#axes[1] = value;
     }
-
     set mx(value: number) {
         this.#axes[2] = value;
     }
-
     set my(value: number) {
         this.#axes[3] = value;
     }
-
     set leftMouse(value: boolean) {
         this.#buttons[7].pressed = value;
     }
-
     set rightMouse(value: boolean) {
         this.#buttons[6].pressed = value;
     }
@@ -58,23 +50,18 @@ class Gamepad {
     get x(): number {
         return this.#axes[0];
     }
-
     get y(): number {
         return this.#axes[1];
     }
-
     get mx(): number {
         return this.#axes[2];
     }
-
     get my(): number {
         return this.#axes[3];
     }
-
     get leftMouse(): boolean {
         return this.#buttons[7].pressed;
     }
-
     get rightMouse(): boolean {
         return this.#buttons[6].pressed;
     }
