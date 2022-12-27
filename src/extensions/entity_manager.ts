@@ -1,6 +1,8 @@
 import { CanvasKit, Vector } from '../core';
 import { game, playerMovement, scaling } from '../apis';
+
 import { Entity, EntityType, EntityColor, TeamColors } from '../types/entity';
+
 import { Extension } from './extension';
 
 const random_id = () => Math.random().toString(36).slice(2, 5);

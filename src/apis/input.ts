@@ -12,7 +12,7 @@ class Input {
     }
 
     keyDown(key: string | number): void {
-        if (typeof key == 'string') {
+        if (typeof key === 'string') {
             key = this.#toKeyCode(key);
         }
 
@@ -30,7 +30,7 @@ class Input {
     }
 
     keyUp(key: string | number): void {
-        if (typeof key == 'string') {
+        if (typeof key === 'string') {
             key = this.#toKeyCode(key);
         }
 

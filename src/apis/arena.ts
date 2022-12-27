@@ -34,9 +34,10 @@ class Arena {
         const scale = (value: number) => Math.round(this.#size * (value - 0.5));
         return new Vector(scale(vector.x), scale(vector.y));
     }
+
     /**
      *
-     * @param {Vector} vector - The scaled vector in [-Arena.size/2, Arena.size/2] coordinates
+     * @param {Vector} vector The scaled vector in [-Arena.size/2, Arena.size/2] coordinates
      * @returns {Vector} The unscaled vector in [0, 1] coordinates
      */
     unscale(vector: Vector): Vector {
