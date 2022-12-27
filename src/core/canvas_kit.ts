@@ -6,7 +6,7 @@ export class CanvasKit {
      */
     static createCanvas(): HTMLCanvasElement {
         const canvas = document.createElement('canvas');
-        canvas.className = 'CanvasKit-bypass';
+        canvas.classList.add('CanvasKit-bypass');
         canvas.style.pointerEvents = 'none';
         canvas.style.position = 'fixed';
         canvas.style['z-index'] = 1;
@@ -41,7 +41,7 @@ export class CanvasKit {
         const target = _window.CanvasRenderingContext2D.prototype;
         target[method] = new Proxy(target[method], {
             apply(target, thisArg, args) {
-                if (thisArg.canvas.className !== 'CanvasKit-bypass') consumer(target, thisArg, args);
+                if (thisArg.canvas.classList.contains('CanvasKit-bypass')) consumer(target, thisArg, args);
                 return Reflect.apply(target, thisArg, args);
             },
         });
@@ -58,7 +58,7 @@ export class CanvasKit {
         const target = _window.CanvasRenderingContext2D.prototype;
         target[method] = new Proxy(target[method], {
             apply(target, thisArg, args) {
-                if (thisArg.canvas.className !== 'CanvasKit-bypass') return func(target, thisArg, args);
+                if (thisArg.canvas.classList.contains('CanvasKit-bypass')) return func(target, thisArg, args);
                 return Reflect.apply(target, thisArg, args);
             },
         });
