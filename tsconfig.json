@@ -2,8 +2,9 @@
     "compilerOptions": {
         "declaration": true,
         "declarationDir": "./dist/src",
-        "target": "ESNext",
-        "module": "ESNext",
+        "strict": true,
+        "target": "ES2022",
+        "module": "ES2022",
         "moduleResolution": "node"
     },
     "include": ["./src"],

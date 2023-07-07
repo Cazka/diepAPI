@@ -15,8 +15,6 @@
     "type": "git",
     "url": "git+https://github.com/Cazka/diepAPI.git"
   },
-  "keywords": [],
-  "author": "",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Cazka/diepAPI/issues"
