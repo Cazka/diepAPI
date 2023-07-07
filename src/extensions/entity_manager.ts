@@ -77,7 +77,7 @@ class EntityManager extends Extension {
     /**
      * If an entity is newly created, try to find it's parent entity.
      */
-    #findParent(type: EntityType, position: Vector): Entity {
+    #findParent(type: EntityType, position: Vector): Entity | undefined {
         if (type == EntityType.Bullet) {
             // TODO: do we want to change the parent entity to EntityType.Barrel in the future?
             return this.#findEntity(EntityType.Player, position, 300);
@@ -88,8 +88,8 @@ class EntityManager extends Extension {
      * Searches `#entitiesLastFrame` for the entity that is closest to `position`
      * @returns the entity or null if there is no match.
      */
-    #findEntity(type: EntityType, position: Vector, tolerance: number = 42): Entity {
-        let result = null;
+    #findEntity(type: EntityType, position: Vector, tolerance: number = 42): Entity | undefined {
+        let result = undefined;
         let shortestDistance = Infinity;
 
         this.#entitiesLastFrame.forEach((entity, i) => {
@@ -104,7 +104,7 @@ class EntityManager extends Extension {
         });
 
         if (shortestDistance > tolerance) {
-            return null;
+            return undefined;
         }
 
         return result;
@@ -115,9 +115,9 @@ class EntityManager extends Extension {
             const side1 = Math.round(Vector.distance(vertices[0], vertices[1]));
             const side2 = Math.round(Vector.distance(vertices[0], vertices[2]));
             const side3 = Math.round(Vector.distance(vertices[1], vertices[2]));
-            //ignore Minimap Arrow
+            //ignore minimap arrow
             if (side1 !== side2 || side2 !== side3) return;
-            //ignore Leader Arrow
+            //ignore leader arrow
             if ('#000000' === ctx.fillStyle) return;
 
             vertices = vertices.map((x) => scaling.toArenaPos(x));
@@ -126,7 +126,7 @@ class EntityManager extends Extension {
             const radius = Math.round(Vector.radius(...vertices));
             const color = ctx.fillStyle as EntityColor;
 
-            let type: EntityType;
+            let type = EntityType.UNKNOWN;
             switch (radius) {
                 case 23:
                     //battleship drone
@@ -157,7 +157,7 @@ class EntityManager extends Extension {
                     if (EntityColor.Triangle === color) type = EntityType.Triangle;
                     break;
             }
-            if (type === undefined) type = EntityType.UNKNOWN;
+            
             this.#add(type, position, { color, radius });
         });
     }
@@ -170,7 +170,7 @@ class EntityManager extends Extension {
             const radius = Math.round(Vector.radius(...vertices));
             const color = ctx.fillStyle as EntityColor;
 
-            let type: EntityType;
+            let type = EntityType.UNKNOWN;
             switch (radius) {
                 case 55:
                     //square
@@ -179,7 +179,7 @@ class EntityManager extends Extension {
                     if (TeamColors.includes(color) || EntityColor.NecromancerDrone === color) type = EntityType.Drone;
                     break;
             }
-            if (type === undefined) type = EntityType.UNKNOWN;
+
             this.#add(type, position, { color, radius });
         });
     }
@@ -192,7 +192,7 @@ class EntityManager extends Extension {
             const radius = Math.round(Vector.radius(...vertices));
             const color = ctx.fillStyle as EntityColor;
 
-            let type: EntityType;
+            let type = EntityType.UNKNOWN;
             switch (radius) {
                 case 75:
                     if (EntityColor.Pentagon === color) type = EntityType.Pentagon;
@@ -201,7 +201,7 @@ class EntityManager extends Extension {
                     if (EntityColor.AlphaPentagon === color) type = EntityType.AlphaPentagon;
                     break;
             }
-            if (type === undefined) type = EntityType.UNKNOWN;
+
             this.#add(type, position, { color, radius });
         });
     }

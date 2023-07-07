@@ -41,21 +41,25 @@ class Player extends EventEmitter {
 
             //Mouse events
             const canvas = document.getElementById('canvas');
-            canvas.onmousemove = new Proxy(canvas.onmousemove, {
+            if(canvas == null) {
+                throw new Error('diepAPI: Game canvas does not exist.');
+            }
+
+            canvas.onmousemove = new Proxy(canvas.onmousemove ?? (() => {}), {
                 apply: (target, thisArg, args) => {
                     if (this.#mouseLock) return;
                     this.#onmousemove(args[0]);
                     return Reflect.apply(target, thisArg, args);
                 },
             });
-            canvas.onmousedown = new Proxy(canvas.onmousedown, {
+            canvas.onmousedown = new Proxy(canvas.onmousedown ?? (() => {}), {
                 apply: (target, thisArg, args) => {
                     if (this.#mouseLock) return;
                     this.#onmousedown(args[0]);
                     return Reflect.apply(target, thisArg, args);
                 },
             });
-            canvas.onmouseup = new Proxy(canvas.onmouseup, {
+            canvas.onmouseup = new Proxy(canvas.onmouseup ?? (() => {}), {
                 apply: (target, thisArg, args) => {
                     if (this.#mouseLock) return;
                     this.#onmouseup(args[0]);
@@ -63,13 +67,13 @@ class Player extends EventEmitter {
                 },
             });
             //Key events
-            _window.onkeydown = new Proxy(_window.onkeydown, {
+            _window.onkeydown = new Proxy(_window.onkeydown ?? (() => {}), {
                 apply: (target, thisArg, args) => {
                     this.#onkeydown(args[0]);
                     return Reflect.apply(target, thisArg, args);
                 },
             });
-            _window.onkeyup = new Proxy(_window.onkeyup, {
+            _window.onkeyup = new Proxy(_window.onkeyup ?? (() => {}), {
                 apply: (target, thisArg, args) => {
                     this.#onkeyup(args[0]);
                     return Reflect.apply(target, thisArg, args);

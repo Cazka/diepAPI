@@ -12,7 +12,7 @@ export enum EntityType {
     AlphaPentagon,
     Crasher,
     UNKNOWN,
-}
+};
 
 export enum EntityColor {
     TeamBlue = '#00b2e1',
@@ -25,7 +25,7 @@ export enum EntityColor {
     AlphaPentagon = '#768dfc',
     Crasher = '#f177dd',
     NecromancerDrone = '#fcc376',
-}
+};
 
 export const TeamColors = [EntityColor.TeamBlue, EntityColor.TeamRed, EntityColor.TeamPurple, EntityColor.TeamGreen];
 
@@ -35,7 +35,7 @@ export const TeamColors = [EntityColor.TeamBlue, EntityColor.TeamRed, EntityColo
  * Holds minimal information currently.
  */
 export class Entity extends Movement {
-    constructor(readonly type: EntityType, readonly parent: Entity, readonly extras: any) {
+    constructor(readonly type: EntityType, readonly parent: Entity | undefined, readonly extras: any) {
         super();
     }
 

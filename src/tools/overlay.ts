@@ -5,13 +5,23 @@ import { game } from '../apis/game';
 class Overlay {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
+
     constructor() {
         this.canvas = CanvasKit.createCanvas();
-        this.ctx = this.canvas.getContext('2d');
-        document.body.appendChild(this.canvas);
-        _window.addEventListener('resize', () => this.#onResize());
-        game.on('frame', () => this.#onFrame());
-        this.#onResize();
+        
+        const ctx = this.canvas.getContext('2d');
+        if(ctx == null) {
+            throw new Error('diepAPI: Your browser does not support canvas.');
+        }
+        
+        this.ctx = ctx;
+        
+        game.once('ready', () => {
+            document.body.appendChild(this.canvas);
+            _window.addEventListener('resize', () => this.#onResize());
+            game.on('frame', () => this.#onFrame());
+            this.#onResize();
+        })
     }
 
     #onResize() {
