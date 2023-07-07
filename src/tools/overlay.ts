@@ -13,13 +13,15 @@ class Overlay {
         if(ctx == null) {
             throw new Error('diepAPI: Your browser does not support canvas.');
         }
-
+        
         this.ctx = ctx;
-
-        document.body.appendChild(this.canvas);
-        _window.addEventListener('resize', () => this.#onResize());
-        game.on('frame', () => this.#onFrame());
-        this.#onResize();
+        
+        game.once('ready', () => {
+            document.body.appendChild(this.canvas);
+            _window.addEventListener('resize', () => this.#onResize());
+            game.on('frame', () => this.#onFrame());
+            this.#onResize();
+        })
     }
 
     #onResize() {
