@@ -5,7 +5,7 @@ import { game } from './game';
 import { minimap } from './minimap';
 
 class Camera {
-    #position: Vector;
+    #position: Vector = new Vector(0, 0);
 
     constructor() {
         game.on('frame_end', () => {

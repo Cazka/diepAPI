@@ -3,6 +3,7 @@ import { EventEmitter } from '../core/event_emitter';
 
 /**
  * Events:
+ * - ready: Emitted when the game is ready
  * - frame: Emitted every frame. Can be used for things that should be executed on every frame
  * - frame_end: Emitted after `frame` and is mainly used internally to update position variables
  * - state => (state): Emitted whenever the game changes its state: 'home', 'game', 'stats', 'loading', 'captcha
@@ -14,7 +15,7 @@ import { EventEmitter } from '../core/event_emitter';
  */
 class Game extends EventEmitter {
     #ready = false;
-    #shadowRoot: ShadowRoot;
+    #shadowRoot: ShadowRoot | undefined | null;
 
     constructor() {
         super();
@@ -35,7 +36,11 @@ class Game extends EventEmitter {
     #onready(): void {
         setTimeout(() => super.emit('ready'), 100);
 
-        this.#shadowRoot = document.querySelector('d-base').shadowRoot;
+        this.#shadowRoot = document.querySelector('d-base')?.shadowRoot;
+        if(this.#shadowRoot == null) {
+            throw new Error('diepAPI: Shadow root does not exist.');
+        }
+
         new MutationObserver((mutationList, observer) => {
             mutationList.forEach((mutation) => {
                 if (mutation.addedNodes.length === 0) {
@@ -44,33 +49,32 @@ class Game extends EventEmitter {
 
                 super.emit('state', this.state);
                 super.emit(`s_${this.state}`);
-                return;
             });
         }).observe(this.#shadowRoot, { childList: true });
     }
 
-    get state(): string {
-        return this.#shadowRoot.querySelector('.screen').tagName.slice(2).toLowerCase();
+    get state(): string | undefined {
+        return this.#shadowRoot?.querySelector('.screen')?.tagName.slice(2).toLowerCase();
     }
 
     get inHome(): boolean {
-        return this.state == 'home';
+        return this.state === 'home';
     }
 
     get inGame(): boolean {
-        return this.state == 'game';
+        return this.state === 'game';
     }
 
     get inStats(): boolean {
-        return this.state == 'stats';
+        return this.state === 'stats';
     }
 
     get inLoading(): boolean {
-        return this.state == 'loading';
+        return this.state === 'loading';
     }
 
-    get isCaptcha(): boolean {
-        return this.state == 'captcha';
+    get inCaptcha(): boolean {
+        return this.state === 'captcha';
     }
 }
 

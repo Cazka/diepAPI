@@ -1,5 +1,9 @@
 import { Vector } from './vector';
 
+type FunctionKeys<T> = {
+    [K in keyof T]: T[K] extends Function? K : never;
+}[keyof T];
+  
 export class CanvasKit {
     /**
      * If you need a canvas then create it with this method.
@@ -9,7 +13,7 @@ export class CanvasKit {
         canvas.className = 'CanvasKit-bypass';
         canvas.style.pointerEvents = 'none';
         canvas.style.position = 'fixed';
-        canvas.style['z-index'] = 1;
+        canvas.style.zIndex = '1';
         canvas.style.top = '0px';
         canvas.style.left = '0px';
         canvas.style.right = '0px';
@@ -34,8 +38,8 @@ export class CanvasKit {
     /**
      * The consumer will be called before
      */
-    static hookCtx(
-        method: string,
+    static hookCtx<T extends FunctionKeys<CanvasRenderingContext2D>>(
+        method: T,
         consumer: (target: Function, thisArg: CanvasRenderingContext2D, args: any[]) => void
     ): void {
         const target = _window.CanvasRenderingContext2D.prototype;
@@ -51,8 +55,8 @@ export class CanvasKit {
      * replaces the function. Use `return Reflect.apply(target, thisArg, args);` in
      * your function to call the original function.
      */
-    static overrideCtx(
-        method: string,
+    static overrideCtx<T extends FunctionKeys<CanvasRenderingContext2D>>(
+        method: T,
         func: (target: Function, thisArg: CanvasRenderingContext2D, args: any[]) => any
     ): void {
         const target = _window.CanvasRenderingContext2D.prototype;

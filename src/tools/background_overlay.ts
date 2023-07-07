@@ -6,12 +6,18 @@ class BackgroundOverlay {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
 
-    #gameCanvas: HTMLCanvasElement;
-    #gameContext: CanvasRenderingContext2D;
+    #gameCanvas: HTMLCanvasElement | undefined;
+    #gameContext: CanvasRenderingContext2D | undefined | null;
 
     constructor() {
         this.canvas = CanvasKit.createCanvas();
-        this.ctx = this.canvas.getContext('2d');
+
+        const ctx = this.canvas.getContext('2d');
+        if(ctx == null) {
+            throw new Error('diepAPI: Your browser does not support canvas.');
+        }
+
+        this.ctx = ctx;
 
         _window.addEventListener('resize', () => this.#onResize());
         game.on('frame', () => this.#onFrame());
@@ -19,7 +25,15 @@ class BackgroundOverlay {
 
         game.once('ready', () => {
             this.#gameCanvas = document.getElementById('canvas') as HTMLCanvasElement;
+            if(this.#gameCanvas == null) {
+                throw new Error('diepAPI: Game canvas does not exist.');
+            }
+
             this.#gameContext = this.#gameCanvas.getContext('2d');
+            if(this.#gameContext == null) {
+                throw new Error('diepAPI: Game canvas context does not exist.');
+            }
+            
             this.#hookBackground();
         });
     }
@@ -39,7 +53,7 @@ class BackgroundOverlay {
 
     #hookBackground() {
         CanvasKit.overrideCtx('fillRect', (target, thisArg, args) => {
-            if (typeof thisArg.fillStyle !== 'object') {
+            if (typeof thisArg.fillStyle !== 'object' || this.#gameContext == null) {
                 return Reflect.apply(target, thisArg, args);
             }
             const result = Reflect.apply(target, thisArg, args);

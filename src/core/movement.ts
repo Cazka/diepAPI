@@ -8,7 +8,7 @@ export class Movement {
      * used for average velocity calculation
      */
     readonly #velocitySamplesSize = 10;
-    #velocitySamples = [];
+    #velocitySamples: Vector[] = [];
     #velocitySamplesIndex = 0;
     #velocityLastNow = performance.now();
     get position(): Vector {

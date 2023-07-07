@@ -3,11 +3,14 @@ import { game } from '../apis/game';
 const sleep = (ms: number): Promise<void> => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 class Input {
-    #gameCanvas: HTMLCanvasElement;
+    #gameCanvas: HTMLCanvasElement | undefined;
 
     constructor() {
         game.once('ready', () => {
             this.#gameCanvas = document.getElementById('canvas') as HTMLCanvasElement;
+            if(this.#gameCanvas == null) {
+                throw new Error('diepAPI: Game canvas does not exist.');
+            }
         });
     }
 
@@ -63,7 +66,7 @@ class Input {
             bubbles: true,
         });
 
-        this.#gameCanvas.dispatchEvent(mousemove);
+        this.#gameCanvas?.dispatchEvent(mousemove);
     }
 
     #toKeyCode(key: string): number {
