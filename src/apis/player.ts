@@ -17,7 +17,7 @@ class Player extends EventEmitter {
   #mousePos = new Vector(0, 0);
 
   #username = (_window.localStorage.name as string | undefined) ?? '';
-  #gamemode = (_window.localStorage.gamemode as string | undefined) ?? '';
+  #gamemode = (_window.localStorage.selected_gamemode as string | undefined) ?? '';
   #level = 1;
   #tank = 'Tank';
 
@@ -189,7 +189,7 @@ class Player extends EventEmitter {
   }
 
   async #onspawn(): Promise<void> {
-    this.#gamemode = (_window.localStorage.gamemode as string | undefined) ?? '';
+    this.#gamemode = (_window.localStorage.selected_gamemode as string | undefined) ?? '';
 
     await sleep(50);
     super.emit('spawn');
