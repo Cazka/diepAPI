@@ -110,17 +110,6 @@ class Player extends EventEmitter {
         },
       );
 
-      // username
-      // TODO: dont use trySpawn
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      // (_window.input as any).trySpawn = new Proxy((_window.input as any).trySpawn, {
-      //   apply: (target, thisArg, args) => {
-      //     this.#username = args[0] as string;
-      //     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-argument
-      //     return Reflect.apply(target, thisArg, args);
-      //   },
-      // });
-
       // tank and level event listener
       CanvasKit.hookCtx('fillText', (target, thisArg, args) => {
         const text = args[0];
@@ -190,7 +179,7 @@ class Player extends EventEmitter {
 
   async #onspawn(): Promise<void> {
     this.#gamemode = (_window.localStorage.selected_gamemode as string | undefined) ?? '';
-
+    this.#username = (_window.localStorage.player_name as string | undefined) ?? '';
     await sleep(50);
     super.emit('spawn');
   }
