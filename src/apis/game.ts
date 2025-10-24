@@ -40,21 +40,22 @@ class Game extends EventEmitter {
       super.emit('ready');
     }, 100);
 
-    this.#shadowRoot = document.querySelector('d-base')?.shadowRoot;
-    if (this.#shadowRoot == null) {
-      throw new Error('diepAPI: Shadow root does not exist.');
-    }
+    // TODO: Causes the game not to load. Find a fix.
+    // this.#shadowRoot = document.querySelector('d-base')?.shadowRoot;
+    // if (this.#shadowRoot == null) {
+    //   throw new Error('diepAPI: Shadow root does not exist.');
+    // }
 
-    new MutationObserver((mutationList, observer) => {
-      mutationList.forEach((mutation) => {
-        if (mutation.addedNodes.length === 0) {
-          return;
-        }
+    // new MutationObserver((mutationList, observer) => {
+    //   mutationList.forEach((mutation) => {
+    //     if (mutation.addedNodes.length === 0) {
+    //       return;
+    //     }
 
-        super.emit('state', this.state);
-        super.emit(`s_${this.state}`);
-      });
-    }).observe(this.#shadowRoot, { childList: true });
+    //     super.emit('state', this.state);
+    //     super.emit(`s_${this.state}`);
+    //   });
+    // }).observe(this.#shadowRoot, { childList: true });
   }
 
   get state(): string | undefined {
