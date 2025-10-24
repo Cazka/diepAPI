@@ -1,6 +1,6 @@
 {
   "name": "diepapi",
-  "version": "2.0.3",
+  "version": "4.0.0",
   "description": "An API for https://diep.io",
   "directories": {
     "doc": "docs",
