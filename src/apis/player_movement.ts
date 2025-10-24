@@ -1,5 +1,4 @@
 import { Movement } from '../core/movement';
-
 import { arena } from './arena';
 import { game } from './game';
 import { minimap } from './minimap';
@@ -11,7 +10,9 @@ class PlayerMovement extends Movement {
   constructor() {
     super();
 
-    game.on('frame_end', () => super.updatePos(arena.scale(minimap.arrowPos)));
+    game.on('frame_end', () => {
+      super.updatePos(arena.scale(minimap.arrowPos));
+    });
   }
 }
 

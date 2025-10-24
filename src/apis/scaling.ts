@@ -1,6 +1,5 @@
 import { CanvasKit } from '../core/canvas_kit';
 import { Vector } from '../core/vector';
-
 import { camera } from './camera';
 
 class Scaling {
@@ -10,9 +9,13 @@ class Scaling {
   constructor() {
     // TODO: game.on('ready')
     setTimeout(() => {
+      if (_window.input == null) {
+        throw new Error('diepAPI: window.input does not exist.');
+      }
+
       _window.input.set_convar = new Proxy(_window.input.set_convar, {
         apply: (target, thisArg, args) => {
-          if (args[0] === 'ren_solid_background') this.#drawSolidBackground = args[1];
+          if (args[0] === 'ren_solid_background') this.#drawSolidBackground = args[1] as boolean;
           else Reflect.apply(target, thisArg, args);
         },
       });
@@ -20,16 +23,19 @@ class Scaling {
 
     CanvasKit.overrideCtx('stroke', (target, thisArg, args) => {
       if (thisArg.fillStyle !== '#cdcdcd') {
-        return Reflect.apply(target, thisArg, args);
+        Reflect.apply(target, thisArg, args);
+        return;
       }
       if (thisArg.globalAlpha === 0) {
-        return Reflect.apply(target, thisArg, args);
+        Reflect.apply(target, thisArg, args);
+        return;
       }
 
       this.#scalingFactor = thisArg.globalAlpha * 10;
 
       if (!this.#drawSolidBackground) {
-        return Reflect.apply(target, thisArg, args);
+        Reflect.apply(target, thisArg, args);
+        return;
       }
     });
   }

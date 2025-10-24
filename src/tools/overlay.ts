@@ -1,6 +1,5 @@
-import { CanvasKit } from '../core/canvas_kit';
-
 import { game } from '../apis/game';
+import { CanvasKit } from '../core/canvas_kit';
 
 class Overlay {
   canvas: HTMLCanvasElement;
@@ -18,8 +17,12 @@ class Overlay {
 
     game.once('ready', () => {
       document.body.appendChild(this.canvas);
-      _window.addEventListener('resize', () => this.#onResize());
-      game.on('frame', () => this.#onFrame());
+      _window.addEventListener('resize', () => {
+        this.#onResize();
+      });
+      game.on('frame', () => {
+        this.#onFrame();
+      });
       this.#onResize();
     });
   }

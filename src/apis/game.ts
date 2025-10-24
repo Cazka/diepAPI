@@ -20,7 +20,9 @@ class Game extends EventEmitter {
   constructor() {
     super();
 
-    CanvasKit.hookRAF(() => this.#onframe());
+    CanvasKit.hookRAF(() => {
+      this.#onframe();
+    });
   }
 
   #onframe(): void {
@@ -34,7 +36,9 @@ class Game extends EventEmitter {
   }
 
   #onready(): void {
-    setTimeout(() => super.emit('ready'), 100);
+    setTimeout(() => {
+      super.emit('ready');
+    }, 100);
 
     this.#shadowRoot = document.querySelector('d-base')?.shadowRoot;
     if (this.#shadowRoot == null) {

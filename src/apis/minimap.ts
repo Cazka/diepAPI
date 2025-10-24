@@ -1,6 +1,5 @@
 import { CanvasKit } from '../core/canvas_kit';
 import { Vector } from '../core/vector';
-
 import { game } from './game';
 
 /**
@@ -19,11 +18,15 @@ class Minimap {
 
   constructor() {
     game.once('ready', () => {
+      if (_window.input == null) {
+        throw new Error('diepAPI: window.input does not exist.');
+      }
+
       _window.input.set_convar('ren_minimap_viewport', 'true');
       _window.input.set_convar = new Proxy(_window.input.set_convar, {
         apply: (target, thisArg, args) => {
           if (args[0] === 'ren_minimap_viewport') {
-            this.#drawViewport = args[1];
+            this.#drawViewport = args[1] as boolean;
             return;
           }
 
@@ -71,20 +74,23 @@ class Minimap {
       const transform = thisArg.getTransform();
 
       if (thisArg.globalAlpha !== 0.1) {
-        return Reflect.apply(target, thisArg, args);
+        Reflect.apply(target, thisArg, args);
+        return;
       }
       if (
         Math.abs(transform.a / transform.d - _window.innerWidth / _window.innerHeight) >
         (_window.innerWidth / _window.innerHeight) * 0.000_05
       ) {
-        return Reflect.apply(target, thisArg, args);
+        Reflect.apply(target, thisArg, args);
+        return;
       }
 
       this.#viewportDim = new Vector(transform.a, transform.d);
       this.#viewportPos = new Vector(transform.e, transform.f);
 
       if (this.#drawViewport) {
-        return Reflect.apply(target, thisArg, args);
+        Reflect.apply(target, thisArg, args);
+        return;
       }
     });
   }

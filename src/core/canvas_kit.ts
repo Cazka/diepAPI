@@ -1,6 +1,7 @@
 import { Vector } from './vector';
 
 type FunctionKeys<T> = {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   [K in keyof T]: T[K] extends Function ? K : never;
 }[keyof T];
 
@@ -40,11 +41,19 @@ export class CanvasKit {
    */
   static hookCtx<T extends FunctionKeys<CanvasRenderingContext2D>>(
     method: T,
-    consumer: (target: Function, thisArg: CanvasRenderingContext2D, args: any[]) => void,
+    consumer: (
+      target: CanvasRenderingContext2D[T],
+      thisArg: CanvasRenderingContext2D,
+      args: Parameters<CanvasRenderingContext2D[T]>,
+    ) => void,
   ): void {
     const target = _window.CanvasRenderingContext2D.prototype;
     target[method] = new Proxy(target[method], {
-      apply(target, thisArg, args) {
+      apply(
+        target,
+        thisArg: CanvasRenderingContext2D,
+        args: Parameters<CanvasRenderingContext2D[T]>,
+      ) {
         if (thisArg.canvas.className !== 'CanvasKit-bypass') consumer(target, thisArg, args);
         return Reflect.apply(target, thisArg, args);
       },
@@ -57,11 +66,19 @@ export class CanvasKit {
    */
   static overrideCtx<T extends FunctionKeys<CanvasRenderingContext2D>>(
     method: T,
-    func: (target: Function, thisArg: CanvasRenderingContext2D, args: any[]) => any,
+    func: (
+      target: CanvasRenderingContext2D[T],
+      thisArg: CanvasRenderingContext2D,
+      args: Parameters<CanvasRenderingContext2D[T]>,
+    ) => unknown,
   ): void {
     const target = _window.CanvasRenderingContext2D.prototype;
     target[method] = new Proxy(target[method], {
-      apply(target, thisArg, args) {
+      apply(
+        target,
+        thisArg: CanvasRenderingContext2D,
+        args: Parameters<CanvasRenderingContext2D[T]>,
+      ) {
         if (thisArg.canvas.className !== 'CanvasKit-bypass') return func(target, thisArg, args);
         return Reflect.apply(target, thisArg, args);
       },

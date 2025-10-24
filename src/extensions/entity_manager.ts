@@ -1,6 +1,6 @@
-import { CanvasKit, Vector } from '../core';
 import { game, playerMovement, scaling } from '../apis';
-import { Entity, EntityType, EntityColor, TeamColors } from '../types/entity';
+import { CanvasKit, Vector } from '../core';
+import { Entity, EntityColor, EntityType, TeamColors } from '../types/entity';
 import { Extension } from './extension';
 
 const random_id = () => Math.random().toString(36).slice(2, 5);
@@ -56,7 +56,7 @@ class EntityManager extends Extension {
    *
    * Will either find the entity in `#entitiesLastFrame` or create a new `Entity`.
    */
-  #add(type: EntityType, position: Vector, extras: object = {}) {
+  #add(type: EntityType, position: Vector, extras: Partial<Entity['extras']>): void {
     let entity = this.#findEntity(type, position);
 
     if (!entity) {
@@ -69,7 +69,7 @@ class EntityManager extends Extension {
       });
     }
     //TODO: remove radius from extras
-    entity.extras.radius = (extras as any).radius;
+    entity.extras.radius = extras.radius;
 
     entity.updatePos(position);
     this.#entities.push(entity);
@@ -89,11 +89,11 @@ class EntityManager extends Extension {
    * Searches `#entitiesLastFrame` for the entity that is closest to `position`
    * @returns the entity or null if there is no match.
    */
-  #findEntity(type: EntityType, position: Vector, tolerance: number = 42): Entity | undefined {
+  #findEntity(type: EntityType, position: Vector, tolerance = 42): Entity | undefined {
     let result = undefined;
     let shortestDistance = Infinity;
 
-    this.#entitiesLastFrame.forEach((entity, i) => {
+    this.#entitiesLastFrame.forEach((entity) => {
       if (entity.type !== type) return;
 
       const distance = Vector.distance(entity.position, position);
@@ -239,6 +239,8 @@ class EntityManager extends Extension {
         index = 1;
         return;
       }
+      // TODO: check if this is a bug.
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (index === 3) {
         index++;
         return;

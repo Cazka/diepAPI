@@ -1,5 +1,5 @@
-import { Vector } from '../core/vector';
 import { Movement } from '../core/movement';
+import { Vector } from '../core/vector';
 
 export enum EntityType {
   Player,
@@ -22,6 +22,7 @@ export enum EntityColor {
   Square = '#ffe869',
   Triangle = '#fc7677',
   Pentagon = '#768dfc',
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   AlphaPentagon = '#768dfc',
   Crasher = '#f177dd',
   NecromancerDrone = '#fcc376',
@@ -43,7 +44,12 @@ export class Entity extends Movement {
   constructor(
     readonly type: EntityType,
     readonly parent: Entity | undefined,
-    readonly extras: any,
+    readonly extras: {
+      id: string;
+      timestamp: number;
+      color?: string;
+      radius?: number;
+    },
   ) {
     super();
   }

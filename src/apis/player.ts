@@ -1,7 +1,6 @@
 import { CanvasKit } from '../core/canvas_kit';
 import { EventEmitter } from '../core/event_emitter';
 import { Vector } from '../core/vector';
-
 import { game } from './game';
 import { gamepad } from './gamepad';
 import { input } from './input';
@@ -17,8 +16,8 @@ class Player extends EventEmitter {
   #mouseCanvasPos = new Vector(0, 0);
   #mousePos = new Vector(0, 0);
 
-  #username = _window.localStorage.name;
-  #gamemode = _window.localStorage.gamemode;
+  #username = (_window.localStorage.name as string | undefined) ?? '';
+  #gamemode = (_window.localStorage.gamemode as string | undefined) ?? '';
   #level = 1;
   #tank = 'Tank';
 
@@ -32,8 +31,8 @@ class Player extends EventEmitter {
         if (this.#isDead == isDead) return;
         this.#isDead = isDead;
 
-        if (this.#isDead) this.#ondead();
-        else this.#onspawn();
+        if (this.#isDead) void this.#ondead();
+        else void this.#onspawn();
       });
       //update mouse position
       game.on('frame', () => {
@@ -46,45 +45,78 @@ class Player extends EventEmitter {
         throw new Error('diepAPI: Game canvas does not exist.');
       }
 
-      canvas.onmousemove = new Proxy(canvas.onmousemove ?? (() => {}), {
-        apply: (target, thisArg, args) => {
-          if (this.#mouseLock) return;
-          this.#onmousemove(args[0]);
-          return Reflect.apply(target, thisArg, args);
+      canvas.onmousemove = new Proxy(
+        canvas.onmousemove ??
+          (() => {
+            /* empty */
+          }),
+        {
+          apply: (target, thisArg, args) => {
+            if (this.#mouseLock) return;
+            this.#onmousemove(args[0] as MouseEvent);
+            return Reflect.apply(target, thisArg, args);
+          },
         },
-      });
-      canvas.onmousedown = new Proxy(canvas.onmousedown ?? (() => {}), {
-        apply: (target, thisArg, args) => {
-          if (this.#mouseLock) return;
-          this.#onmousedown(args[0]);
-          return Reflect.apply(target, thisArg, args);
+      );
+      canvas.onmousedown = new Proxy(
+        canvas.onmousedown ??
+          (() => {
+            /* empty */
+          }),
+        {
+          apply: (target, thisArg, args) => {
+            if (this.#mouseLock) return;
+            this.#onmousedown(args[0] as MouseEvent);
+            return Reflect.apply(target, thisArg, args);
+          },
         },
-      });
-      canvas.onmouseup = new Proxy(canvas.onmouseup ?? (() => {}), {
-        apply: (target, thisArg, args) => {
-          if (this.#mouseLock) return;
-          this.#onmouseup(args[0]);
-          return Reflect.apply(target, thisArg, args);
+      );
+      canvas.onmouseup = new Proxy(
+        canvas.onmouseup ??
+          (() => {
+            /* empty */
+          }),
+        {
+          apply: (target, thisArg, args) => {
+            if (this.#mouseLock) return;
+            this.#onmouseup(args[0] as MouseEvent);
+            return Reflect.apply(target, thisArg, args);
+          },
         },
-      });
+      );
       //Key events
-      _window.onkeydown = new Proxy(_window.onkeydown ?? (() => {}), {
-        apply: (target, thisArg, args) => {
-          this.#onkeydown(args[0]);
-          return Reflect.apply(target, thisArg, args);
+      _window.onkeydown = new Proxy(
+        _window.onkeydown ??
+          (() => {
+            /* empty */
+          }),
+        {
+          apply: (target, thisArg, args) => {
+            this.#onkeydown(args[0] as KeyboardEvent);
+            return Reflect.apply(target, thisArg, args);
+          },
         },
-      });
-      _window.onkeyup = new Proxy(_window.onkeyup ?? (() => {}), {
-        apply: (target, thisArg, args) => {
-          this.#onkeyup(args[0]);
-          return Reflect.apply(target, thisArg, args);
+      );
+      _window.onkeyup = new Proxy(
+        _window.onkeyup ??
+          (() => {
+            /* empty */
+          }),
+        {
+          apply: (target, thisArg, args) => {
+            this.#onkeyup(args[0] as KeyboardEvent);
+            return Reflect.apply(target, thisArg, args);
+          },
         },
-      });
+      );
 
       // username
-      _window.input.trySpawn = new Proxy(_window.input.trySpawn, {
+      // TODO: dont use trySpawn
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      (_window.input as any).trySpawn = new Proxy((_window.input as any).trySpawn, {
         apply: (target, thisArg, args) => {
-          this.#username = args[0];
+          this.#username = args[0] as string;
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-argument
           return Reflect.apply(target, thisArg, args);
         },
       });
@@ -92,7 +124,7 @@ class Player extends EventEmitter {
       // tank and level event listener
       CanvasKit.hookCtx('fillText', (target, thisArg, args) => {
         const text = args[0];
-        const match = text.match(/^Lvl (\d+) (.+)$/);
+        const match = /^Lvl (\d+) (.+)$/.exec(text);
 
         if (match == null) {
           return;
@@ -157,7 +189,7 @@ class Player extends EventEmitter {
   }
 
   async #onspawn(): Promise<void> {
-    this.#gamemode = _window.localStorage.gamemode;
+    this.#gamemode = (_window.localStorage.gamemode as string | undefined) ?? '';
 
     await sleep(50);
     super.emit('spawn');
@@ -168,15 +200,19 @@ class Player extends EventEmitter {
   }
 
   async spawn(name: string = this.#username): Promise<void> {
+    await Promise.resolve();
+
     if (!this.#isDead) {
       return;
     }
 
-    _window.input.trySpawn(name);
+    // TODO: dont use trySpawn
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+    (_window.input as any).trySpawn(name);
   }
 
   async upgrade_stat(id: number, level: number): Promise<void> {
-    if (id < 1 || id > 8) throw `diepAPI: ${id} is not a supported stat`;
+    if (id < 1 || id > 8) throw new Error(`diepAPI: ${id} is not a supported stat`);
 
     input.keyDown(85);
     for (let i = 0; i < level; i++) {

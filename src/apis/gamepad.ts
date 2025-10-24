@@ -15,11 +15,10 @@ class Gamepad {
    */
   constructor() {
     this.#axes = [0, 0, 0, 0];
-    this.#buttons = [...Array(17)].map((x) => {
-      return { pressed: false };
-    });
+    this.#buttons = Array.from({ length: 17 }, () => ({ pressed: false }));
     this.connected = false;
 
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     _window.navigator.getGamepads = new Proxy(_window.navigator.getGamepads, {
       apply: (target, thisArg, args) => {
         if (this.connected) return [this.#toGamepad()];
@@ -31,36 +30,40 @@ class Gamepad {
   set x(value: number) {
     this.#axes[0] = value;
   }
-  set y(value: number) {
-    this.#axes[1] = value;
-  }
-  set mx(value: number) {
-    this.#axes[2] = value;
-  }
-  set my(value: number) {
-    this.#axes[3] = value;
-  }
-  set leftMouse(value: boolean) {
-    this.#buttons[7].pressed = value;
-  }
-  set rightMouse(value: boolean) {
-    this.#buttons[6].pressed = value;
-  }
-
   get x(): number {
     return this.#axes[0];
+  }
+
+  set y(value: number) {
+    this.#axes[1] = value;
   }
   get y(): number {
     return this.#axes[1];
   }
+
+  set mx(value: number) {
+    this.#axes[2] = value;
+  }
   get mx(): number {
     return this.#axes[2];
+  }
+
+  set my(value: number) {
+    this.#axes[3] = value;
   }
   get my(): number {
     return this.#axes[3];
   }
+
+  set leftMouse(value: boolean) {
+    this.#buttons[7].pressed = value;
+  }
   get leftMouse(): boolean {
     return this.#buttons[7].pressed;
+  }
+
+  set rightMouse(value: boolean) {
+    this.#buttons[6].pressed = value;
   }
   get rightMouse(): boolean {
     return this.#buttons[6].pressed;

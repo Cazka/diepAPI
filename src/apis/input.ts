@@ -4,11 +4,11 @@ const sleep = (ms: number): Promise<void> =>
   new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 class Input {
-  #gameCanvas: HTMLCanvasElement | undefined;
+  #gameCanvas: HTMLCanvasElement | undefined | null;
 
   constructor() {
     game.once('ready', () => {
-      this.#gameCanvas = document.getElementById('canvas') as HTMLCanvasElement;
+      this.#gameCanvas = document.getElementById('canvas') as HTMLCanvasElement | null;
       if (this.#gameCanvas == null) {
         throw new Error('diepAPI: Game canvas does not exist.');
       }

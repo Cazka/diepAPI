@@ -1,12 +1,9 @@
-import { Vector } from '../core/vector';
-import { Entity, EntityType } from '../types/entity';
-
-import { scaling } from '../apis/scaling';
 import { game } from '../apis/game';
 import { player } from '../apis/player';
-
+import { scaling } from '../apis/scaling';
+import { Vector } from '../core/vector';
 import { overlay } from '../tools/overlay';
-
+import { Entity, EntityType } from '../types/entity';
 import { entityManager } from './entity_manager';
 import { Extension } from './extension';
 
@@ -26,7 +23,7 @@ class DebugTool extends Extension {
           const position = scaling.toCanvasPos(entity.position);
           const futurePos = scaling.toCanvasPos(entity.predictPos(1000));
           const dimensions = scaling.toCanvasUnits(
-            new Vector(2 * entity.extras.radius, 2 * entity.extras.radius),
+            new Vector(2 * (entity.extras.radius ?? 0), 2 * (entity.extras.radius ?? 0)),
           );
 
           if (this.#drawBoundingBox) {
@@ -84,7 +81,8 @@ class DebugTool extends Extension {
   #_drawboundingBox(entity: Entity, position: Vector, dimensions: Vector) {
     overlay.ctx.save();
 
-    overlay.ctx.strokeStyle = entity.type === EntityType.UNKNOWN ? '#ffffff' : entity.extras.color;
+    overlay.ctx.strokeStyle =
+      entity.type === EntityType.UNKNOWN ? '#ffffff' : (entity.extras.color ?? '#ffffff');
     overlay.ctx.lineWidth = scaling.toCanvasUnits(new Vector(5, 5)).x;
 
     overlay.ctx.strokeRect(
@@ -136,7 +134,7 @@ class DebugTool extends Extension {
 
     const fontSize = scaling.toCanvasUnits(new Vector(30, 30)).x;
 
-    overlay.ctx.font = fontSize + 'px Ubuntu';
+    overlay.ctx.font = `${fontSize} px Ubuntu`;
     overlay.ctx.fillStyle = `#ffffff`;
     overlay.ctx.strokeStyle = '#000000';
     overlay.ctx.lineWidth = fontSize / 5;
@@ -161,7 +159,7 @@ class DebugTool extends Extension {
         Game Info:
         gamemode: ${player.gamemode}
         entities: ${entityManager.entities.length}
-        
+
         Player Info:
         Is dead: ${player.isDead}
         level: ${player.level}

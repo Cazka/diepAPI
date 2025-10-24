@@ -1,5 +1,4 @@
 import { Vector } from '../core/vector';
-
 import { arena } from './arena';
 import { game } from './game';
 import { minimap } from './minimap';
