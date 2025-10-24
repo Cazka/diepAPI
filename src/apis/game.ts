@@ -14,68 +14,68 @@ import { EventEmitter } from '../core/event_emitter';
  * - s_captcha: Emitted when the game changes its state to captcha
  */
 class Game extends EventEmitter {
-    #ready = false;
-    #shadowRoot: ShadowRoot | undefined | null;
+  #ready = false;
+  #shadowRoot: ShadowRoot | undefined | null;
 
-    constructor() {
-        super();
+  constructor() {
+    super();
 
-        CanvasKit.hookRAF(() => this.#onframe());
+    CanvasKit.hookRAF(() => this.#onframe());
+  }
+
+  #onframe(): void {
+    if (!this.#ready && _window.input !== undefined) {
+      this.#ready = true;
+      this.#onready();
     }
 
-    #onframe(): void {
-        if (!this.#ready && _window.input !== undefined) {
-            this.#ready = true;
-            this.#onready();
+    super.emit('frame');
+    super.emit('frame_end');
+  }
+
+  #onready(): void {
+    setTimeout(() => super.emit('ready'), 100);
+
+    this.#shadowRoot = document.querySelector('d-base')?.shadowRoot;
+    if (this.#shadowRoot == null) {
+      throw new Error('diepAPI: Shadow root does not exist.');
+    }
+
+    new MutationObserver((mutationList, observer) => {
+      mutationList.forEach((mutation) => {
+        if (mutation.addedNodes.length === 0) {
+          return;
         }
 
-        super.emit('frame');
-        super.emit('frame_end');
-    }
+        super.emit('state', this.state);
+        super.emit(`s_${this.state}`);
+      });
+    }).observe(this.#shadowRoot, { childList: true });
+  }
 
-    #onready(): void {
-        setTimeout(() => super.emit('ready'), 100);
+  get state(): string | undefined {
+    return this.#shadowRoot?.querySelector('.screen')?.tagName.slice(2).toLowerCase();
+  }
 
-        this.#shadowRoot = document.querySelector('d-base')?.shadowRoot;
-        if(this.#shadowRoot == null) {
-            throw new Error('diepAPI: Shadow root does not exist.');
-        }
+  get inHome(): boolean {
+    return this.state === 'home';
+  }
 
-        new MutationObserver((mutationList, observer) => {
-            mutationList.forEach((mutation) => {
-                if (mutation.addedNodes.length === 0) {
-                    return;
-                }
+  get inGame(): boolean {
+    return this.state === 'game';
+  }
 
-                super.emit('state', this.state);
-                super.emit(`s_${this.state}`);
-            });
-        }).observe(this.#shadowRoot, { childList: true });
-    }
+  get inStats(): boolean {
+    return this.state === 'stats';
+  }
 
-    get state(): string | undefined {
-        return this.#shadowRoot?.querySelector('.screen')?.tagName.slice(2).toLowerCase();
-    }
+  get inLoading(): boolean {
+    return this.state === 'loading';
+  }
 
-    get inHome(): boolean {
-        return this.state === 'home';
-    }
-
-    get inGame(): boolean {
-        return this.state === 'game';
-    }
-
-    get inStats(): boolean {
-        return this.state === 'stats';
-    }
-
-    get inLoading(): boolean {
-        return this.state === 'loading';
-    }
-
-    get inCaptcha(): boolean {
-        return this.state === 'captcha';
-    }
+  get inCaptcha(): boolean {
+    return this.state === 'captcha';
+  }
 }
 
 export const game = new Game();

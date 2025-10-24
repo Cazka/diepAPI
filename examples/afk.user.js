@@ -17,15 +17,15 @@ let afkActive = false;
 let afkPosition;
 
 window.addEventListener('keydown', (e) => {
-    if (e.code != 'KeyQ') return;
+  if (e.code != 'KeyQ') return;
 
-    afkActive = !afkActive;
-    player.useGamepad(afkActive);
+  afkActive = !afkActive;
+  player.useGamepad(afkActive);
 
-    if (afkActive) afkPosition = player.position;
+  if (afkActive) afkPosition = player.position;
 });
 
 game.on('frame', () => {
-    if (!afkActive) return;
-    player.moveTo(afkPosition);
+  if (!afkActive) return;
+  player.moveTo(afkPosition);
 });

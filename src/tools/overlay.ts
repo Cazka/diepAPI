@@ -3,39 +3,39 @@ import { CanvasKit } from '../core/canvas_kit';
 import { game } from '../apis/game';
 
 class Overlay {
-    canvas: HTMLCanvasElement;
-    ctx: CanvasRenderingContext2D;
+  canvas: HTMLCanvasElement;
+  ctx: CanvasRenderingContext2D;
 
-    constructor() {
-        this.canvas = CanvasKit.createCanvas();
-        
-        const ctx = this.canvas.getContext('2d');
-        if(ctx == null) {
-            throw new Error('diepAPI: Your browser does not support canvas.');
-        }
-        
-        this.ctx = ctx;
-        
-        game.once('ready', () => {
-            document.body.appendChild(this.canvas);
-            _window.addEventListener('resize', () => this.#onResize());
-            game.on('frame', () => this.#onFrame());
-            this.#onResize();
-        })
+  constructor() {
+    this.canvas = CanvasKit.createCanvas();
+
+    const ctx = this.canvas.getContext('2d');
+    if (ctx == null) {
+      throw new Error('diepAPI: Your browser does not support canvas.');
     }
 
-    #onResize() {
-        this.canvas.width = _window.innerWidth * _window.devicePixelRatio;
-        this.canvas.height = _window.innerHeight * _window.devicePixelRatio;
-    }
+    this.ctx = ctx;
 
-    #onFrame() {
-        this.canvas.width = _window.innerWidth * _window.devicePixelRatio;
-        this.canvas.height = _window.innerHeight * _window.devicePixelRatio;
+    game.once('ready', () => {
+      document.body.appendChild(this.canvas);
+      _window.addEventListener('resize', () => this.#onResize());
+      game.on('frame', () => this.#onFrame());
+      this.#onResize();
+    });
+  }
 
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-    }
+  #onResize() {
+    this.canvas.width = _window.innerWidth * _window.devicePixelRatio;
+    this.canvas.height = _window.innerHeight * _window.devicePixelRatio;
+  }
+
+  #onFrame() {
+    this.canvas.width = _window.innerWidth * _window.devicePixelRatio;
+    this.canvas.height = _window.innerHeight * _window.devicePixelRatio;
+
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+  }
 }
 
 export const overlay = new Overlay();

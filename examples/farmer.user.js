@@ -19,24 +19,24 @@ entityManager.load();
 let farmActive = false;
 
 window.addEventListener('keydown', (e) => {
-    if (e.code != 'KeyP') return;
+  if (e.code != 'KeyP') return;
 
-    farmActive = !farmActive;
+  farmActive = !farmActive;
 });
 
 game.on('frame', () => {
-    if (!farmActive) return;
-    const entities = entityManager.entities.filter((x) => x.type > 3 && x.type !== 9);
+  if (!farmActive) return;
+  const entities = entityManager.entities.filter((x) => x.type > 3 && x.type !== 9);
 
-    if (entities.length === 0) {
-        return;
-    }
+  if (entities.length === 0) {
+    return;
+  }
 
-    const entity = entities.reduce((acc, x) => {
-        const distAcc = Vector.distance(acc.predictPos(100), player.predictPos(100));
-        const distX = Vector.distance(x.predictPos(100), player.predictPos(100));
+  const entity = entities.reduce((acc, x) => {
+    const distAcc = Vector.distance(acc.predictPos(100), player.predictPos(100));
+    const distX = Vector.distance(x.predictPos(100), player.predictPos(100));
 
-        return distX < distAcc ? x : acc;
-    });
-    if (entity) player.lookAt(entity.position);
+    return distX < distAcc ? x : acc;
+  });
+  if (entity) player.lookAt(entity.position);
 });
