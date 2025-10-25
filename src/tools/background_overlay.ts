@@ -21,8 +21,8 @@ class BackgroundOverlay {
     _window.addEventListener('resize', () => {
       this.#onResize();
     });
-    game.on('frame', () => {
-      this.#onFrame();
+    game.on('frame_start', () => {
+      this.#onFrameStart();
     });
     this.#onResize();
 
@@ -46,7 +46,7 @@ class BackgroundOverlay {
     this.canvas.height = _window.innerHeight * _window.devicePixelRatio;
   }
 
-  #onFrame() {
+  #onFrameStart() {
     this.canvas.width = _window.innerWidth * _window.devicePixelRatio;
     this.canvas.height = _window.innerHeight * _window.devicePixelRatio;
 
