@@ -1,6 +1,4 @@
-import { game } from '../apis/game';
-import { player } from '../apis/player';
-import { scaling } from '../apis/scaling';
+import { arena, camera, game, minimap, player, scaling } from '../apis';
 import { Vector } from '../core/vector';
 import { overlay } from '../tools/overlay';
 import { Entity, EntityType } from '../types/entity';
@@ -166,7 +164,23 @@ class DebugTool extends Extension {
         tank: ${player.tank}
         position: ${Math.round(player.position.x)},${Math.round(player.position.y)}
         mouse: ${Math.round(player.mouse.x)},${Math.round(player.mouse.y)}
-        velocity [units/seconds]: ${Math.round(Math.hypot(player.velocity.x, player.velocity.y))}`;
+        velocity [units/seconds]: ${Math.round(Math.hypot(player.velocity.x, player.velocity.y))}
+
+        Arena Info:
+        size: ${Math.round(arena.size)}
+
+        Camera Info:
+        position: ${camera.position.x},${camera.position.y}
+        scaling factor: ${scaling.scalingFactor}
+        fov: ${scaling.fov}
+
+        Minimap Info:
+        minimapDim: ${minimap.minimapDim.x},${minimap.minimapDim.y}
+        minimapPos: ${minimap.minimapPos.x},${minimap.minimapPos.y}
+        viewportDim: ${minimap.viewportDim.x},${minimap.viewportDim.y}
+        viewportPos: ${minimap.viewportPos.x},${minimap.viewportPos.y}
+        arrowPos: ${minimap.arrowPos.x},${minimap.arrowPos.y}
+        `;
 
     overlay.ctx.save();
 
