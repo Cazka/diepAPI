@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         diepAPI
 // @description  https://github.com/Cazka/diepAPI
-// @version      4.0.0
+// @version      3.3.0
 // @author       Cazka
 // @match        https://diep.io/*
 // @icon         https://www.google.com/s2/favicons?domain=diep.io
