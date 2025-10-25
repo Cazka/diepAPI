@@ -22,7 +22,7 @@ class Scaling {
     }, 1000);
 
     CanvasKit.overrideCtx('stroke', (target, thisArg, args) => {
-      if (thisArg.fillStyle !== '#cdcdcd') {
+      if (thisArg.fillStyle !== '#cccccc') {
         Reflect.apply(target, thisArg, args);
         return;
       }
