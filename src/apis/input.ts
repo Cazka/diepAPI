@@ -70,6 +70,44 @@ class Input {
     this.#gameCanvas?.dispatchEvent(mousemove);
   }
 
+  /**
+   * button: 0 = left, 1 = middle, 2 = right
+   */
+  mouseDown(button: 0 | 1 | 2): void {
+    const mouseDown = new MouseEvent('mousedown', {
+      button: button,
+      cancelable: true,
+      composed: true,
+      bubbles: true,
+    });
+
+    _window.dispatchEvent(mouseDown);
+  }
+
+  /**
+   * button: 0 = left, 1 = middle, 2 = right
+   */
+  mouseUp(button: 0 | 1 | 2): void {
+    const mouseUp = new MouseEvent('mouseup', {
+      button: button,
+      cancelable: true,
+      composed: true,
+      bubbles: true,
+    });
+
+    _window.dispatchEvent(mouseUp);
+  }
+
+  /**
+   * button: 0 = left, 1 = middle, 2 = right
+   */
+  async mousePress(button: 0 | 1 | 2): Promise<void> {
+    this.mouseDown(button);
+    await sleep(200);
+    this.mouseUp(button);
+    await sleep(10);
+  }
+
   #toKeyCode(key: string): number {
     if (key.length != 1) {
       throw new Error(`diepAPI: Unsupported key: ${key}`);

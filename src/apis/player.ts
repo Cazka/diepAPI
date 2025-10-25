@@ -212,6 +212,8 @@ class Player extends EventEmitter {
   }
 
   async upgrade_tank(index: number): Promise<void> {
+    if (index < 1) throw new Error(`diepAPI: ${index} is not a supported tank index`);
+
     index -= 1;
     const x_index = index % 2;
     const y_index = Math.floor(index / 2);
@@ -220,7 +222,7 @@ class Player extends EventEmitter {
 
     this.#mouseLock = true;
     input.mouse(x, y);
-    await input.keyPress(1);
+    await input.mousePress(0);
     // wait 200 ms before disabling mouselock
     await sleep(200);
     this.#mouseLock = false;
