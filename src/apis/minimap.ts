@@ -73,7 +73,7 @@ class Minimap {
     CanvasKit.overrideCtx('fillRect', (target, thisArg, args) => {
       const transform = thisArg.getTransform();
 
-      if (thisArg.globalAlpha !== 0.1) {
+      if (Math.round(thisArg.globalAlpha * 10) / 10 !== 0.1) {
         Reflect.apply(target, thisArg, args);
         return;
       }
