@@ -195,9 +195,12 @@ class Player extends EventEmitter {
       return;
     }
 
-    // TODO: dont use trySpawn
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-    (_window.input as any).trySpawn(name);
+    const spawnNameInput = document.getElementById('spawn-nickname') as HTMLInputElement;
+
+    spawnNameInput.select();
+    document.execCommand('insertText', false, name);
+
+    document.getElementById('spawn-button')?.click();
   }
 
   async upgrade_stat(id: number, level: number): Promise<void> {
