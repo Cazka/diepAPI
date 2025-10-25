@@ -4,6 +4,7 @@ import { EventEmitter } from '../core/event_emitter';
 /**
  * Events:
  * - ready: Emitted when the game is ready
+ * - frame_start: Emitted before `frame`.
  * - frame: Emitted every frame. Can be used for things that should be executed on every frame
  * - frame_end: Emitted after `frame` and is mainly used internally to update position variables
  * - state => (state): Emitted whenever the game changes its state: 'home', 'game', 'stats', 'loading', 'captcha
@@ -31,6 +32,7 @@ class Game extends EventEmitter {
       this.#onready();
     }
 
+    super.emit('frame_start');
     super.emit('frame');
     super.emit('frame_end');
   }
