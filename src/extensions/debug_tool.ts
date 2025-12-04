@@ -132,21 +132,43 @@ class DebugTool extends Extension {
 
     const fontSize = scaling.toCanvasUnits(new Vector(30, 30)).x;
 
-    overlay.ctx.font = `${fontSize} px Ubuntu`;
+    overlay.ctx.font = `${fontSize}px Ubuntu`;
     overlay.ctx.fillStyle = `#ffffff`;
     overlay.ctx.strokeStyle = '#000000';
     overlay.ctx.lineWidth = fontSize / 5;
 
+    const text = `${entity.extras.id} ${Math.floor((performance.now() - entity.extras.timestamp) / 1000)}`;
+    const textMetrics = overlay.ctx.measureText(text);
+    const textWidth = textMetrics.actualBoundingBoxRight + textMetrics.actualBoundingBoxLeft;
+    const textHeight = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent;
+
     overlay.ctx.strokeText(
-      `${entity.extras.id} ${Math.floor((performance.now() - entity.extras.timestamp) / 1000)}`,
-      position.x,
-      position.y - dimensions.y * 0.7,
+      text,
+      position.x - textWidth / 2,
+      position.y - dimensions.y / 2 - textHeight / 2,
+    );
+    overlay.ctx.fillText(
+      text,
+      position.x - textWidth / 2,
+      position.y - dimensions.y / 2 - textHeight / 2,
     );
 
+    const positionText = `${entity.position.x.toFixed()},${entity.position.y.toFixed()}`;
+    const positionTextMetrics = overlay.ctx.measureText(positionText);
+    const positionTextWidth =
+      positionTextMetrics.actualBoundingBoxRight + positionTextMetrics.actualBoundingBoxLeft;
+    const positionTextHeight =
+      positionTextMetrics.actualBoundingBoxAscent + positionTextMetrics.actualBoundingBoxDescent;
+
+    overlay.ctx.strokeText(
+      positionText,
+      position.x - positionTextWidth / 2,
+      position.y + dimensions.y / 2 + positionTextHeight,
+    );
     overlay.ctx.fillText(
-      `${entity.extras.id} ${Math.floor((performance.now() - entity.extras.timestamp) / 1000)}`,
-      position.x,
-      position.y - dimensions.y * 0.7,
+      positionText,
+      position.x - positionTextWidth / 2,
+      position.y + dimensions.y / 2 + positionTextHeight,
     );
 
     overlay.ctx.restore();
