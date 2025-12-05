@@ -29,6 +29,7 @@
     "typescript": "^4.9.5",
     "typescript-eslint": "^8.46.2",
     "webpack": "^5.88.1",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^5.1.4",
+    "wrapper-webpack-plugin": "^2.2.2"
   }
 }
