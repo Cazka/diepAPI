@@ -210,6 +210,8 @@ console.log(entityManager.entities);
 
 Keep your tank stationary at its current position. Press Q to toggle AFK mode on/off.
 
+[![Install AFK Script](https://img.shields.io/badge/Install-AFK_Script-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/afk.user.js)
+
 ```javascript
 // ==UserScript==
 // @name         AFK Script
@@ -264,6 +266,8 @@ game.on('frame', () => {
 ### Example 2: Shape Farmer Script
 
 Automatically aims at nearby shapes and shoots them. Press P to toggle farming mode on/off.
+
+[![Install Shape Farmer](https://img.shields.io/badge/Install-Shape_Farmer-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/farmer.user.js)
 
 ```javascript
 // ==UserScript==
