@@ -24,31 +24,51 @@
 
 ---
 
-## 📦 Installation
+## 📦 Getting Started
 
-### As a Userscript (Recommended)
+### Using diepAPI in Your Scripts (Recommended)
 
-**Requirements:** [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/)
+You don't need to install diepAPI separately! Just add a `@require` directive to your userscript, and your userscript manager will automatically load diepAPI for you.
 
-1. Install Tampermonkey or Violentmonkey in your browser
-2. Download the latest `diepAPI.user.js` from [Releases](https://github.com/Cazka/diepAPI/releases)
-3. Your userscript manager will prompt you to install it
-4. Navigate to [diep.io](https://diep.io) and start using the API!
-
-### Using diepAPI in Your Scripts
-
-Once installed, create a new userscript with diepAPI as a dependency:
+Create a new userscript in Tampermonkey/Violentmonkey with:
 
 ```javascript
 // ==UserScript==
 // @name         My Awesome Bot
+// @description  My custom diep.io bot
 // @match        https://diep.io/*
-// @require      https://github.com/Cazka/diepAPI/releases/download/latest/diepAPI.user.js
+// @require      https://github.com/Cazka/diepAPI/releases/latest/download/diepAPI.user.js
 // @grant        none
 // ==/UserScript==
 
-// Your code here - diepAPI is available as window.diepAPI
+// diepAPI is automatically loaded and available here!
+const { game, player } = diepAPI.apis;
+
+game.on('ready', () => {
+  console.log('Bot started!');
+  player.spawn('MyBot');
+});
 ```
+
+That's it! The `@require` line automatically downloads and loads diepAPI before your script runs.
+
+**Requirements:** [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/)
+
+---
+
+### Install Standalone (Optional)
+
+If you want to experiment with diepAPI directly in the browser console without writing a script:
+
+1. Install [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/)
+2. Download `diepAPI.user.js` from [Releases](https://github.com/Cazka/diepAPI/releases)
+3. Install it in your userscript manager
+4. Navigate to [diep.io](https://diep.io)
+5. Open browser console and use `window.diepAPI`
+
+This method is mainly for testing and experimentation. For building bots, use the `@require` method above.
+
+---
 
 ### Building from Source
 
@@ -58,9 +78,17 @@ See the [Building from Source](#-building-from-source) section below.
 
 ## 🚀 Quick Start
 
-Here's a simple script to get you started. This example spawns your tank and logs your position every frame:
+Here's a complete, ready-to-use example. Copy this entire code block and create a new userscript in your userscript manager:
 
 ```javascript
+// ==UserScript==
+// @name         Position Logger
+// @description  Logs player position every frame
+// @match        https://diep.io/*
+// @require      https://github.com/Cazka/diepAPI/releases/latest/download/diepAPI.user.js
+// @grant        none
+// ==/UserScript==
+
 // Access the APIs you need
 const { game, player } = diepAPI.apis;
 
@@ -81,7 +109,14 @@ game.on('frame', () => {
 });
 ```
 
-That's it! You now have access to real-time game data. Let's explore what else you can do.
+**How to use:**
+1. Copy the code above
+2. In Tampermonkey/Violentmonkey, click "Create new script"
+3. Paste the code and save
+4. Navigate to [diep.io](https://diep.io)
+5. Open browser console (F12) to see the logs
+
+The `@require` directive automatically downloads diepAPI - no separate installation needed!
 
 ---
 
@@ -178,12 +213,10 @@ Keep your tank stationary at its current position. Press Q to toggle AFK mode on
 // @version      0.0.5
 // @author       Cazka
 // @match        https://diep.io/*
+// @require      https://github.com/Cazka/diepAPI/releases/latest/download/diepAPI.user.js
 // @icon         https://www.google.com/s2/favicons?domain=diep.io
 // @grant        none
 // ==/UserScript==
-
-// Check if diepAPI is installed
-if (!window.diepAPI) return window.alert('Please install diepAPI to use this script');
 
 const { Vector } = window.diepAPI.core;
 const { player, game } = window.diepAPI.apis;
@@ -234,12 +267,10 @@ Automatically aims at nearby shapes and shoots them. Press P to toggle farming m
 // @version      0.0.7
 // @author       Cazka
 // @match        https://diep.io/*
+// @require      https://github.com/Cazka/diepAPI/releases/latest/download/diepAPI.user.js
 // @icon         https://www.google.com/s2/favicons?domain=diep.io
 // @grant        none
 // ==/UserScript==
-
-// Check if diepAPI is installed
-if (!window.diepAPI) return window.alert('Please install diepAPI to use this script');
 
 const { Vector } = window.diepAPI.core;
 const { player, game } = window.diepAPI.apis;
@@ -387,13 +418,13 @@ npm install
 npm run build
 ```
 
-**Output:** `diepAPI.user.js` in the root directory
+**Output:** `dist/diepAPI.user.js`
 
 ### Development Workflow
 
 1. Make changes to files in `src/`
 2. Run `npm run build` to compile
-3. Install `diepAPI.user.js` in Tampermonkey
+3. Install `dist/diepAPI.user.js` in Tampermonkey
 4. Test your changes at [diep.io](https://diep.io)
 5. Iterate!
 

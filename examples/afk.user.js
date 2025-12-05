@@ -4,11 +4,11 @@
 // @version      0.0.5
 // @author       Cazka
 // @match        https://diep.io/*
+// @require      https://github.com/Cazka/diepAPI/releases/latest/download/diepAPI.user.js
 // @icon         https://www.google.com/s2/favicons?domain=diep.io
 // @namespace    https://greasyfork.org/users/541070
 // @grant        none
 // ==/UserScript==
-if (!window.diepAPI) return window.alert('Please install diepAPI to use this script');
 
 const { Vector } = window.diepAPI.core;
 const { player, game } = window.diepAPI.apis;
