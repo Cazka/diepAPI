@@ -1,39 +1,435 @@
-# diepAPI
+<div align="center">
+  <img src="assets/diepAPI-logo.png" alt="diepAPI Logo" width="400">
 
-diepAPI is a library with many apis that allow you to interact with the game.
+  <p><strong>A powerful JavaScript API for building bots, tools, and automation scripts for diep.io</strong></p>
 
-### APIs:
+  ![Version](https://img.shields.io/badge/version-3.3.0-blue.svg)
+  ![License](https://img.shields.io/badge/license-MIT-green.svg)
+  ![GitHub Stars](https://img.shields.io/github/stars/Cazka/diepAPI?style=social)
+</div>
 
-- arena
-- camera
-- game
-- gamepad
-- minimap
-- player
-- playerMovement
-- scaling
+---
 
-### Building:
+## What is diepAPI?
 
-You can build the library yourself or use my prebuild version that can be found [here](https://github.com/Cazka/diepAPI/releases/).
+**diepAPI** is a comprehensive library that gives you programmatic access to the diep.io game. Build powerful bots and tools with just a few lines of code! Whether you want to create an AFK script, automate shape farming, or build advanced analytics tools, diepAPI makes it easy.
 
+**Key capabilities:**
+- 🎮 **Real-time game state** - Access player position, velocity, level, tank type, and more
+- 🤖 **Player control** - Move, aim, shoot, and upgrade programmatically
+- 👁️ **Entity tracking** - Track all visible players, shapes, and projectiles
+- 🎨 **Canvas overlays** - Draw custom visualizations on top of the game
+- ⚡ **Event-driven** - React to game events like spawning, leveling up, and frame updates
+- 📘 **TypeScript support** - Full type definitions included
+
+---
+
+## 📦 Installation
+
+### As a Userscript (Recommended)
+
+**Requirements:** [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/)
+
+1. Install Tampermonkey or Violentmonkey in your browser
+2. Download the latest `diepAPI.user.js` from [Releases](https://github.com/Cazka/diepAPI/releases)
+3. Your userscript manager will prompt you to install it
+4. Navigate to [diep.io](https://diep.io) and start using the API!
+
+### Using diepAPI in Your Scripts
+
+Once installed, create a new userscript with diepAPI as a dependency:
+
+```javascript
+// ==UserScript==
+// @name         My Awesome Bot
+// @match        https://diep.io/*
+// @require      https://github.com/Cazka/diepAPI/releases/download/latest/diepAPI.user.js
+// @grant        none
+// ==/UserScript==
+
+// Your code here - diepAPI is available as window.diepAPI
 ```
+
+### Building from Source
+
+See the [Building from Source](#-building-from-source) section below.
+
+---
+
+## 🚀 Quick Start
+
+Here's a simple script to get you started. This example spawns your tank and logs your position every frame:
+
+```javascript
+// Access the APIs you need
+const { game, player } = diepAPI.apis;
+
+// Wait for the game to be ready
+game.on('ready', () => {
+  console.log('diepAPI is ready!');
+
+  // Spawn with a custom name
+  player.spawn('MyBot');
+});
+
+// Run code every frame
+game.on('frame', () => {
+  // Access player state
+  console.log('Position:', player.position);
+  console.log('Velocity:', player.velocity);
+  console.log('Level:', player.level);
+});
+```
+
+That's it! You now have access to real-time game data. Let's explore what else you can do.
+
+---
+
+## 📚 Core Concepts
+
+### API Structure
+
+diepAPI is organized into three main namespaces:
+
+- **`diepAPI.apis`** - Core game APIs for accessing state and controlling the player
+  - `game`, `player`, `input`, `arena`, `camera`, `scaling`, `minimap`, `playerMovement`
+
+- **`diepAPI.extensions`** - Optional features that must be loaded before use
+  - `entityManager` (track all visible entities), `debugTool` (visual debugging)
+
+- **`diepAPI.tools`** - Utility tools for drawing and visualization
+  - `overlay` (canvas overlay), `backgroundOverlay` (background canvas)
+
+- **`diepAPI.core`** - Core utilities like `Vector` math
+
+### Events
+
+diepAPI uses an event-driven architecture. Subscribe to events to react to game state changes:
+
+```javascript
+const { game, player } = diepAPI.apis;
+
+// Game events
+game.on('ready', () => console.log('Game is ready!'));
+game.on('frame', () => console.log('New frame'));
+game.on('frame_start', () => console.log('Frame started'));
+game.on('frame_end', () => console.log('Frame ended'));
+
+// Player events
+player.on('spawn', () => console.log('Player spawned'));
+player.on('dead', () => console.log('Player died'));
+player.on('level', (level) => console.log('Level up!', level));
+player.on('tank', (tankType) => console.log('Tank changed:', tankType));
+```
+
+Remove event listeners with `.off()`:
+```javascript
+const handler = () => console.log('Frame');
+game.on('frame', handler);
+game.off('frame', handler); // Remove listener
+```
+
+### Coordinate Systems
+
+diepAPI works with three coordinate systems:
+
+- **Arena coordinates** - Game world coordinates (origin at arena center)
+- **Canvas coordinates** - High-DPI canvas rendering coordinates
+- **Screen coordinates** - Browser viewport pixel coordinates
+
+Convert between them using the `scaling` API:
+
+```javascript
+const { scaling } = diepAPI.apis;
+
+// Convert between coordinate systems
+const arenaPos = scaling.toArenaPos(canvasPos);
+const canvasPos = scaling.toCanvasPos(arenaPos);
+const screenPos = scaling.canvasToScreen(canvasPos);
+const canvasPos = scaling.screenToCanvas(screenPos);
+```
+
+### Loading Extensions
+
+Extensions must be loaded before use:
+
+```javascript
+const { entityManager } = diepAPI.extensions;
+
+// Load the extension (call once)
+entityManager.load();
+
+// Now you can use it
+console.log(entityManager.entities);
+```
+
+---
+
+## 💡 Complete Examples
+
+### Example 1: AFK Script
+
+Keep your tank stationary at its current position. Press Q to toggle AFK mode on/off.
+
+```javascript
+// ==UserScript==
+// @name         AFK Script
+// @description  press Q to activate AFK
+// @version      0.0.5
+// @author       Cazka
+// @match        https://diep.io/*
+// @icon         https://www.google.com/s2/favicons?domain=diep.io
+// @grant        none
+// ==/UserScript==
+
+// Check if diepAPI is installed
+if (!window.diepAPI) return window.alert('Please install diepAPI to use this script');
+
+const { Vector } = window.diepAPI.core;
+const { player, game } = window.diepAPI.apis;
+
+let afkActive = false;
+let afkPosition;
+
+// Toggle AFK mode with Q key
+window.addEventListener('keydown', (e) => {
+  if (e.code != 'KeyQ') return;
+
+  // Toggle AFK state
+  afkActive = !afkActive;
+
+  // Enable/disable API control of player movement
+  // (prevents user keyboard input from interfering)
+  player.useGamepad(afkActive);
+
+  // Save current position when activating AFK
+  if (afkActive) afkPosition = player.position;
+});
+
+// Every frame, move back to the saved position
+game.on('frame', () => {
+  if (!afkActive) return;
+
+  // Move player to the saved AFK position
+  player.moveTo(afkPosition);
+});
+```
+
+**What you'll learn:**
+- Basic event handling with keyboard and game events
+- Using `player.useGamepad()` to enable API control
+- Using `player.moveTo()` to control player position
+- Toggle pattern for activating/deactivating features
+
+---
+
+### Example 2: Shape Farmer Script
+
+Automatically aims at nearby shapes and shoots them. Press P to toggle farming mode on/off.
+
+```javascript
+// ==UserScript==
+// @name         Farm Script
+// @description  press P to start the farmer
+// @version      0.0.7
+// @author       Cazka
+// @match        https://diep.io/*
+// @icon         https://www.google.com/s2/favicons?domain=diep.io
+// @grant        none
+// ==/UserScript==
+
+// Check if diepAPI is installed
+if (!window.diepAPI) return window.alert('Please install diepAPI to use this script');
+
+const { Vector } = window.diepAPI.core;
+const { player, game } = window.diepAPI.apis;
+const { entityManager } = window.diepAPI.extensions;
+
+// Load the entity manager extension to track entities
+entityManager.load();
+
+let farmActive = false;
+
+// Toggle farming mode with P key
+window.addEventListener('keydown', (e) => {
+  if (e.code != 'KeyP') return;
+
+  farmActive = !farmActive;
+});
+
+// Every frame, find and aim at the nearest shape
+game.on('frame', () => {
+  if (!farmActive) return;
+
+  // Filter entities to find shapes only
+  // Entity types: 0-3 are players/projectiles, 4+ are shapes
+  // Type 9 is Alpha Pentagon (too dangerous), so we exclude it
+  const entities = entityManager.entities.filter((x) => x.type > 3 && x.type !== 9);
+
+  if (entities.length === 0) {
+    return; // No shapes nearby
+  }
+
+  // Find the closest shape using reduce
+  const entity = entities.reduce((acc, x) => {
+    // Use predictPos() to account for entity movement
+    // This gives better accuracy when entities are moving
+    const distAcc = Vector.distance(acc.predictPos(100), player.predictPos(100));
+    const distX = Vector.distance(x.predictPos(100), player.predictPos(100));
+
+    // Return whichever entity is closer
+    return distX < distAcc ? x : acc;
+  });
+
+  // Aim at the closest shape
+  if (entity) player.lookAt(entity.position);
+});
+```
+
+**What you'll learn:**
+- Loading and using the `entityManager` extension
+- Filtering entities by type to find specific targets
+- Using `Vector.distance()` for distance calculations
+- Using `predictPos()` for better targeting of moving entities
+- Using `player.lookAt()` to aim at targets
+- Using `reduce()` to find the closest entity
+
+---
+
+## 📖 API Reference
+
+### Core APIs (`diepAPI.apis`)
+
+Quick reference for the main APIs:
+
+| API | Description | Key Properties/Methods |
+|-----|-------------|----------------------|
+| **game** | Game state and events | `.on(event, handler)`, `.off(event, handler)`, `.isReady` |
+| **player** | Player state and control | `.position`, `.velocity`, `.level`, `.tank`, `.isDead`, `.spawn(name)`, `.moveTo(pos)`, `.lookAt(pos)`, `.upgrade_stat(stat, amount)`, `.upgrade_tank(choice)`, `.useGamepad(enabled)` |
+| **input** | Keyboard and mouse control | `.keyDown(key)`, `.keyUp(key)`, `.keyPress(key)`, `.mouse(x, y)`, `.mousePress(button)` |
+| **arena** | Arena information | `.size` (arena dimensions) |
+| **camera** | Camera position tracking | `.position` (current camera position) |
+| **scaling** | Coordinate system conversion | `.toArenaPos(canvasPos)`, `.toCanvasPos(arenaPos)`, `.screenToCanvas(screenPos)`, `.canvasToScreen(canvasPos)` |
+| **minimap** | Minimap position tracking | `.position` (minimap position) |
+| **playerMovement** | Advanced movement tracking | Position/velocity tracking with prediction |
+
+### Extensions (`diepAPI.extensions`)
+
+Extensions must be loaded with `.load()` before use:
+
+| Extension | Description | Usage |
+|-----------|-------------|-------|
+| **entityManager** | Track all visible entities (players, shapes, projectiles) | `.load()`, `.entities` (array), `.getPlayer()` (get your player entity) |
+| **debugTool** | Visual debugging overlays for development | `.load()`, `.enable()`, `.disable()` |
+
+### Tools (`diepAPI.tools`)
+
+| Tool | Description | Usage |
+|------|-------------|-------|
+| **overlay** | Canvas overlay for drawing custom graphics | `.ctx` (CanvasRenderingContext2D) |
+| **backgroundOverlay** | Background layer overlay | `.ctx` (CanvasRenderingContext2D) |
+
+### Core Utilities (`diepAPI.core`)
+
+| Utility | Description | Key Methods |
+|---------|-------------|-------------|
+| **Vector** | Vector math operations | `.add()`, `.subtract()`, `.scale()`, `.distance()`, `.magnitude()`, `.normalize()` |
+
+### Event Reference
+
+**Game Events:**
+- `ready` - Fired when diepAPI is ready to use
+- `frame` - Fired every game frame
+- `frame_start` - Fired at the start of each frame
+- `frame_end` - Fired at the end of each frame
+
+**Player Events:**
+- `spawn` - Fired when the player spawns
+- `dead` - Fired when the player dies
+- `level` - Fired when the player levels up (callback receives level number)
+- `tank` - Fired when the player changes tank (callback receives tank type)
+- `keydown` - Fired when a key is pressed
+- `keyup` - Fired when a key is released
+
+### Entity Types
+
+When using `entityManager`, entities have a `type` property:
+
+- **0-3**: Players and player projectiles (bullets, drones, etc.)
+- **4**: Square
+- **5**: Triangle
+- **6**: Pentagon
+- **7**: Crasher
+- **9**: Alpha Pentagon
+
+Use `entity.type` to filter for specific entity types.
+
+### Full Documentation
+
+For complete API documentation with all methods and properties, visit:
+📘 **[https://cazka.github.io/diepAPI/](https://cazka.github.io/diepAPI/)**
+
+---
+
+## 🔧 Building from Source
+
+Want to modify diepAPI or contribute? Here's how to build it yourself:
+
+```bash
+# Clone the repository
 git clone https://github.com/Cazka/diepAPI.git
+cd diepAPI
+
+# Install dependencies
 npm install
+
+# Build the userscript
 npm run build
 ```
 
-You will find diepAPI.js in the /dist folder.
+**Output:** `diepAPI.user.js` in the root directory
 
-### Working with the API:
+### Development Workflow
 
-include the bundled library in your script and access the api by the global Object `diepAPI`.
-Refer to the documentation and examples for more information.
+1. Make changes to files in `src/`
+2. Run `npm run build` to compile
+3. Install `diepAPI.user.js` in Tampermonkey
+4. Test your changes at [diep.io](https://diep.io)
+5. Iterate!
 
-### Documentation:
+### Other Commands
 
-Documentation can be found [here](https://cazka.github.io/diepAPI/).
+- `npm run lint` - Check code style with ESLint
+- `npm run build-tools` - Compile TypeScript development tools
 
-### Examples:
+---
 
-Examples can be found [here](https://github.com/Cazka/diepAPI/blob/main/examples/).
+## 🤝 Contributing
+
+Contributions are welcome! Whether it's bug reports, feature requests, or code contributions, we'd love your help making diepAPI better.
+
+- **Issues & Bug Reports:** [GitHub Issues](https://github.com/Cazka/diepAPI/issues)
+- **Pull Requests:** Fork the repo, make your changes, and submit a PR
+- **Code Style:** Run `npm run lint` before submitting to ensure consistent code style
+
+---
+
+## 📄 License
+
+diepAPI is licensed under the **MIT License**. See [LICENSE](LICENSE) for details.
+
+---
+
+## 🔗 Helpful Links
+
+- **📘 Full Documentation:** [https://cazka.github.io/diepAPI/](https://cazka.github.io/diepAPI/)
+- **💡 More Examples:** [examples/](https://github.com/Cazka/diepAPI/tree/main/examples)
+- **🐛 Report Issues:** [GitHub Issues](https://github.com/Cazka/diepAPI/issues)
+- **⭐ Star on GitHub:** [Cazka/diepAPI](https://github.com/Cazka/diepAPI)
+
+---
+
+<div align="center">
+  <p>Made with ❤️ for the diep.io community</p>
+  <p><strong>Happy botting! 🤖</strong></p>
+</div>
