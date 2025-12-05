@@ -43,7 +43,7 @@ module.exports = {
   if (_window.diepAPI) return;
 
 `,
-      footer: '\n\n  _window.diepAPI = diepAPI;\n})();'
-    })
-  ]
+      footer: '\n\n  _window.diepAPI = diepAPI;\n})();',
+    }),
+  ],
 };

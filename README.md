@@ -3,9 +3,10 @@
 
   <p><strong>A powerful JavaScript API for building bots, tools, and automation scripts for diep.io</strong></p>
 
-  ![Version](https://img.shields.io/badge/version-3.3.0-blue.svg)
-  ![License](https://img.shields.io/badge/license-MIT-green.svg)
-  ![GitHub Stars](https://img.shields.io/github/stars/Cazka/diepAPI?style=social)
+![Version](https://img.shields.io/badge/version-3.3.1-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![GitHub Stars](https://img.shields.io/github/stars/Cazka/diepAPI?style=social)
+
 </div>
 
 ---
@@ -15,6 +16,7 @@
 **diepAPI** is a comprehensive library that gives you programmatic access to the diep.io game. Build powerful bots and tools with just a few lines of code! Whether you want to create an AFK script, automate shape farming, or build advanced analytics tools, diepAPI makes it easy.
 
 **Key capabilities:**
+
 - 🎮 **Real-time game state** - Access player position, velocity, level, tank type, and more
 - 🤖 **Player control** - Move, aim, shoot, and upgrade programmatically
 - 👁️ **Entity tracking** - Track all visible players, shapes, and projectiles
@@ -110,6 +112,7 @@ game.on('frame', () => {
 ```
 
 **How to use:**
+
 1. Copy the code above
 2. In Tampermonkey/Violentmonkey, click "Create new script"
 3. Paste the code and save
@@ -158,6 +161,7 @@ player.on('tank', (tankType) => console.log('Tank changed:', tankType));
 ```
 
 Remove event listeners with `.off()`:
+
 ```javascript
 const handler = () => console.log('Frame');
 game.on('frame', handler);
@@ -249,6 +253,7 @@ game.on('frame', () => {
 ```
 
 **What you'll learn:**
+
 - Basic event handling with keyboard and game events
 - Using `player.useGamepad()` to enable API control
 - Using `player.moveTo()` to control player position
@@ -318,6 +323,7 @@ game.on('frame', () => {
 ```
 
 **What you'll learn:**
+
 - Loading and using the `entityManager` extension
 - Filtering entities by type to find specific targets
 - Using `Vector.distance()` for distance calculations
@@ -333,48 +339,50 @@ game.on('frame', () => {
 
 Quick reference for the main APIs:
 
-| API | Description | Key Properties/Methods |
-|-----|-------------|----------------------|
-| **game** | Game state and events | `.on(event, handler)`, `.off(event, handler)`, `.isReady` |
-| **player** | Player state and control | `.position`, `.velocity`, `.level`, `.tank`, `.isDead`, `.spawn(name)`, `.moveTo(pos)`, `.lookAt(pos)`, `.upgrade_stat(stat, amount)`, `.upgrade_tank(choice)`, `.useGamepad(enabled)` |
-| **input** | Keyboard and mouse control | `.keyDown(key)`, `.keyUp(key)`, `.keyPress(key)`, `.mouse(x, y)`, `.mousePress(button)` |
-| **arena** | Arena information | `.size` (arena dimensions) |
-| **camera** | Camera position tracking | `.position` (current camera position) |
-| **scaling** | Coordinate system conversion | `.toArenaPos(canvasPos)`, `.toCanvasPos(arenaPos)`, `.screenToCanvas(screenPos)`, `.canvasToScreen(canvasPos)` |
-| **minimap** | Minimap position tracking | `.position` (minimap position) |
-| **playerMovement** | Advanced movement tracking | Position/velocity tracking with prediction |
+| API                | Description                  | Key Properties/Methods                                                                                                                                                                 |
+| ------------------ | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **game**           | Game state and events        | `.on(event, handler)`, `.off(event, handler)`, `.isReady`                                                                                                                              |
+| **player**         | Player state and control     | `.position`, `.velocity`, `.level`, `.tank`, `.isDead`, `.spawn(name)`, `.moveTo(pos)`, `.lookAt(pos)`, `.upgrade_stat(stat, amount)`, `.upgrade_tank(choice)`, `.useGamepad(enabled)` |
+| **input**          | Keyboard and mouse control   | `.keyDown(key)`, `.keyUp(key)`, `.keyPress(key)`, `.mouse(x, y)`, `.mousePress(button)`                                                                                                |
+| **arena**          | Arena information            | `.size` (arena dimensions)                                                                                                                                                             |
+| **camera**         | Camera position tracking     | `.position` (current camera position)                                                                                                                                                  |
+| **scaling**        | Coordinate system conversion | `.toArenaPos(canvasPos)`, `.toCanvasPos(arenaPos)`, `.screenToCanvas(screenPos)`, `.canvasToScreen(canvasPos)`                                                                         |
+| **minimap**        | Minimap position tracking    | `.position` (minimap position)                                                                                                                                                         |
+| **playerMovement** | Advanced movement tracking   | Position/velocity tracking with prediction                                                                                                                                             |
 
 ### Extensions (`diepAPI.extensions`)
 
 Extensions must be loaded with `.load()` before use:
 
-| Extension | Description | Usage |
-|-----------|-------------|-------|
+| Extension         | Description                                               | Usage                                                                   |
+| ----------------- | --------------------------------------------------------- | ----------------------------------------------------------------------- |
 | **entityManager** | Track all visible entities (players, shapes, projectiles) | `.load()`, `.entities` (array), `.getPlayer()` (get your player entity) |
-| **debugTool** | Visual debugging overlays for development | `.load()`, `.enable()`, `.disable()` |
+| **debugTool**     | Visual debugging overlays for development                 | `.load()`, `.enable()`, `.disable()`                                    |
 
 ### Tools (`diepAPI.tools`)
 
-| Tool | Description | Usage |
-|------|-------------|-------|
-| **overlay** | Canvas overlay for drawing custom graphics | `.ctx` (CanvasRenderingContext2D) |
-| **backgroundOverlay** | Background layer overlay | `.ctx` (CanvasRenderingContext2D) |
+| Tool                  | Description                                | Usage                             |
+| --------------------- | ------------------------------------------ | --------------------------------- |
+| **overlay**           | Canvas overlay for drawing custom graphics | `.ctx` (CanvasRenderingContext2D) |
+| **backgroundOverlay** | Background layer overlay                   | `.ctx` (CanvasRenderingContext2D) |
 
 ### Core Utilities (`diepAPI.core`)
 
-| Utility | Description | Key Methods |
-|---------|-------------|-------------|
+| Utility    | Description            | Key Methods                                                                        |
+| ---------- | ---------------------- | ---------------------------------------------------------------------------------- |
 | **Vector** | Vector math operations | `.add()`, `.subtract()`, `.scale()`, `.distance()`, `.magnitude()`, `.normalize()` |
 
 ### Event Reference
 
 **Game Events:**
+
 - `ready` - Fired when diepAPI is ready to use
 - `frame` - Fired every game frame
 - `frame_start` - Fired at the start of each frame
 - `frame_end` - Fired at the end of each frame
 
 **Player Events:**
+
 - `spawn` - Fired when the player spawns
 - `dead` - Fired when the player dies
 - `level` - Fired when the player levels up (callback receives level number)
