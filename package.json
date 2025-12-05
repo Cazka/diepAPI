@@ -2,6 +2,7 @@
   "name": "diepapi",
   "version": "3.3.0",
   "description": "An API for https://diep.io",
+  "author": "Cazka",
   "directories": {
     "doc": "docs",
     "example": "examples"
