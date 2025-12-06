@@ -18,12 +18,8 @@ class BackgroundOverlay {
 
     this.ctx = ctx;
 
-    _window.addEventListener('resize', () => {
-      this.#onResize();
-    });
-    game.on('frame_start', () => {
-      this.#onFrameStart();
-    });
+    _window.addEventListener('resize', () => this.#onResize());
+    game.on('frame_start', () => this.#onFrameStart());
     this.#onResize();
 
     game.once('ready', () => {

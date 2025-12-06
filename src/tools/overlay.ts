@@ -5,6 +5,9 @@ class Overlay {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
 
+  #gameCanvas: HTMLCanvasElement | undefined | null;
+  #gameContext: CanvasRenderingContext2D | undefined | null;
+
   constructor() {
     this.canvas = CanvasKit.createCanvas();
 
@@ -15,15 +18,22 @@ class Overlay {
 
     this.ctx = ctx;
 
+    _window.addEventListener('resize', () => this.#onResize());
+    game.on('frame_start', () => this.#onFrameStart());
+    this.#onResize();
+
     game.once('ready', () => {
-      document.body.appendChild(this.canvas);
-      _window.addEventListener('resize', () => {
-        this.#onResize();
-      });
-      game.on('frame_start', () => {
-        this.#onFrameStart();
-      });
-      this.#onResize();
+      this.#gameCanvas = document.getElementById('canvas') as HTMLCanvasElement | null;
+      if (this.#gameCanvas == null) {
+        throw new Error('diepAPI: Game canvas does not exist.');
+      }
+
+      this.#gameContext = this.#gameCanvas.getContext('2d');
+      if (this.#gameContext == null) {
+        throw new Error('diepAPI: Game canvas context does not exist.');
+      }
+
+      game.on('frame_end', () => this.#drawOnGameCanvas());
     });
   }
 
@@ -38,6 +48,18 @@ class Overlay {
 
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+  }
+
+  #drawOnGameCanvas() {
+    if (this.#gameContext == null) {
+      return;
+    }
+
+    this.#gameContext.save();
+    this.#gameContext.setTransform(1, 0, 0, 1, 0, 0);
+    this.#gameContext.globalAlpha = 1;
+    this.#gameContext.drawImage(this.canvas, 0, 0);
+    this.#gameContext.restore();
   }
 }
 
