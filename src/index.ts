@@ -1,3 +1,7 @@
+import { installEventProxy } from './core/event_proxy';
+
+installEventProxy();
+
 export * as apis from './apis';
 
 export * as core from './core';
