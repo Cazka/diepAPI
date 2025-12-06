@@ -1,20 +1,7 @@
-import { game } from '../apis/game';
-
 const sleep = (ms: number): Promise<void> =>
   new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 class Input {
-  #gameCanvas: HTMLCanvasElement | undefined | null;
-
-  constructor() {
-    game.once('ready', () => {
-      this.#gameCanvas = document.getElementById('canvas') as HTMLCanvasElement | null;
-      if (this.#gameCanvas == null) {
-        throw new Error('diepAPI: Game canvas does not exist.');
-      }
-    });
-  }
-
   keyDown(key: string | number): void {
     if (typeof key == 'string') {
       key = this.#toKeyCode(key);
@@ -67,7 +54,7 @@ class Input {
       bubbles: true,
     });
 
-    this.#gameCanvas?.dispatchEvent(mousemove);
+    _window.dispatchEvent(mousemove);
   }
 
   /**

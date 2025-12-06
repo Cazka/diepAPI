@@ -40,13 +40,8 @@ class Player extends EventEmitter {
       });
 
       //Mouse events
-      const canvas = document.getElementById('canvas');
-      if (canvas == null) {
-        throw new Error('diepAPI: Game canvas does not exist.');
-      }
-
-      canvas.onmousemove = new Proxy(
-        canvas.onmousemove ??
+      _window.onmousemove = new Proxy(
+        _window.onmousemove ??
           (() => {
             /* empty */
           }),
@@ -58,8 +53,8 @@ class Player extends EventEmitter {
           },
         },
       );
-      canvas.onmousedown = new Proxy(
-        canvas.onmousedown ??
+      _window.onmousedown = new Proxy(
+        _window.onmousedown ??
           (() => {
             /* empty */
           }),
@@ -71,8 +66,8 @@ class Player extends EventEmitter {
           },
         },
       );
-      canvas.onmouseup = new Proxy(
-        canvas.onmouseup ??
+      _window.onmouseup = new Proxy(
+        _window.onmouseup ??
           (() => {
             /* empty */
           }),
