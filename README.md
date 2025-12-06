@@ -206,7 +206,53 @@ console.log(entityManager.entities);
 
 ## 💡 Complete Examples
 
-### Example 1: AFK Script
+### Quick Reference
+
+Choose an example based on your experience level:
+
+| Example                                    | Difficulty      | What You'll Learn                        | Install                                                                                                                                                                |
+| ------------------------------------------ | --------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Press O Script](#beginner-press-o-script) | 🟢 Beginner     | Basic events, auto-spawn                 | [![Install](https://img.shields.io/badge/Install-Press_O-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/press_o.user.js)     |
+| [AFK Script](#beginner-afk-script)         | 🟢 Beginner     | Event handling, player control, movement | [![Install](https://img.shields.io/badge/Install-AFK_Script-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/afk.user.js)      |
+| [Shape Farmer](#intermediate-shape-farmer) | 🟡 Intermediate | Entity tracking, filtering, targeting    | [![Install](https://img.shields.io/badge/Install-Shape_Farmer-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/farmer.user.js) |
+
+---
+
+### Beginner Examples
+
+#### Beginner: Press O Script
+
+The simplest possible bot - automatically opens the upgrade menu when you spawn and respawns when you die.
+
+[![Install Press O Script](https://img.shields.io/badge/Install-Press_O_Script-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/press_o.user.js)
+
+```javascript
+// ==UserScript==
+// @name         Press O
+// @description  best script
+// @version      0.0.2
+// @author       Cazka
+// @match        https://diep.io/*
+// @require      https://github.com/Cazka/diepAPI/releases/latest/download/diepAPI.user.js
+// @icon         https://www.google.com/s2/favicons?domain=diep.io
+// @grant        none
+// ==/UserScript==
+
+const { player } = window.diepAPI.apis;
+
+player.on('spawn', async () => await player.keyPress('o'));
+player.on('dead', async () => await player.spawn());
+```
+
+**What you'll learn:**
+
+- Using player events (`spawn`, `dead`)
+- Auto-spawning with `player.spawn()`
+- Simulating key presses with `player.keyPress()`
+
+---
+
+#### Beginner: AFK Script
 
 Keep your tank stationary at its current position. Press Q to toggle AFK mode on/off.
 
@@ -263,7 +309,9 @@ game.on('frame', () => {
 
 ---
 
-### Example 2: Shape Farmer Script
+### Intermediate Examples
+
+#### Intermediate: Shape Farmer
 
 Automatically aims at nearby shapes and shoots them. Press P to toggle farming mode on/off.
 
@@ -457,6 +505,46 @@ Contributions are welcome! Whether it's bug reports, feature requests, or code c
 
 ---
 
+## 👥 Community & Support
+
+### Join Our Discord
+
+[![Discord](https://img.shields.io/discord/298838657974927360?label=Discord&logo=discord&color=7289DA&style=for-the-badge)](https://discord.gg/5q2E3Sx)
+
+Join our Discord community to:
+
+- 💬 Get help and support from other developers
+- 🎨 Share your bots and scripts
+- 💡 Discuss new features and ideas
+- 🐛 Report bugs and get quick assistance
+- 🤝 Connect with the diepAPI community
+
+### Community Projects
+
+Showcase your amazing creations built with diepAPI! See what others have made and share your own.
+
+| Project Name         | Description                            | Author      | Links                    |
+| -------------------- | -------------------------------------- | ----------- | ------------------------ |
+| _Your project here!_ | _Submit a PR to showcase your project_ | _Your name_ | _Link to your repo/gist_ |
+
+**Want to showcase your project?** Submit a PR adding your project to this table! Make sure your project is educational or automation-focused (no cheats/exploits).
+
+### Contributors
+
+A huge thank you to everyone who has contributed to diepAPI! 🎉
+
+- **View all contributors:** [GitHub Contributors](https://github.com/Cazka/diepAPI/graphs/contributors)
+- **Want to contribute?** Check out the [Contributing](#-contributing) section above
+
+We appreciate:
+
+- 🐛 Bug reports and fixes
+- ✨ New features and improvements
+- 📚 Documentation enhancements
+- 💡 Ideas and suggestions
+
+---
+
 ## 📄 License
 
 diepAPI is licensed under the **MIT License**. See [LICENSE](LICENSE) for details.
@@ -466,7 +554,8 @@ diepAPI is licensed under the **MIT License**. See [LICENSE](LICENSE) for detail
 ## 🔗 Helpful Links
 
 - **📘 Full Documentation:** [https://cazka.github.io/diepAPI/](https://cazka.github.io/diepAPI/)
-- **💡 More Examples:** [examples/](https://github.com/Cazka/diepAPI/tree/main/examples)
+- **💡 Examples:** See [Complete Examples](#-complete-examples) (categorized by difficulty) or browse all in [examples/](https://github.com/Cazka/diepAPI/tree/main/examples)
+- **💬 Discord Community:** [Join our Discord](https://discord.gg/5q2E3Sx) - Get help, share projects, and connect with developers
 - **🐛 Report Issues:** [GitHub Issues](https://github.com/Cazka/diepAPI/issues)
 - **⭐ Star on GitHub:** [Cazka/diepAPI](https://github.com/Cazka/diepAPI)
 
