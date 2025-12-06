@@ -509,7 +509,7 @@ Contributions are welcome! Whether it's bug reports, feature requests, or code c
 
 ### Join Our Discord
 
-[![Discord](https://img.shields.io/discord/298838657974927360?label=Discord&logo=discord&color=7289DA&style=for-the-badge)](https://discord.gg/5q2E3Sx)
+[![Discord](https://img.shields.io/discord/727270183181221931?label=Discord&logo=discord&color=7289DA&style=for-the-badge)](https://discord.gg/5q2E3Sx)
 
 Join our Discord community to:
 
