@@ -40,6 +40,7 @@ class Player extends EventEmitter {
       });
 
       //Mouse events
+      // TODO: mouseLock wont work here since the game uses addEventListener. Need to hook into that instead. Maybe we can extend event_proxy.ts to support this.
       _window.onmousemove = new Proxy(
         _window.onmousemove ??
           (() => {
