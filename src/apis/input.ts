@@ -60,8 +60,10 @@ class Input {
   /**
    * button: 0 = left, 1 = middle, 2 = right
    */
-  mouseDown(button: 0 | 1 | 2): void {
+  mouseDown(x: number, y: number, button: 0 | 1 | 2): void {
     const mouseDown = new MouseEvent('mousedown', {
+      clientX: x,
+      clientY: y,
       button: button,
       cancelable: true,
       composed: true,
@@ -74,8 +76,10 @@ class Input {
   /**
    * button: 0 = left, 1 = middle, 2 = right
    */
-  mouseUp(button: 0 | 1 | 2): void {
+  mouseUp(x: number, y: number, button: 0 | 1 | 2): void {
     const mouseUp = new MouseEvent('mouseup', {
+      clientX: x,
+      clientY: y,
       button: button,
       cancelable: true,
       composed: true,
@@ -88,10 +92,10 @@ class Input {
   /**
    * button: 0 = left, 1 = middle, 2 = right
    */
-  async mousePress(button: 0 | 1 | 2): Promise<void> {
-    this.mouseDown(button);
+  async mousePress(x: number, y: number, button: 0 | 1 | 2): Promise<void> {
+    this.mouseDown(x, y, button);
     await sleep(200);
-    this.mouseUp(button);
+    this.mouseUp(x, y, button);
     await sleep(10);
   }
 

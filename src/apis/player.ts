@@ -219,8 +219,7 @@ class Player extends EventEmitter {
     const y = scaling.screenToCanvasUnits(scaling.windowRatio * (y_index * 110 + 120));
 
     this.#mouseLock = true;
-    input.mouse(x, y);
-    await input.mousePress(0);
+    await input.mousePress(x, y, 0);
     // wait 200 ms before disabling mouselock
     await sleep(200);
     this.#mouseLock = false;
