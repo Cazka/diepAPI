@@ -18,8 +18,12 @@ class Overlay {
 
     this.ctx = ctx;
 
-    _window.addEventListener('resize', () => this.#onResize());
-    game.on('frame_start', () => this.#onFrameStart());
+    _window.addEventListener('resize', () => {
+      this.#onResize();
+    });
+    game.on('frame_start', () => {
+      this.#onFrameStart();
+    });
     this.#onResize();
 
     game.once('ready', () => {
@@ -33,7 +37,9 @@ class Overlay {
         throw new Error('diepAPI: Game canvas context does not exist.');
       }
 
-      game.on('frame_end', () => this.#drawOnGameCanvas());
+      game.on('frame_end', () => {
+        this.#drawOnGameCanvas();
+      });
     });
   }
 

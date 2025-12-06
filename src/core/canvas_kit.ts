@@ -15,6 +15,7 @@ export class CanvasKit {
    */
   static createCanvas(): HTMLCanvasElement {
     const canvas = document.createElement('canvas');
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
     (canvas as any)[CANVAS_KIT_BYPASS] = true;
     canvas.style.pointerEvents = 'none';
     canvas.style.position = 'fixed';
@@ -58,6 +59,7 @@ export class CanvasKit {
 
     target[method] = new Proxy(target[method], {
       apply(target, thisArg: RenderingContext, args: Parameters<RenderingContext[T]>) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
         if (!(thisArg.canvas as any)[CANVAS_KIT_BYPASS]) consumer(target, thisArg, args);
         return Reflect.apply(target, thisArg, args);
       },
@@ -83,6 +85,7 @@ export class CanvasKit {
 
     target[method] = new Proxy(target[method], {
       apply(target, thisArg: RenderingContext, args: Parameters<RenderingContext[T]>) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
         if (!(thisArg.canvas as any)[CANVAS_KIT_BYPASS]) return func(target, thisArg, args);
         return Reflect.apply(target, thisArg, args);
       },
@@ -102,7 +105,9 @@ export class CanvasKit {
 
     let vertices: Vector[] = [];
 
-    const onFillPolygon = (ctx: RenderingContext) => cb(vertices, ctx);
+    const onFillPolygon = (ctx: RenderingContext) => {
+      cb(vertices, ctx);
+    };
 
     CanvasKit.hookCtx(
       'beginPath',
