@@ -1,14 +1,14 @@
 import { CanvasKit } from '../core/canvas_kit';
 import { Vector } from '../core/vector';
 import { camera } from './camera';
+import { game } from './game';
 
 class Scaling {
   #scalingFactor = 1;
   #drawSolidBackground = false;
 
   constructor() {
-    // TODO: game.on('ready')
-    setTimeout(() => {
+    game.once('ready', () => {
       if (_window.input == null) {
         throw new Error('diepAPI: window.input does not exist.');
       }
@@ -19,7 +19,7 @@ class Scaling {
           else Reflect.apply(target, thisArg, args);
         },
       });
-    }, 1000);
+    });
 
     CanvasKit.overrideCtx('stroke', (target, thisArg, args) => {
       if (thisArg.fillStyle !== '#cccccc') {
