@@ -26,6 +26,8 @@ class EntityManager extends Extension {
 
       this.#pentagonHook();
 
+      this.#hexagonHook();
+
       //when is a bullet being drawn?
 
       //when is a player being drawn?
@@ -201,6 +203,25 @@ class EntityManager extends Extension {
           break;
         case 200:
           if (EntityColor.AlphaPentagon === color) type = EntityType.AlphaPentagon;
+          break;
+      }
+
+      this.#add(type, position, { color, radius });
+    });
+  }
+
+  #hexagonHook(): void {
+    CanvasKit.hookPolygon(6, (vertices, ctx) => {
+      vertices = vertices.map((x) => scaling.toArenaPos(x));
+
+      const position = Vector.centroid(...vertices);
+      const radius = Math.round(Vector.radius(...vertices));
+      const color = ctx.fillStyle as EntityColor;
+
+      let type = EntityType.UNKNOWN;
+      switch (radius) {
+        case 100:
+          if (EntityColor.Hexagon === color) type = EntityType.Hexagon;
           break;
       }
 

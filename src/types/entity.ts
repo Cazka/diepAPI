@@ -9,6 +9,7 @@ export enum EntityType {
   Square,
   Triangle,
   Pentagon,
+  Hexagon,
   AlphaPentagon,
   Crasher,
   UNKNOWN,
@@ -22,6 +23,7 @@ export enum EntityColor {
   Square = '#ffe869',
   Triangle = '#fc7677',
   Pentagon = '#768dfc',
+  Hexagon = '#35c5db',
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   AlphaPentagon = '#768dfc',
   Crasher = '#f177dd',
