@@ -1,11 +1,12 @@
-import { CanvasKit } from '../core/canvas_kit';
-import { EventEmitter } from '../core/event_emitter';
+import { CanvasKit, EventEmitter } from '../core';
 
 /**
  * Events:
  * - ready: Emitted when the game is ready
- * - frame_start: Emitted before `frame`.
- * - frame: Emitted every frame. Can be used for things that should be executed on every frame
+ * - before_frame: Emitted before the game frame starts
+ * - after_frame: Emitted after the game frame ends
+ * - frame_start: Emitted before `frame` and is mainly used internally to run setup code before the frame handlers
+ * - frame: Emitted every frame after game logic is processed. Can be used for things that should be executed on every frame
  * - frame_end: Emitted after `frame` and is mainly used internally to update position variables
  * - state => (state): Emitted whenever the game changes its state: 'home', 'game', 'stats', 'loading', 'captcha
  * - s_home: Emitted when the game changes its state to home
@@ -15,20 +16,27 @@ import { EventEmitter } from '../core/event_emitter';
  * - s_captcha: Emitted when the game changes its state to captcha
  */
 class Game extends EventEmitter {
-  #ready = false;
+  #isReady = false;
   #shadowRoot: ShadowRoot | undefined | null;
 
   constructor() {
     super();
 
-    CanvasKit.hookRAF(() => {
-      this.#onframe();
+    CanvasKit.replaceRAF((target, thisArg, args) => {
+      super.emit('before_frame');
+
+      this.#onFrame();
+      const result = Reflect.apply(target, thisArg, args);
+
+      super.emit('after_frame');
+
+      return result;
     });
   }
 
-  #onframe(): void {
-    if (!this.#ready && _window.input !== undefined) {
-      this.#ready = true;
+  #onFrame(): void {
+    if (!this.#isReady && _window.input !== undefined) {
+      this.#isReady = true;
       this.#onready();
     }
 

@@ -42,6 +42,28 @@ export class CanvasKit {
   }
 
   /**
+   * replaces the function. Use `return Reflect.apply(target, thisArg, args);` in
+   * your function to call the original function.
+   */
+  static replaceRAF(
+    func: (
+      target: typeof _window.requestAnimationFrame,
+      thisArg: undefined,
+      args: [FrameRequestCallback],
+    ) => number,
+  ): void {
+    _window.requestAnimationFrame = new Proxy(_window.requestAnimationFrame, {
+      apply(
+        target: typeof _window.requestAnimationFrame,
+        thisArg: undefined,
+        args: [FrameRequestCallback],
+      ) {
+        return func(target, thisArg, args);
+      },
+    });
+  }
+
+  /**
    * The consumer will be called before
    */
   static hookCtx<T extends FunctionKeys<RenderingContext>>(

@@ -149,9 +149,11 @@ const { game, player } = diepAPI.apis;
 
 // Game events
 game.on('ready', () => console.log('Game is ready!'));
-game.on('frame', () => console.log('New frame'));
+game.on('before_frame', () => console.log('Before frame'));
 game.on('frame_start', () => console.log('Frame started'));
+game.on('frame', () => console.log('New frame'));
 game.on('frame_end', () => console.log('Frame ended'));
+game.on('after_frame', () => console.log('After frame'));
 
 // Player events
 player.on('spawn', () => console.log('Player spawned'));
@@ -210,11 +212,12 @@ console.log(entityManager.entities);
 
 Choose an example based on your experience level:
 
-| Example                                    | Difficulty      | What You'll Learn                        | Install                                                                                                                                                                |
-| ------------------------------------------ | --------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Press O Script](#beginner-press-o-script) | 🟢 Beginner     | Basic events, auto-spawn                 | [![Install](https://img.shields.io/badge/Install-Press_O-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/press_o.user.js)     |
-| [AFK Script](#beginner-afk-script)         | 🟢 Beginner     | Event handling, player control, movement | [![Install](https://img.shields.io/badge/Install-AFK_Script-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/afk.user.js)      |
-| [Shape Farmer](#intermediate-shape-farmer) | 🟡 Intermediate | Entity tracking, filtering, targeting    | [![Install](https://img.shields.io/badge/Install-Shape_Farmer-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/farmer.user.js) |
+| Example                                        | Difficulty      | What You'll Learn                          | Install                                                                                                                                                                  |
+| ---------------------------------------------- | --------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [Press O Script](#beginner-press-o-script)     | 🟢 Beginner     | Basic events, auto-spawn                   | [![Install](https://img.shields.io/badge/Install-Press_O-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/press_o.user.js)       |
+| [AFK Script](#beginner-afk-script)             | 🟢 Beginner     | Event handling, player control, movement   | [![Install](https://img.shields.io/badge/Install-AFK_Script-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/afk.user.js)        |
+| [Shape Farmer](#intermediate-shape-farmer)     | 🟡 Intermediate | Entity tracking, filtering, targeting      | [![Install](https://img.shields.io/badge/Install-Shape_Farmer-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/farmer.user.js)   |
+| [Safe Zone Keeper](#intermediate-safe-zone-keeper) | 🟡 Intermediate | Position management, boundary logic, vectors | [![Install](https://img.shields.io/badge/Install-Safe_Zone-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/safezone.user.js) |
 
 ---
 
@@ -385,6 +388,123 @@ game.on('frame', () => {
 
 ---
 
+#### Intermediate: Safe Zone Keeper
+
+Automatically keeps your tank within a safe radius from the arena center. Press Z to toggle safe zone mode on/off. Includes visual boundary overlay.
+
+[![Install Safe Zone Keeper](https://img.shields.io/badge/Install-Safe_Zone-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/safezone.user.js)
+
+```javascript
+// ==UserScript==
+// @name         Safe Zone Keeper
+// @description  press Z to activate safe zone mode
+// @version      0.0.1
+// @author       Cazka
+// @match        https://diep.io/*
+// @require      https://github.com/Cazka/diepAPI/releases/latest/download/diepAPI.user.js
+// @icon         https://www.google.com/s2/favicons?domain=diep.io
+// @grant        none
+// ==/UserScript==
+
+const { Vector } = window.diepAPI.core;
+const { player, game, scaling } = window.diepAPI.apis;
+const { overlay } = window.diepAPI.tools;
+
+// Safe zone configuration
+const SAFE_ZONE_RADIUS = 1000; // units from arena center
+const ARENA_CENTER = new Vector(0, 0);
+
+let safeZoneActive = false;
+
+// Toggle safe zone mode with Z key
+window.addEventListener('keydown', (e) => {
+  if (e.code != 'KeyZ') return;
+
+  // Toggle safe zone state
+  safeZoneActive = !safeZoneActive;
+
+  // Enable/disable API control of player movement
+  player.useGamepad(safeZoneActive);
+
+  console.log(`Safe Zone ${safeZoneActive ? 'activated' : 'deactivated'}`);
+});
+
+// Every frame, check if player is outside safe zone
+game.on('frame', () => {
+  // Draw safe zone boundary (always visible)
+  drawSafeZoneBoundary();
+
+  if (!safeZoneActive || player.isDead) return;
+
+  // Calculate distance from arena center
+  const distanceFromCenter = Vector.distance(player.position, ARENA_CENTER);
+
+  // If player is outside safe zone, move back toward center
+  if (distanceFromCenter > SAFE_ZONE_RADIUS) {
+    // Calculate direction vector toward center
+    const directionToCenter = Vector.subtract(ARENA_CENTER, player.position);
+
+    // Normalize the direction vector (make it length 1)
+    const magnitude = Vector.len(directionToCenter);
+    const normalized = Vector.scale(directionToCenter, 1 / magnitude);
+
+    // Move player toward center
+    // Using a small step to make movement smooth
+    const targetPos = Vector.add(player.position, Vector.scale(normalized, 50));
+    player.moveTo(targetPos);
+  }
+});
+
+// Draw the safe zone boundary circle on the overlay
+function drawSafeZoneBoundary() {
+  const ctx = overlay.ctx;
+
+  // Convert arena center to canvas coordinates
+  const centerCanvas = scaling.toCanvasPos(ARENA_CENTER);
+
+  // Convert radius to canvas units
+  const radiusCanvas = scaling.toCanvasUnits(new Vector(SAFE_ZONE_RADIUS, 0)).x;
+
+  ctx.save();
+
+  // Draw boundary circle
+  ctx.strokeStyle = safeZoneActive ? '#00ff00' : '#ffff00';
+  ctx.lineWidth = 3 * window.devicePixelRatio;
+  ctx.setLineDash([10, 10]);
+
+  ctx.beginPath();
+  ctx.arc(centerCanvas.x, centerCanvas.y, radiusCanvas, 0, 2 * Math.PI);
+  ctx.stroke();
+
+  // Draw status text
+  const fontSize = 18 * window.devicePixelRatio;
+  ctx.font = `${fontSize}px Ubuntu`;
+  ctx.fillStyle = safeZoneActive ? '#00ff00' : '#ffff00';
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth = fontSize / 8;
+  ctx.setLineDash([]);
+
+  const statusText = `SAFE ZONE: ${safeZoneActive ? 'ON' : 'OFF'}`;
+
+  ctx.strokeText(statusText, 20, 40);
+  ctx.fillText(statusText, 20, 40);
+
+  ctx.restore();
+}
+```
+
+**What you'll learn:**
+
+- Position management and distance calculations with `Vector.distance()`
+- Boundary detection and response logic
+- Normalizing vectors using `Vector.len()` and `Vector.scale()` for directional movement
+- Using `Vector.subtract()` and `Vector.add()` for vector operations
+- Converting between coordinate systems with `scaling.toCanvasPos()` and `scaling.toCanvasUnits()`
+- Drawing custom visualizations with the `overlay` tool
+- Combining multiple APIs (`player`, `game`, `scaling`, `overlay`)
+
+---
+
 ## 📖 API Reference
 
 ### Core APIs (`diepAPI.apis`)
@@ -429,9 +549,11 @@ Extensions must be loaded with `.load()` before use:
 **Game Events:**
 
 - `ready` - Fired when diepAPI is ready to use
-- `frame` - Fired every game frame
-- `frame_start` - Fired at the start of each frame
-- `frame_end` - Fired at the end of each frame
+- `before_frame` - Fired before the game frame starts
+- `frame_start` - Fired at the start of each frame (used internally for setup)
+- `frame` - Fired every game frame after game logic is processed
+- `frame_end` - Fired at the end of each frame (used internally for cleanup)
+- `after_frame` - Fired after the game frame ends
 
 **Player Events:**
 
