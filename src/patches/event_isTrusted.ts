@@ -3,11 +3,13 @@
  */
 function getProxiedEvent(event: Event): Event {
   const handler: ProxyHandler<Event> = {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     get(target, prop, receiver) {
       if (prop === 'isTrusted') {
         return true;
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return Reflect.get(target, prop, target);
     },
   };

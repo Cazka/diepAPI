@@ -9,8 +9,7 @@ import { scaling } from './scaling';
 
 export type PlayerEvents = 'spawn' | 'dead' | 'level' | 'tank' | 'keydown' | 'keyup';
 
-const sleep = (ms: number): Promise<void> =>
-  new Promise((resolve, reject) => setTimeout(resolve, ms));
+const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
 
 class Player extends EventEmitter<PlayerEvents> {
   #isDead = true;
@@ -52,6 +51,7 @@ class Player extends EventEmitter<PlayerEvents> {
           apply: (target, thisArg, args) => {
             if (this.#mouseLock) return;
             this.#onmousemove(args[0] as MouseEvent);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return Reflect.apply(target, thisArg, args);
           },
         },
@@ -65,6 +65,7 @@ class Player extends EventEmitter<PlayerEvents> {
           apply: (target, thisArg, args) => {
             if (this.#mouseLock) return;
             this.#onmousedown(args[0] as MouseEvent);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return Reflect.apply(target, thisArg, args);
           },
         },
@@ -78,6 +79,7 @@ class Player extends EventEmitter<PlayerEvents> {
           apply: (target, thisArg, args) => {
             if (this.#mouseLock) return;
             this.#onmouseup(args[0] as MouseEvent);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return Reflect.apply(target, thisArg, args);
           },
         },
@@ -91,6 +93,7 @@ class Player extends EventEmitter<PlayerEvents> {
         {
           apply: (target, thisArg, args) => {
             this.#onkeydown(args[0] as KeyboardEvent);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return Reflect.apply(target, thisArg, args);
           },
         },
@@ -103,6 +106,7 @@ class Player extends EventEmitter<PlayerEvents> {
         {
           apply: (target, thisArg, args) => {
             this.#onkeyup(args[0] as KeyboardEvent);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return Reflect.apply(target, thisArg, args);
           },
         },
@@ -196,13 +200,14 @@ class Player extends EventEmitter<PlayerEvents> {
     const spawnNameInput = document.getElementById('spawn-nickname') as HTMLInputElement;
 
     spawnNameInput.select();
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     document.execCommand('insertText', false, name);
 
     document.getElementById('spawn-button')?.click();
   }
 
   async upgrade_stat(id: number, level: number): Promise<void> {
-    if (id < 1 || id > 8) throw new Error(`diepAPI: ${id} is not a supported stat`);
+    if (id < 1 || id > 8) throw new Error(`diepAPI: ${id.toString()} is not a supported stat`);
 
     input.keyDown(85);
     for (let i = 0; i < level; i++) {
@@ -213,7 +218,7 @@ class Player extends EventEmitter<PlayerEvents> {
   }
 
   async upgrade_tank(index: number): Promise<void> {
-    if (index < 1) throw new Error(`diepAPI: ${index} is not a supported tank index`);
+    if (index < 1) throw new Error(`diepAPI: ${index.toString()} is not a supported tank index`);
 
     index -= 1;
     const x_index = index % 2;
@@ -300,17 +305,21 @@ class Player extends EventEmitter<PlayerEvents> {
   }
 
   #onmousedown(e: MouseEvent): void {
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     if (gamepad.connected) this.#onkeydown({ keyCode: e.which } as KeyboardEvent);
   }
 
   #onmouseup(e: MouseEvent): void {
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     if (gamepad.connected) this.#onkeyup({ keyCode: e.which } as KeyboardEvent);
   }
 
   #onkeydown(e: KeyboardEvent): void {
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     super.emit('keydown', e.keyCode);
 
     if (gamepad.connected) {
+      // eslint-disable-next-line @typescript-eslint/no-deprecated
       switch (e.keyCode) {
         case 37:
         case 65:
@@ -341,9 +350,11 @@ class Player extends EventEmitter<PlayerEvents> {
   }
 
   #onkeyup(e: KeyboardEvent): void {
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     super.emit('keyup', e.keyCode);
 
     if (gamepad.connected) {
+      // eslint-disable-next-line @typescript-eslint/no-deprecated
       switch (e.keyCode) {
         case 37:
         case 65:
