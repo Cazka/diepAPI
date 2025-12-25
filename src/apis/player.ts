@@ -7,10 +7,12 @@ import { input } from './input';
 import { playerMovement } from './player_movement';
 import { scaling } from './scaling';
 
+export type PlayerEvents = 'spawn' | 'dead' | 'level' | 'tank' | 'keydown' | 'keyup';
+
 const sleep = (ms: number): Promise<void> =>
   new Promise((resolve, reject) => setTimeout(resolve, ms));
 
-class Player extends EventEmitter {
+class Player extends EventEmitter<PlayerEvents> {
   #isDead = true;
   #mouseLock = false;
   #mouseCanvasPos = new Vector(0, 0);

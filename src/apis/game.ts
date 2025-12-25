@@ -1,5 +1,19 @@
 import { CanvasKit, EventEmitter } from '../core';
 
+export type GameEvents =
+  | 'ready'
+  | 'before_frame'
+  | 'after_frame'
+  | 'frame_start'
+  | 'frame'
+  | 'frame_end'
+  | 'state'
+  | 's_home'
+  | 's_game'
+  | 's_stats'
+  | 's_loading'
+  | 's_captcha';
+
 /**
  * Events:
  * - ready: Emitted when the game is ready
@@ -15,7 +29,7 @@ import { CanvasKit, EventEmitter } from '../core';
  * - s_loading: Emitted when the game changes its state to loading
  * - s_captcha: Emitted when the game changes its state to captcha
  */
-class Game extends EventEmitter {
+class Game extends EventEmitter<GameEvents> {
   #isReady = false;
   #shadowRoot: ShadowRoot | undefined | null;
 

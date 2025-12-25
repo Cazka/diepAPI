@@ -1,16 +1,16 @@
-export abstract class EventEmitter extends EventTarget {
-  protected emit(eventName: string, ...args: unknown[]): void {
+export abstract class EventEmitter<Event extends string> extends EventTarget {
+  protected emit(eventName: Event, ...args: unknown[]): void {
     super.dispatchEvent(new CustomEvent(eventName, { detail: args }));
   }
 
-  on(eventName: string, listener: EventListener): void {
+  on(eventName: Event, listener: EventListener): void {
     super.addEventListener(eventName, ((e: CustomEvent) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       Reflect.apply(listener, this, e.detail);
     }) as EventListener);
   }
 
-  once(eventName: string, listener: EventListener): void {
+  once(eventName: Event, listener: EventListener): void {
     super.addEventListener(
       eventName,
       ((e: CustomEvent) => {
@@ -23,7 +23,7 @@ export abstract class EventEmitter extends EventTarget {
     );
   }
 
-  off(eventName: string, listener: EventListener): void {
+  off(eventName: Event, listener: EventListener): void {
     super.removeEventListener(eventName, listener);
   }
 }
