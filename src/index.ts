@@ -1,6 +1,5 @@
-import { installEventProxy } from './core/event_proxy';
-
-installEventProxy();
+// import patches first.
+import './patches';
 
 export * as apis from './apis';
 

@@ -1,6 +1,7 @@
 export { arena } from './arena';
 export { camera } from './camera';
 export { game } from './game';
+export { gamepad } from './gamepad';
 export { input } from './input';
 export { minimap } from './minimap';
 export { player } from './player';
