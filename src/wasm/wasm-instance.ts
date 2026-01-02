@@ -1,4 +1,5 @@
 import { EventEmitter } from '../core';
+import { assert } from '../utils/assert';
 
 export type WasmInstanceEvents = 'instantiated';
 
@@ -51,6 +52,8 @@ class WasmInstance extends EventEmitter<WasmInstanceEvents> {
         args: [Response | PromiseLike<Response>, WebAssembly.Imports | undefined],
       ) => {
         const [source, importObject] = args;
+        assert(source instanceof Promise, 'diepAPI: Source must be a Response');
+        assert(importObject != null, 'diepAPI: importObject must be a WebAssembly.Imports');
 
         const result = await Reflect.apply(target, thisArg, args);
 
@@ -60,19 +63,19 @@ class WasmInstance extends EventEmitter<WasmInstanceEvents> {
         this.#importDescriptors = WebAssembly.Module.imports(this.#module);
         this.#exportDescriptors = WebAssembly.Module.exports(this.#module);
 
-        this.#imports = importObject ?? null;
+        this.#imports = importObject;
         this.#exports = result.instance.exports;
 
         const memoryDescriptor = wasmInstance.exportDescriptors?.find(
           (desc) => desc.kind === 'memory',
         );
-        if (!memoryDescriptor) {
-          throw new Error('diepAPI: No memory descriptor found in WASM module exports');
-        }
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        this.#memory = wasmInstance.exports![memoryDescriptor.name] as WebAssembly.Memory;
+        assert(memoryDescriptor != null, 'diepAPI: No memory export found in WASM module');
+
+        this.#memory = this.#exports[memoryDescriptor.name] as WebAssembly.Memory;
+        assert(this.#memory instanceof WebAssembly.Memory, 'diepAPI: Exported memory is invalid');
 
         this.emit('instantiated');
+        console.log('diepAPI: WASM instance instantiated');
 
         return result;
       },
