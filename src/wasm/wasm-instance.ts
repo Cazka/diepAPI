@@ -13,6 +13,7 @@ class WasmInstance extends EventEmitter<WasmInstanceEvents> {
   #exportDescriptors: WebAssembly.ModuleExportDescriptor[] | null = null;
   #imports: WebAssembly.Imports | null = null;
   #exports: WebAssembly.Exports | null = null;
+  #memory: WebAssembly.Memory | null = null;
 
   get instance(): WebAssembly.Instance | null {
     return this.#instance;
@@ -37,6 +38,10 @@ class WasmInstance extends EventEmitter<WasmInstanceEvents> {
     return this.#exports;
   }
 
+  get memory(): WebAssembly.Memory | null {
+    return this.#memory;
+  }
+
   constructor() {
     super();
     WebAssembly.instantiateStreaming = new Proxy(WebAssembly.instantiateStreaming, {
@@ -57,6 +62,15 @@ class WasmInstance extends EventEmitter<WasmInstanceEvents> {
 
         this.#imports = importObject ?? null;
         this.#exports = result.instance.exports;
+
+        const memoryDescriptor = wasmInstance.exportDescriptors?.find(
+          (desc) => desc.kind === 'memory',
+        );
+        if (!memoryDescriptor) {
+          throw new Error('diepAPI: No memory descriptor found in WASM module exports');
+        }
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        this.#memory = wasmInstance.exports![memoryDescriptor.name] as WebAssembly.Memory;
 
         this.emit('instantiated');
 
