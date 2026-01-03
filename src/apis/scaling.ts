@@ -1,55 +1,23 @@
-import { CanvasKit } from '../core/canvas_kit';
 import { Vector } from '../core/vector';
+import { codec, config, memoryAccess } from '../wasm';
 import { camera } from './camera';
-import { game } from './game';
-
 class Scaling {
   #scalingFactor = 1;
-  #drawSolidBackground = false;
-
-  constructor() {
-    game.once('ready', () => {
-      if (_window.input == null) {
-        throw new Error('diepAPI: window.input does not exist.');
-      }
-
-      _window.input.set_convar = new Proxy(_window.input.set_convar, {
-        apply: (target, thisArg, args) => {
-          if (args[0] === 'ren_solid_background') this.#drawSolidBackground = args[1] as boolean;
-          else Reflect.apply(target, thisArg, args);
-        },
-      });
-    });
-
-    CanvasKit.overrideCtx('stroke', (target, thisArg, args) => {
-      if (thisArg.fillStyle !== '#cccccc') {
-        Reflect.apply(target, thisArg, args);
-        return;
-      }
-      if (thisArg.globalAlpha === 0) {
-        Reflect.apply(target, thisArg, args);
-        return;
-      }
-
-      this.#scalingFactor = thisArg.globalAlpha * 10;
-
-      if (!this.#drawSolidBackground) {
-        Reflect.apply(target, thisArg, args);
-        return;
-      }
-    });
-  }
 
   get windowRatio(): number {
     return Math.max(_window.innerWidth / 1920, _window.innerHeight / 1080);
   }
 
   get scalingFactor(): number {
-    return this.#scalingFactor;
+    return this.fov * this.windowRatio;
   }
 
   get fov(): number {
-    return this.#scalingFactor / this.windowRatio;
+    if (!memoryAccess.HEAPU32) {
+      return 0;
+    }
+    const fov = memoryAccess.HEAPU32[config.FOV_PTR >> 2];
+    return codec.decodeFloat(fov);
   }
 
   /**
