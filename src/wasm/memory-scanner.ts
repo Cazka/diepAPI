@@ -2,25 +2,17 @@ import { assert } from '../utils/assert';
 import { memoryAccess } from './memory-access';
 
 const DATA_TYPE_SIZES = {
-  int8: 1,
-  int16: 2,
-  int32: 4,
-  uint8: 1,
-  uint16: 2,
-  uint32: 4,
-  float32: 4,
-  float64: 8,
+  i8: 1,
+  i16: 2,
+  i32: 4,
+  u8: 1,
+  u16: 2,
+  u32: 4,
+  f32: 4,
+  f64: 8,
 } as const satisfies Record<MemoryDataType, number>;
 
-export type MemoryDataType =
-  | 'int8'
-  | 'int16'
-  | 'int32'
-  | 'uint8'
-  | 'uint16'
-  | 'uint32'
-  | 'float32'
-  | 'float64';
+export type MemoryDataType = 'i8' | 'i16' | 'i32' | 'u8' | 'u16' | 'u32' | 'f32' | 'f64';
 
 class MemoryAddress {
   #address: number;
@@ -29,67 +21,67 @@ class MemoryAddress {
     this.#address = address;
   }
 
-  get int8(): number {
+  get i8(): number {
     assert(memoryAccess.HEAP8 !== null, 'diepAPI: HEAP8 is null');
     return memoryAccess.HEAP8[this.#address];
   }
-  set int8(value: number) {
+  set i8(value: number) {
     assert(memoryAccess.HEAP8 !== null, 'diepAPI: HEAP8 is null');
     memoryAccess.HEAP8[this.#address] = value;
   }
-  get int16(): number {
+  get i16(): number {
     assert(memoryAccess.HEAP16 !== null, 'diepAPI: HEAP16 is null');
     return memoryAccess.HEAP16[this.#address >> 1];
   }
-  set int16(value: number) {
+  set i16(value: number) {
     assert(memoryAccess.HEAP16 !== null, 'diepAPI: HEAP16 is null');
     memoryAccess.HEAP16[this.#address >> 1] = value;
   }
-  get int32(): number {
+  get i32(): number {
     assert(memoryAccess.HEAP32 !== null, 'diepAPI: HEAP32 is null');
     return memoryAccess.HEAP32[this.#address >> 2];
   }
-  set int32(value: number) {
+  set i32(value: number) {
     assert(memoryAccess.HEAP32 !== null, 'diepAPI: HEAP32 is null');
     memoryAccess.HEAP32[this.#address >> 2] = value;
   }
-  get uint8(): number {
+  get u8(): number {
     assert(memoryAccess.HEAPU8 !== null, 'diepAPI: HEAPU8 is null');
     return memoryAccess.HEAPU8[this.#address];
   }
-  set uint8(value: number) {
+  set u8(value: number) {
     assert(memoryAccess.HEAPU8 !== null, 'diepAPI: HEAPU8 is null');
     memoryAccess.HEAPU8[this.#address] = value;
   }
-  get uint16(): number {
+  get u16(): number {
     assert(memoryAccess.HEAPU16 !== null, 'diepAPI: HEAPU16 is null');
     return memoryAccess.HEAPU16[this.#address >> 1];
   }
-  set uint16(value: number) {
+  set u16(value: number) {
     assert(memoryAccess.HEAPU16 !== null, 'diepAPI: HEAPU16 is null');
     memoryAccess.HEAPU16[this.#address >> 1] = value;
   }
-  get uint32(): number {
+  get u32(): number {
     assert(memoryAccess.HEAPU32 !== null, 'diepAPI: HEAPU32 is null');
     return memoryAccess.HEAPU32[this.#address >> 2];
   }
-  set uint32(value: number) {
+  set u32(value: number) {
     assert(memoryAccess.HEAPU32 !== null, 'diepAPI: HEAPU32 is null');
     memoryAccess.HEAPU32[this.#address >> 2] = value;
   }
-  get float32(): number {
+  get f32(): number {
     assert(memoryAccess.HEAPF32 !== null, 'diepAPI: HEAPF32 is null');
     return memoryAccess.HEAPF32[this.#address >> 2];
   }
-  set float32(value: number) {
+  set f32(value: number) {
     assert(memoryAccess.HEAPF32 !== null, 'diepAPI: HEAPF32 is null');
     memoryAccess.HEAPF32[this.#address >> 2] = value;
   }
-  get float64(): number {
+  get f64(): number {
     assert(memoryAccess.HEAPF64 !== null, 'diepAPI: HEAPF64 is null');
     return memoryAccess.HEAPF64[this.#address >> 3];
   }
-  set float64(value: number) {
+  set f64(value: number) {
     assert(memoryAccess.HEAPF64 !== null, 'diepAPI: HEAPF64 is null');
     memoryAccess.HEAPF64[this.#address >> 3] = value;
   }
