@@ -74,7 +74,7 @@ class WasmInstance extends EventEmitter<WasmInstanceEvents> {
         this.#memory = this.#exports[memoryDescriptor.name] as WebAssembly.Memory;
         assert(this.#memory instanceof WebAssembly.Memory, 'diepAPI: Exported memory is invalid');
 
-        this.emit('instantiated');
+        super.emit('instantiated');
         console.log('diepAPI: WASM instance instantiated');
 
         return result;
