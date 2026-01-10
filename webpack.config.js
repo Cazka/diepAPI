@@ -41,9 +41,34 @@ module.exports = {
 (() => {
   const _window = 'undefined' == typeof unsafeWindow ? window : unsafeWindow;
   if (_window.diepAPI) return;
+  // if (Object.is('diepAPI')) return;
 
 `,
-      footer: '\n\n  _window.diepAPI = diepAPI;\n})();',
+      footer: `
+
+  // Keep until game tries to check for diepAPI presence.
+  _window.diepAPI = diepAPI;
+
+  // Stealth access: diepAPI only accessible via Object.is('diepAPI') from userscripts
+  // Object.is = new Proxy(Object.is, {
+  //   apply: function(target, thisArg, args) {
+  //     if (args[0] === 'diepAPI') {
+  //       try { throw new Error(); }
+  //       catch (e) {
+  //         if (e.stack) {
+  //           // Check if caller is a userscript
+  //           const caller = e.stack.split('\\n')[2];
+  //           if (caller.includes('userscript.html')) {
+  //             return diepAPI;
+  //           }
+  //         }
+  //       }
+  //     }
+  //     return Reflect.apply(target, thisArg, args);
+  //   }
+  // });
+})();
+`,
     }),
   ],
 };
