@@ -2,8 +2,6 @@ import { Vector } from '../core/vector';
 import { codec, config, memoryAccess } from '../wasm';
 import { camera } from './camera';
 class Scaling {
-  #scalingFactor = 1;
-
   get windowRatio(): number {
     return Math.max(_window.innerWidth / 1920, _window.innerHeight / 1080);
   }
@@ -26,7 +24,7 @@ class Scaling {
    * @returns {Vector} The vector in arena units
    */
   toArenaUnits(v: Vector): Vector {
-    return Vector.round(Vector.unscale(this.#scalingFactor, v));
+    return Vector.round(Vector.unscale(this.scalingFactor, v));
   }
 
   /**
@@ -35,7 +33,7 @@ class Scaling {
    * @returns {Vector} The vector in canvas units
    */
   toCanvasUnits(v: Vector): Vector {
-    return Vector.round(Vector.scale(this.#scalingFactor, v));
+    return Vector.round(Vector.scale(this.scalingFactor, v));
   }
 
   /**
