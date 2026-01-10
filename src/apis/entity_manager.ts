@@ -1,7 +1,6 @@
-import { game, playerMovement, scaling } from '../apis';
+import { game, playerMovement, scaling } from '.';
 import { CanvasKit, Vector } from '../core';
 import { Entity, EntityColor, EntityType, TeamColors } from '../types/entity';
-import { Extension } from './extension';
 
 const random_id = () => Math.random().toString(36).slice(2, 5);
 
@@ -9,30 +8,28 @@ const random_id = () => Math.random().toString(36).slice(2, 5);
  * Entity Manager is used to access the information about the entities, that are currently drawn on the screen.
  * To access the entities the EntityManager exposes the EntityManager.entities field.
  */
-class EntityManager extends Extension {
+class EntityManager {
   #entities: Entity[] = [];
   #entitiesLastFrame: Entity[] = this.#entities;
 
   constructor() {
-    super(() => {
-      game.on('frame_end', () => {
-        this.#entitiesLastFrame = this.#entities;
-        this.#entities = [];
-      });
-
-      this.#triangleHook();
-
-      this.#squareHook();
-
-      this.#pentagonHook();
-
-      this.#hexagonHook();
-
-      //when is a bullet being drawn?
-
-      //when is a player being drawn?
-      this.#playerHook();
+    game.on('frame_end', () => {
+      this.#entitiesLastFrame = this.#entities;
+      this.#entities = [];
     });
+
+    this.#triangleHook();
+
+    this.#squareHook();
+
+    this.#pentagonHook();
+
+    this.#hexagonHook();
+
+    //when is a bullet being drawn?
+
+    //when is a player being drawn?
+    this.#playerHook();
   }
 
   get entities(): Entity[] {

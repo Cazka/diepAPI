@@ -1,11 +1,10 @@
 import { arena, camera, game, minimap, player, scaling } from '../apis';
+import { entityManager } from '../apis/entity_manager';
 import { Vector } from '../core/vector';
-import { overlay } from '../tools/overlay';
 import { Entity, EntityType } from '../types/entity';
-import { entityManager } from './entity_manager';
-import { Extension } from './extension';
+import { overlay } from './overlay';
 
-class DebugTool extends Extension {
+class DebugTool {
   #drawBoundingBox = false;
   #drawVelocity = false;
   #drawParent = false;
@@ -13,38 +12,34 @@ class DebugTool extends Extension {
   #drawStats = false;
 
   constructor() {
-    super(() => {
-      entityManager.load();
+    game.on('frame', () => {
+      entityManager.entities.forEach((entity) => {
+        const position = scaling.toCanvasPos(entity.position);
+        const futurePos = scaling.toCanvasPos(entity.predictPos(1000));
+        const dimensions = scaling.toCanvasUnits(
+          new Vector(2 * (entity.extras.radius ?? 0), 2 * (entity.extras.radius ?? 0)),
+        );
 
-      game.on('frame', () => {
-        entityManager.entities.forEach((entity) => {
-          const position = scaling.toCanvasPos(entity.position);
-          const futurePos = scaling.toCanvasPos(entity.predictPos(1000));
-          const dimensions = scaling.toCanvasUnits(
-            new Vector(2 * (entity.extras.radius ?? 0), 2 * (entity.extras.radius ?? 0)),
-          );
+        if (this.#drawBoundingBox) {
+          this.#_drawboundingBox(entity, position, dimensions);
+        }
 
-          if (this.#drawBoundingBox) {
-            this.#_drawboundingBox(entity, position, dimensions);
-          }
+        if (this.#drawVelocity) {
+          this.#_drawVelocity(position, futurePos);
+        }
 
-          if (this.#drawVelocity) {
-            this.#_drawVelocity(position, futurePos);
-          }
+        if (this.#drawParent) {
+          this.#_drawParent(entity, position);
+        }
 
-          if (this.#drawParent) {
-            this.#_drawParent(entity, position);
-          }
-
-          if (this.#drawInfo) {
-            this.#_drawInfo(entity, position, dimensions);
-          }
-        });
-
-        if (this.#drawStats) {
-          this.#_drawStats();
+        if (this.#drawInfo) {
+          this.#_drawInfo(entity, position, dimensions);
         }
       });
+
+      if (this.#drawStats) {
+        this.#_drawStats();
+      }
     });
   }
 

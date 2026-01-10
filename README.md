@@ -130,13 +130,10 @@ The `@require` directive automatically downloads diepAPI - no separate installat
 diepAPI is organized into three main namespaces:
 
 - **`diepAPI.apis`** - Core game APIs for accessing state and controlling the player
-  - `game`, `player`, `input`, `arena`, `camera`, `scaling`, `minimap`, `playerMovement`
-
-- **`diepAPI.extensions`** - Optional features that must be loaded before use
-  - `entityManager` (track all visible entities), `debugTool` (visual debugging)
+  - `game`, `player`, `input`, `arena`, `camera`, `scaling`, `minimap`, `playerMovement`, `entityManager`
 
 - **`diepAPI.tools`** - Utility tools for drawing and visualization
-  - `overlay` (canvas overlay), `backgroundOverlay` (background canvas)
+  - `overlay` (canvas overlay), `backgroundOverlay` (background canvas), `debugTool`
 
 - **`diepAPI.core`** - Core utilities like `Vector` math
 
@@ -190,20 +187,6 @@ const screenPos = scaling.canvasToScreen(canvasPos);
 const canvasPos = scaling.screenToCanvas(screenPos);
 ```
 
-### Loading Extensions
-
-Extensions must be loaded before use:
-
-```javascript
-const { entityManager } = diepAPI.extensions;
-
-// Load the extension (call once)
-entityManager.load();
-
-// Now you can use it
-console.log(entityManager.entities);
-```
-
 ---
 
 ## 💡 Complete Examples
@@ -212,12 +195,12 @@ console.log(entityManager.entities);
 
 Choose an example based on your experience level:
 
-| Example                                        | Difficulty      | What You'll Learn                          | Install                                                                                                                                                                  |
-| ---------------------------------------------- | --------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [Press O Script](#beginner-press-o-script)     | 🟢 Beginner     | Basic events, auto-spawn                   | [![Install](https://img.shields.io/badge/Install-Press_O-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/press_o.user.js)       |
-| [AFK Script](#beginner-afk-script)             | 🟢 Beginner     | Event handling, player control, movement   | [![Install](https://img.shields.io/badge/Install-AFK_Script-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/afk.user.js)        |
-| [Shape Farmer](#intermediate-shape-farmer)     | 🟡 Intermediate | Entity tracking, filtering, targeting      | [![Install](https://img.shields.io/badge/Install-Shape_Farmer-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/farmer.user.js)   |
-| [Safe Zone Keeper](#intermediate-safe-zone-keeper) | 🟡 Intermediate | Position management, boundary logic, vectors | [![Install](https://img.shields.io/badge/Install-Safe_Zone-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/safezone.user.js) |
+| Example                                            | Difficulty      | What You'll Learn                            | Install                                                                                                                                                                |
+| -------------------------------------------------- | --------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Press O Script](#beginner-press-o-script)         | 🟢 Beginner     | Basic events, auto-spawn                     | [![Install](https://img.shields.io/badge/Install-Press_O-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/press_o.user.js)     |
+| [AFK Script](#beginner-afk-script)                 | 🟢 Beginner     | Event handling, player control, movement     | [![Install](https://img.shields.io/badge/Install-AFK_Script-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/afk.user.js)      |
+| [Shape Farmer](#intermediate-shape-farmer)         | 🟡 Intermediate | Entity tracking, filtering, targeting        | [![Install](https://img.shields.io/badge/Install-Shape_Farmer-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/farmer.user.js) |
+| [Safe Zone Keeper](#intermediate-safe-zone-keeper) | 🟡 Intermediate | Position management, boundary logic, vectors | [![Install](https://img.shields.io/badge/Install-Safe_Zone-44cc11?style=flat&logo=tampermonkey)](https://github.com/Cazka/diepAPI/raw/main/examples/safezone.user.js)  |
 
 ---
 
@@ -334,10 +317,7 @@ Automatically aims at nearby shapes and shoots them. Press P to toggle farming m
 
 const { Vector } = window.diepAPI.core;
 const { player, game } = window.diepAPI.apis;
-const { entityManager } = window.diepAPI.extensions;
-
-// Load the entity manager extension to track entities
-entityManager.load();
+const { entityManager } = window.diepAPI.apis;
 
 let farmActive = false;
 
@@ -521,22 +501,15 @@ Quick reference for the main APIs:
 | **scaling**        | Coordinate system conversion | `.toArenaPos(canvasPos)`, `.toCanvasPos(arenaPos)`, `.screenToCanvas(screenPos)`, `.canvasToScreen(canvasPos)`                                                                         |
 | **minimap**        | Minimap position tracking    | `.position` (minimap position)                                                                                                                                                         |
 | **playerMovement** | Advanced movement tracking   | Position/velocity tracking with prediction                                                                                                                                             |
-
-### Extensions (`diepAPI.extensions`)
-
-Extensions must be loaded with `.load()` before use:
-
-| Extension         | Description                                               | Usage                                                                   |
-| ----------------- | --------------------------------------------------------- | ----------------------------------------------------------------------- |
-| **entityManager** | Track all visible entities (players, shapes, projectiles) | `.load()`, `.entities` (array), `.getPlayer()` (get your player entity) |
-| **debugTool**     | Visual debugging overlays for development                 | `.load()`, `.enable()`, `.disable()`                                    |
+| **entityManager**  | Entity tracking              | `.entities` (array of visible entities), `.getPlayer()`                                                                                                                                |
 
 ### Tools (`diepAPI.tools`)
 
-| Tool                  | Description                                | Usage                             |
-| --------------------- | ------------------------------------------ | --------------------------------- |
-| **overlay**           | Canvas overlay for drawing custom graphics | `.ctx` (CanvasRenderingContext2D) |
-| **backgroundOverlay** | Background layer overlay                   | `.ctx` (CanvasRenderingContext2D) |
+| Tool                  | Description                                | Usage                                                        |
+| --------------------- | ------------------------------------------ | ------------------------------------------------------------ |
+| **overlay**           | Canvas overlay for drawing custom graphics | `.ctx` (CanvasRenderingContext2D)                            |
+| **backgroundOverlay** | Background layer overlay                   | `.ctx` (CanvasRenderingContext2D)                            |
+| **debugTool**         | Visual debugging for entities              | `.drawAll(bool)`, `.drawBoundingBox(bool)`, `.drawStats(bool)` |
 
 ### Core Utilities (`diepAPI.core`)
 
