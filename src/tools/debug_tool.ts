@@ -194,8 +194,6 @@ class DebugTool {
         Minimap Info:
         minimapDim: ${minimap.minimapDim.x},${minimap.minimapDim.y}
         minimapPos: ${minimap.minimapPos.x},${minimap.minimapPos.y}
-        viewportDim: ${minimap.viewportDim.x},${minimap.viewportDim.y}
-        viewportPos: ${minimap.viewportPos.x},${minimap.viewportPos.y}
         arrowPos: ${minimap.arrowPos.x},${minimap.arrowPos.y}
         `;
 
