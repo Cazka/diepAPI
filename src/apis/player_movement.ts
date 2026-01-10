@@ -1,7 +1,6 @@
 import { Movement } from '../core/movement';
-import { arena } from './arena';
+import { camera } from './camera';
 import { game } from './game';
-import { minimap } from './minimap';
 
 class PlayerMovement extends Movement {
   /**
@@ -11,7 +10,7 @@ class PlayerMovement extends Movement {
     super();
 
     game.on('frame_end', () => {
-      super.updatePos(arena.scale(minimap.arrowPos));
+      super.updatePos(camera.position);
     });
   }
 }
