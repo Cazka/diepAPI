@@ -184,7 +184,8 @@ class DebugTool {
         velocity [units/seconds]: ${Math.round(Math.hypot(player.velocity.x, player.velocity.y))}
 
         Arena Info:
-        size: ${Math.round(arena.size)}
+        width: ${Math.round(arena.size.x)}
+        height: ${Math.round(arena.size.y)}
 
         Camera Info:
         position: ${camera.position.x},${camera.position.y}
