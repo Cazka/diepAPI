@@ -1,22 +1,17 @@
 import { Vector } from '../core/vector';
-import { arena } from './arena';
-import { game } from './game';
-import { minimap } from './minimap';
+import { config, memoryAccess } from '../wasm';
+import { decodeFloat } from '../wasm/codec';
 
 class Camera {
-  #position: Vector = new Vector(0, 0);
-
-  constructor() {
-    game.on('frame_end', () => {
-      const center = Vector.add(minimap.viewportPos, Vector.unscale(2, minimap.viewportDim));
-      const cameraPos = Vector.subtract(center, minimap.minimapPos);
-      const normalized = Vector.divide(cameraPos, minimap.minimapDim);
-      this.#position = arena.scale(normalized);
-    });
-  }
-
   get position(): Vector {
-    return this.#position;
+    if (!memoryAccess.HEAPU32) {
+      return new Vector(0, 0);
+    }
+
+    const cameraX = Math.round(decodeFloat(memoryAccess.HEAPU32[config.CameraPositionX_ADDR >> 2]));
+    const cameraY = Math.round(decodeFloat(memoryAccess.HEAPU32[config.CameraPositionY_ADDR >> 2]));
+
+    return new Vector(cameraX, cameraY);
   }
 }
 

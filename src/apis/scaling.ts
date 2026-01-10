@@ -16,7 +16,7 @@ class Scaling {
     if (!memoryAccess.HEAPU32) {
       return 0;
     }
-    const fov = memoryAccess.HEAPU32[config.FOV_PTR >> 2];
+    const fov = memoryAccess.HEAPU32[config.FOV_ADDR >> 2];
     return codec.decodeFloat(fov);
   }
 
