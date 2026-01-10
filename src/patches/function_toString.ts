@@ -1,3 +1,8 @@
+/**
+ * Patch for Function.prototype.toString to return correct function name for native functions.
+ * This is neccessary since proxying functions causes the name to be lost.
+ */
+
 // eslint-disable-next-line @typescript-eslint/unbound-method
 Function.prototype.toString = new Proxy(Function.prototype.toString, {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type

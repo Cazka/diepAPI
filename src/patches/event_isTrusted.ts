@@ -1,4 +1,8 @@
 /**
+ * Patch to make Event.isTrusted always return true.
+ */
+
+/**
  * Wraps an event object in a Proxy that returns true for isTrusted
  */
 function getProxiedEvent(event: Event): Event {
